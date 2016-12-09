@@ -22,6 +22,7 @@ void LobbyScene::onInit()
 	initPopupRank();
 	initPopupSettings();
 	initPopupUserInfo();
+	initPopupHistory();
 
 	Sprite* bg = Sprite::create("lobby/bg.jpg");
 	bg->setPosition(560, 350);
@@ -87,6 +88,7 @@ void LobbyScene::onInit()
 
 void LobbyScene::registerEventListenner()
 {
+	BaseScene::registerEventListenner();
 	EventHandler::getSingleton().onConnected = bind(&LobbyScene::onConnected, this);
 	EventHandler::getSingleton().onConnectionLost = bind(&LobbyScene::onConnectionLost, this);
 	EventHandler::getSingleton().onLoginZone = bind(&LobbyScene::onLoginZone, this);
@@ -101,6 +103,7 @@ void LobbyScene::registerEventListenner()
 
 void LobbyScene::unregisterEventListenner()
 {
+	BaseScene::unregisterEventListenner();
 	EventHandler::getSingleton().onConnected = NULL;
 	EventHandler::getSingleton().onConnectionLost = NULL;
 	EventHandler::getSingleton().onLoginZone = NULL;
@@ -167,9 +170,7 @@ void LobbyScene::onLoginZoneError(short int code, std::string msg)
 {
 	hideWaiting();
 	if (msg.length() == 0) return;
-	showPopupNotice(msg, [=]() {
-		hidePopupNotice();
-	});
+	showPopupNotice(msg, [=]() {});
 	if(code == 28) setMoneyType(1 - currentMoneyType);
 }
 
@@ -184,9 +185,7 @@ void LobbyScene::onErrorSFSResponse(unsigned char code, std::string msg)
 	}
 	if(code != 48) hideWaiting();
 	if (msg.length() == 0) return;
-	showPopupNotice(msg, [=]() {
-		hidePopupNotice();
-	});
+	showPopupNotice(msg, [=]() {});
 }
 
 void LobbyScene::onInviteDataResponse(InviteData data)

@@ -296,6 +296,7 @@ struct UserReconnectData
 
 struct ShopHistoryData
 {
+	long UserId;
 	unsigned char Id;
 	unsigned char ItemId;
 	unsigned char Price;

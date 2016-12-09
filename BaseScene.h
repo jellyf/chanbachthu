@@ -1,6 +1,6 @@
 #pragma once
 #include "cocos2d.h"
-#include "ui\CocosGUI.h"
+#include "ui/CocosGUI.h"
 #include "Data.h"
 
 class BaseScene : public cocos2d::Scene
@@ -24,34 +24,34 @@ public:
 	void onUserDataMeResponse();
 	void onRankDataResponse(std::vector<std::vector<RankData>> list);
 	void onListEventDataResponse(std::vector<EventData> list);
+	void onPlayLogDataResponse(std::vector<PlayLogData> logs);
 protected:
 	virtual void initHeaderWithInfos();
 	virtual void onBackScene();
-	virtual void showPopupHistory();
 	virtual void onChangeMoneyType(int type);
 
 	void addTouchEventListener(cocos2d::ui::Button* btn, std::function<void()> func, float scale = 1.0f);
 	void hideSplash();
 	void hideWaiting();
-	void hidePopupNotice();
-	void hidePopupSettings();
 	void hidePopup(cocos2d::Node* popup);
 	void initEventView(cocos2d::Vec2 pos, cocos2d::Size size);
 	void initPopupNotice();
 	void initPopupRank();
 	void initPopupSettings();
 	void initPopupUserInfo();
+	void initPopupHistory();
 	void setMoneyType(int type);
-	void showPopupNotice(std::string msg, std::function<void()> func = [=]() {});
+	void showPopupNotice(std::string msg, std::function<void()> func);
 	void showPopupRank(int type);
-	void showPopupSettings();
 	void showPopupUserInfo(UserData userData, bool showHistoryIfIsMe = true);
+	void showPopupHistory();
 	void showSplash();
 	void showToast(std::string msg, cocos2d::Vec2 pos, cocos2d::Color3B textColor = cocos2d::Color3B::WHITE, cocos2d::Color3B bgColor = cocos2d::Color3B(80, 80, 80), int bgOpacity = 200);
 	void showWaiting();
 	void showPopup(cocos2d::Node* popup);
 	void setDisplayName(std::string name);
 	void runEventView(std::vector<EventData> list, int currentPosX = 1500);
+	void addBtnChoosePage(int x, int y, cocos2d::Node* node, std::function<void(int)> funcPage);
 
 	bool hasHeader = false;
 	bool isWaiting = false;
@@ -70,6 +70,7 @@ protected:
 	cocos2d::Node* popupRank;
 	cocos2d::Node* popupMainSettings;
 	cocos2d::Node* popupUserInfo;
+	cocos2d::Node* popupHistory;
 	cocos2d::Node* eventView;
 
 	std::vector<cocos2d::ui::Button*> buttons;

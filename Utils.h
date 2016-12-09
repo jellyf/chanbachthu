@@ -32,7 +32,9 @@ public:
 	void logoutZone();
 	void LoadTextureFromURL(std::string url, std::function<void(cocos2d::Texture2D*)> func);
 	void onLoadTextureResponse(std::string url, cocos2d::Texture2D* texture);
-
+	void openSMS(std::string number, std::string text);
+	void openTel(std::string number);
+	void loginFacebook();
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;

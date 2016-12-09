@@ -17,7 +17,6 @@ public:
 	void onLoginZoneError(short int code, std::string msg);
 	void onErrorResponse(unsigned char code, std::string msg);
 	void onTableDataResponse(LobbyListTable data);
-	void onPlayLogDataResponse(std::vector<PlayLogData> logs);
 	void onShopHistoryDataResponse(std::vector<ShopHistoryData> list);
 	void onShopItemsDataResponse(std::vector<ShopItemData> list);
 	void onExchangeItemResponse(std::string msg);
@@ -27,7 +26,6 @@ public:
 	void onNewsDataResponse(std::vector<NewsData> list);
 protected:
 	virtual void onBackScene();
-	virtual void showPopupHistory();
 	virtual void onChangeMoneyType(int type);
 private:
 	void initPopupCharge();
@@ -35,21 +33,18 @@ private:
 	void initPopupMail();
 	void initPopupNews();
 	void initPopupShop();
-	void initPopupHistory();
 	void initWebView();
 	void initPopupDisplayName();
 
 	void showPopupMail();
 	void showPopupNews();
 	void showWebView(std::string url);
-	void addBtnChoosePage(int x, int y, cocos2d::Node* node, std::function<void(int)> funcPage);
 
 	cocos2d::Node* popupShop;
 	cocos2d::Node* popupMail;
 	cocos2d::Node* popupNews;
 	cocos2d::Node* popupGuide;
 	cocos2d::Node* popupCharge;
-	cocos2d::Node* popupHistory;
 	cocos2d::Node* popupDisplayName;
 	cocos2d::Node* nodeWebview;
 

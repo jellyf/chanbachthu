@@ -1102,8 +1102,7 @@ void GameScene::showWinnerCards()
 
 void GameScene::showSettings()
 {
-	showSplash();
-	popupSettings->setVisible(true);
+	showPopup(popupSettings);
 
 	int opacity = myServerSlot == 0 ? 255 : 200;
 	for (int i = 0; i < 3; i++) {
@@ -1979,6 +1978,7 @@ void GameScene::onUserPenet(PenetData data)
 		btnHold->setVisible(false);
 		btnPick->setVisible(false);
 		btnPenet->setVisible(false);
+		btnForward->setVisible(false);
 		btnBashBack->setVisible(true);
 		updateCardHand(data.CardHand);
 		runTimeWaiting(data.UId, timeTurn);
@@ -2207,7 +2207,7 @@ void GameScene::onTableResponse(GameTableData data)
 
 void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
 {
-	tableInvite->setVisible(true);
+	showPopup(tableInvite);
 	ui::ScrollView* scroll = (ui::ScrollView*)tableInvite->getChildByName("scroll");
 	int sx = tableInvite->getChildByName("inside")->getContentSize().width;
 
@@ -2511,6 +2511,7 @@ void GameScene::initCrestTable()
 	tableCrest->setPosition(560, 490);
 	tableCrest->setVisible(false);
 	mLayer->addChild(tableCrest, constant::GAME_ZORDER_SPLASH + 1);
+	Utils::getSingleton().autoScaleNode(tableCrest);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setContentSize(Size(1100, 430));
@@ -2570,6 +2571,7 @@ void GameScene::initEndMatchTable()
 	tableEndMatch->setPosition(560, 500);
 	tableEndMatch->setVisible(false);
 	mLayer->addChild(tableEndMatch, constant::ZORDER_POPUP + 1);
+	Utils::getSingleton().autoScaleNode(tableEndMatch);
 
 	Sprite* bg = Sprite::create("popup/bg.png");
 	bg->setScaleY(.85f);
@@ -2619,6 +2621,7 @@ void GameScene::initInviteTable()
 	tableInvite->setPosition(560, 350);
 	tableInvite->setVisible(false);
 	mLayer->addChild(tableInvite, constant::ZORDER_POPUP + 1);
+	Utils::getSingleton().autoScaleNode(tableInvite);
 
 	Sprite* bg = Sprite::create("popup/bg.png");
 	bg->setScale(1.1f, 1.5f);
@@ -2650,8 +2653,7 @@ void GameScene::initInviteTable()
 	btnDong->setPosition(Vec2(300, 280));
 	btnDong->setScale(.8f);
 	addTouchEventListener(btnDong, [=]() {
-		tableInvite->setVisible(false);
-		hideSplash();
+		hidePopup(tableInvite);
 	});
 	tableInvite->addChild(btnDong);
 }
@@ -2662,6 +2664,7 @@ void GameScene::initSettingsPopup()
 	popupSettings->setPosition(560, 350);
 	popupSettings->setVisible(false);
 	mLayer->addChild(popupSettings, constant::ZORDER_POPUP);
+	Utils::getSingleton().autoScaleNode(popupSettings);
 
 	Sprite* bg = Sprite::create("popup/bg.png");
 	popupSettings->addChild(bg);
@@ -2727,8 +2730,7 @@ void GameScene::initSettingsPopup()
 	ui::Button* btnOK = ui::Button::create("popup/btn_submit.png", "popup/btn_submit_clicked.png");
 	btnOK->setPosition(Vec2(0, -190));
 	addTouchEventListener(btnOK, [=]() {
-		hideSplash();
-		popupSettings->setVisible(false);
+		hidePopup(popupSettings);
 		UserDefault::getInstance()->setBoolForKey(constant::KEY_AUTO_READY.c_str(), cbs[3]->isSelected());
 		UserDefault::getInstance()->setBoolForKey(constant::KEY_SOUND.c_str(), cbs[4]->isSelected());
 		if (myServerSlot == 0 && (state == NONE || state == READY)){
@@ -2742,8 +2744,7 @@ void GameScene::initSettingsPopup()
 	btnClose->setPosition(Vec2(290, 170));
 	btnClose->setScale(.7f);
 	addTouchEventListener(btnClose, [=]() {
-		hideSplash();
-		popupSettings->setVisible(false);
+		hidePopup(popupSettings);
 	});
 	popupSettings->addChild(btnClose);
 }

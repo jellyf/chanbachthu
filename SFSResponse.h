@@ -664,12 +664,15 @@ public:
 			ShopHistoryData data;
 			byteArray->ReadByte(data.Id);
 			byteArray->ReadByte(data.ItemId);
+			byteArray->ReadInt(data.UserId);
 			byteArray->ReadUTF(data.Name);
 			byteArray->ReadByte(data.Price);
 			byteArray->ReadByte(data.Status);
 			byteArray->ReadUTF(data.CreateDate);
 			byteArray->ReadUTF(data.UpdateDate);
 			byteArray->ReadUTF(data.Content);
+			list.push_back(data);
+			//CCLOG("%d %d %s %d %d %s %s %s", data.Id, data.ItemId, data.Name.c_str(), data.Price, data.Status, data.CreateDate.c_str(), data.Content);
 		}
 	}
 

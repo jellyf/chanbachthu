@@ -242,3 +242,42 @@ void Utils::onLoadTextureResponse(std::string url, cocos2d::Texture2D * texture)
 	}
 	callbacks[url].clear();
 }
+
+void Utils::openSMS(std::string number, std::string text)
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	JniMethodInfo methodInfo;
+	if (!JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/cpp/AppActivity", "openSMS", "(Ljava/lang/String;Ljava/lang/String;)V")) {
+		return;
+	}
+	jstring jaddress = methodInfo.env->NewStringUTF(number.c_str());
+	jstring jsmsBody = methodInfo.env->NewStringUTF(text.c_str());
+	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, jaddress, jsmsBody);
+	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+#endif
+}
+
+void Utils::openTel(std::string number)
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	JniMethodInfo methodInfo;
+	if (!JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/cpp/AppActivity", "openCall", "(Ljava/lang/String;)V")) {
+		return;
+	}
+	jstring jphone = methodInfo.env->NewStringUTF(number.c_str());
+	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, jphone);
+	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+#endif
+}
+
+void Utils::loginFacebook()
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	JniMethodInfo methodInfo;
+	if (!JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/cpp/AppActivity", "loginFacebook", "()V")) {
+		return;
+	}
+	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID);
+	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+#endif
+}

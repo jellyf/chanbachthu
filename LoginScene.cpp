@@ -87,12 +87,12 @@ void LoginScene::onInit()
 	addTouchEventListener(btnLogin, [=]() {
 		string username = tfUsername->getText();// Utils::getSingleton().trim(tfUsername->getText());
 		if (username.length() == 0) {
-			showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_tai_khoan"));
+			showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_tai_khoan"), [=]() {});
 			return;
 		}
 		string password = tfPassword->getText();// Utils::getSingleton().trim(tfPassword->getText());
 		if (password.length() == 0) {
-			showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_mat_khau"));
+			showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_mat_khau"), [=]() {});
 			return;
 		}
 		showWaiting();
@@ -111,14 +111,7 @@ void LoginScene::onInit()
 	ui::Button* btnFB = ui::Button::create("login/btn_fb.png", "login/btn_fb_clicked.png");
 	btnFB->setPosition(Vec2(0, -195));
 	addTouchEventListener(btnFB, [=]() {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-		JniMethodInfo methodInfo;
-		if (!JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/cpp/AppActivity", "loginFacebook", "()V")) {
-			return;
-		}
-		methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID);
-		methodInfo.env->DeleteLocalRef(methodInfo.classID);
-#endif
+		Utils::getSingleton().loginFacebook();
 	});
 	loginNode->addChild(btnFB);
 
@@ -129,16 +122,7 @@ void LoginScene::onInit()
 	addTouchEventListener(btnPhone, [=]() {
 		string phone = Utils::getSingleton().gameConfig.phone;
 		if (phone.length() == 0) return;
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-		JniMethodInfo methodInfo;
-		if (!JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/cpp/AppActivity", "openCall", "(Ljava/lang/String;)V")) {
-			return;
-		}
-		jstring jphone = methodInfo.env->NewStringUTF(phone.c_str());
-		methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, jphone);
-		methodInfo.env->DeleteLocalRef(methodInfo.classID);
-#endif
+		Utils::getSingleton().openTel(phone);
 	});
 	mLayer->addChild(btnPhone);
 	Utils::getSingleton().autoScaleNode(btnPhone);
@@ -211,7 +195,7 @@ void LoginScene::onLoginZone()
 void LoginScene::onConnectionFailed()
 {
 	hideWaiting();
-	showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"));
+	showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"), [=]() {});
 }
 
 void LoginScene::onConfigZoneReceived()
@@ -241,6 +225,7 @@ void LoginScene::onLoginFacebook(std::string token)
 
 void LoginScene::onErrorResponse(unsigned char code, std::string msg)
 {
+	if (code == 49) return;
 	hideWaiting();
 	if (code == 48) {
 		loginNode->setVisible(true);
@@ -248,10 +233,9 @@ void LoginScene::onErrorResponse(unsigned char code, std::string msg)
 		tfUsername->setText(tfResUname->getText());
 		tfPassword->setText(tfResPass->getText());
 		Utils::getSingleton().saveUsernameAndPassword(tfUsername->getText(), tfPassword->getText());
-		return;
 	}
 	if (msg.length() == 0) return;
-	showPopupNotice(msg);
+	showPopupNotice(msg, [=]() {});
 }
 
 void LoginScene::onHttpResponse(int tag, std::string content)
@@ -284,7 +268,7 @@ void LoginScene::onHttpResponseFailed()
 		currentConfigLink = 1;
 		SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
 	} else {
-		showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"));
+		showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"), [=]() {});
 	}
 }
 
