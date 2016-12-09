@@ -6,6 +6,10 @@
 #include "GameScene.h"
 #include "Constant.h"
 #include "SFSRequest.h"
+#include "EventHandler.h"
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#include "IOSHelperCPlus.h"
+#endif
 
 using namespace std;
 using namespace cocos2d;
@@ -253,7 +257,9 @@ void Utils::openSMS(std::string number, std::string text)
 	jstring jaddress = methodInfo.env->NewStringUTF(number.c_str());
 	jstring jsmsBody = methodInfo.env->NewStringUTF(text.c_str());
 	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, jaddress, jsmsBody);
-	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+    methodInfo.env->DeleteLocalRef(methodInfo.classID);
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    IOSHelperCPlus::openSMS(number.c_str(), text.c_str());
 #endif
 }
 
@@ -267,6 +273,8 @@ void Utils::openTel(std::string number)
 	jstring jphone = methodInfo.env->NewStringUTF(number.c_str());
 	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, jphone);
 	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    IOSHelperCPlus::openTel(number.c_str());
 #endif
 }
 
@@ -279,5 +287,10 @@ void Utils::loginFacebook()
 	}
 	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID);
 	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    IOSHelperCPlus::setLoginFBCallback([=](std::string token){
+        EventHandler::getSingleton().callbackLoginFacebook(token);
+    });
+    IOSHelperCPlus::loginFacebook();
 #endif
 }
