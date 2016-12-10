@@ -13,7 +13,7 @@ void MainScene::onInit()
 	BaseScene::onInit();
 
 	bool paymentEnabled = Utils::getSingleton().gameConfig.paymentEnabled;
-	currentMoneyType = (int)UserDefault::getInstance()->getBoolForKey(constant::KEY_MONEY_TYPE.c_str(), Utils::getSingleton().userDataMe.MoneyType);
+	currentMoneyType = Utils::getSingleton().userDataMe.MoneyType;
 
 	std::vector<Vec2> vecPos;
 	vecPos.push_back(Vec2(240, 65));
@@ -93,7 +93,7 @@ void MainScene::onInit()
 	lbNewMail->setPosition(circleNewMail->getContentSize().width / 2 - 4, circleNewMail->getContentSize().height / 2);
 	circleNewMail->addChild(lbNewMail);
 
-	ui::Button* btnNhaTranh = ui::Button::create("main/nhatranh.png");
+	ui::Button* btnNhaTranh = ui::Button::create("main/nhatranh.png", "main/nhatranh.png");
 	btnNhaTranh->setPosition(vecPos[5]);
 	addTouchEventListener(btnNhaTranh, [=]() {
 		if (isWaiting) return;
@@ -104,7 +104,7 @@ void MainScene::onInit()
 	});
 	mLayer->addChild(btnNhaTranh);
 
-	ui::Button* btnDinhLang = ui::Button::create("main/dinhlang.png");
+	ui::Button* btnDinhLang = ui::Button::create("main/dinhlang.png", "main/dinhlang.png");
 	btnDinhLang->setPosition(vecPos[6]);
 	addTouchEventListener(btnDinhLang, [=]() {
 		if (isWaiting) return;
@@ -115,7 +115,7 @@ void MainScene::onInit()
 	});
 	mLayer->addChild(btnDinhLang);
 
-	ui::Button* btnPhuChua = ui::Button::create("main/phuchua.png");
+	ui::Button* btnPhuChua = ui::Button::create("main/phuchua.png", "main/phuchua.png");
 	btnPhuChua->setPosition(vecPos[7]);
 	addTouchEventListener(btnPhuChua, [=]() {
 		if (isWaiting) return;
@@ -126,7 +126,7 @@ void MainScene::onInit()
 	});
 	mLayer->addChild(btnPhuChua);
 
-	ui::Button* btnLoiDai = ui::Button::create("main/loidai.png");
+	ui::Button* btnLoiDai = ui::Button::create("main/loidai.png", "main/loidai.png");
 	btnLoiDai->setPosition(vecPos[8]);
 	addTouchEventListener(btnLoiDai, [=]() {
 		

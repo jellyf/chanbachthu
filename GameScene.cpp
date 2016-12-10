@@ -138,7 +138,7 @@ void GameScene::onInit()
 	ui::Button* btnChat = ui::Button::create("board/btn_chat.png", "board/btn_chat_clicked.png");
 	btnChat->setPosition(Vec2(975, 650));
 	addTouchEventListener(btnChat, [=]() {
-		tableChat->setVisible(true);
+		showPopup(tableChat);
 	});
 	mLayer->addChild(btnChat, constant::GAME_ZORDER_BUTTON);
 	Utils::getSingleton().autoScaleNode(btnChat);
@@ -158,7 +158,7 @@ void GameScene::onInit()
 	addTouchEventListener(btnReady, [=]() {
 		state = READY;
 		SFSRequest::getSingleton().RequestGameReady();
-		lbCrestTime->setVisible(false);
+		//lbCrestTime->setVisible(false);
 		btnReady->setVisible(false);
 	});
 	mLayer->addChild(btnReady);
@@ -466,11 +466,15 @@ void GameScene::onInit()
 
 	lbCrestTime = Label::create("", "fonts/arialbd.ttf", 50);
 	lbCrestTime->setPosition(750, 280);
-	mLayer->addChild(lbCrestTime, constant::GAME_ZORDER_SPLASH + 1);
+	mLayer->addChild(lbCrestTime, constant::ZORDER_POPUP + 10);
 
 	DelayTime* delay = DelayTime::create(1);
 	CallFunc* func = CallFunc::create([=]() {
-		if (lbCrestTime->getString().compare("0") == 0) return;
+		if (lbCrestTime->getString().compare("0") == 0) {
+			lbCrestTime->setVisible(false);
+			lbCrestTime->pauseSchedulerAndActions();
+			return;
+		}
 		int time = atoi(lbCrestTime->getString().c_str());
 		time--;
 		lbCrestTime->setString(to_string(time));
@@ -541,7 +545,7 @@ void GameScene::onInit()
 	}
 	showWinnerCards();*/
 
-	/*for (int i = 0; i < 10; i++) {
+	/*for (int i = 0; i < 13; i++) {
 		endMatchData.ListStiltCard.push_back(8);
 	}
 	showStiltCards();*/
@@ -1011,14 +1015,16 @@ void GameScene::showStiltCards()
 	for (Sprite* sp : spCards) {
 		sp->setVisible(false);
 	}
-	int x = 585 - endMatchData.ListStiltCard.size() * 25;
+	int x = 575 - endMatchData.ListStiltCard.size() * 23;
+	Sprite* sp;
 	for (unsigned char c : endMatchData.ListStiltCard) {
-		Sprite* sp = getCardSprite(c);
-		sp->setScale(1);
+		sp = getCardSprite(c);
+		sp->setScale(.92);
 		sp->setPosition(x, 125);
-		sp->setLocalZOrder(constant::ZORDER_POPUP + 1);
-		x += 50;
+		sp->setLocalZOrder(constant::ZORDER_POPUP + 10);
+		x += 46;
 	}
+	sp->setPosition(x - 26, 125);
 }
 
 void GameScene::showWinnerCards()
@@ -1047,7 +1053,7 @@ void GameScene::showWinnerCards()
 			sp->setColor(i == 0 ? color : Color3B::WHITE);
 			sp->setPosition(x1, i == 0 ? 150 : 100);
 			sp->setAnchorPoint(Vec2(.5f, .5f));
-			sp->setLocalZOrder(constant::GAME_ZORDER_SPLASH + 1 + i);
+			sp->setLocalZOrder(constant::ZORDER_POPUP + 10 + i);
 		}
 		x1 += 50;
 	}
@@ -1068,7 +1074,7 @@ void GameScene::showWinnerCards()
 			sp->setColor(color);
 			sp->setPosition(x2, i % 2 == 0 ? 100 : 150);
 			sp->setAnchorPoint(Vec2(.5f, .5f));
-			sp->setLocalZOrder(constant::GAME_ZORDER_SPLASH + 1 + (1 - i % 2));
+			sp->setLocalZOrder(constant::ZORDER_POPUP + 10 + (1 - i % 2));
 			if(i % 2 == 0) x2 -= 50;
 		}
 	}
@@ -1089,7 +1095,7 @@ void GameScene::showWinnerCards()
 			sp->setColor(color);
 			sp->setPosition(x3, y3);
 			sp->setAnchorPoint(Vec2(.5f, .5f));
-			sp->setLocalZOrder(constant::GAME_ZORDER_SPLASH + 1 + i);
+			sp->setLocalZOrder(constant::ZORDER_POPUP + 10 + i);
 			//x3 += 46;
 			y3 -= 50;
 			if (y3 < 100) {
@@ -1114,14 +1120,12 @@ void GameScene::showSettings()
 
 void GameScene::showError(std::string msg)
 {
-	showSplash();
+	showPopup(lbError->getParent());
 	lbError->setString(msg);
-	lbError->getParent()->setVisible(true);
 
 	DelayTime* delay = DelayTime::create(2);
 	CallFunc* func = CallFunc::create([=]() {
-		hideSplash();
-		lbError->getParent()->setVisible(false);
+		hidePopup(lbError->getParent());
 	});
 	lbError->getParent()->stopAllActions();
 	lbError->getParent()->runAction(Sequence::create(delay, func, nullptr));
@@ -1205,6 +1209,13 @@ void GameScene::onUserDataResponse(UserData data)
 
 void GameScene::onUserExitRoom(long sfsUId)
 {
+	if (sfsUId == sfsIdMe) {
+		showPopupNotice(Utils::getSingleton().getStringForKey("bi_day_khoi_ban"), [=]() {
+			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
+			Utils::getSingleton().goToLobbyScene();
+		});
+		return;
+	}
 	int index = userIndexs[sfsUId];
 	if (vecUsers[index]->isVisible() && vecUsers[index]->getAlpha() == 150) {
 		vecUsers[index]->setName("");
@@ -1365,9 +1376,6 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	for (Sprite* sp : spCards) {
 		sp->setVisible(false);
 	}
-	for (Sprite* sp : spBatBaos) {
-		sp->setVisible(false);
-	}
 	for (int i = 0; i < vecStilts.size(); i++) {
 		vecStilts[i]->setVisible(true);
 		//vecStilts[i]->setPosition(dealPos[i] + Vec2(560, 350));
@@ -1415,6 +1423,7 @@ void GameScene::onStartGameDataResponse(StartGameData data)
 	this->myCardHand = data.CardHand;
 	btnReady->setVisible(false);
 	lbCrestTime->setVisible(false);
+	lbCrestTime->pauseSchedulerAndActions();
 	for (Sprite* sp : spSanSangs) {
 		sp->setVisible(false);
 	}
@@ -1567,6 +1576,7 @@ void GameScene::onUserBash(BashData data)
 		if (chosenCard > 0 && atoi(spHandCards[chosenCard]->getName().c_str()) % 1000 == data.CardId) {
 			spCard = spHandCards[chosenCard];
 			spHandCards.erase(spHandCards.begin() + chosenCard);
+			spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
 			chosenCard = -1;
 		} else {
 			for (int i = 0; i < spHandCards.size(); i++) {
@@ -1664,6 +1674,7 @@ void GameScene::onUserBashBack(BashBackData data)
 		if (chosenCard > 0 && atoi(spHandCards[chosenCard]->getName().c_str()) % 1000 == data.CardId) {
 			spCard = spHandCards[chosenCard];
 			spHandCards.erase(spHandCards.begin() + chosenCard);
+			spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
 			chosenCard = -1;
 		} else {
 			for (int i = 0; i < spHandCards.size(); i++) {
@@ -1771,6 +1782,7 @@ void GameScene::onUserHold(HoldData data)
 		if (chosenCard > 0 && atoi(spHandCards[chosenCard]->getName().c_str()) % 1000 == data.CardId) {
 			spCard = spHandCards[chosenCard];
 			spHandCards.erase(spHandCards.begin() + chosenCard);
+			spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
 			chosenCard = -1;
 		} else {
 			for (int i = 0; i < spHandCards.size(); i++) {
@@ -1787,10 +1799,6 @@ void GameScene::onUserHold(HoldData data)
 		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUsers[index]->getPositionY();
 		spCard->setPosition(x, y);
 		spCard->setName(to_string((int)data.CardId));
-
-		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
-		spCard->runAction(rotate);
-		zorder = spCard->getLocalZOrder();
 	} else {
 		spCard = getCardSprite(data.CardId);
 		spCard->setRotation(0);
@@ -1810,8 +1818,12 @@ void GameScene::onUserHold(HoldData data)
 	MoveTo* move1 = MoveTo::create(cardSpeed, pos - Vec2(0, 40));
 	MoveTo* move2 = MoveTo::create(cardSpeed, pos);
 	ScaleTo* scaleTo = ScaleTo::create(cardSpeed, cardScaleTable);
+	RotateTo* rotate = RotateTo::create(cardSpeed, 0);
+	spCard->stopAllActions();
+	spCard->runAction(rotate);
 	spCard->runAction(move1);
 	spCard->runAction(scaleTo);
+	runningSpCard->stopAllActions();
 	runningSpCard->runAction(move2);
 	runningSpCard->runAction(scaleTo->clone());
 	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_USER);
@@ -1941,13 +1953,11 @@ void GameScene::onUserPenet(PenetData data)
 			if (atoi(spHandCards[i]->getName().c_str()) % 1000 == data.CardId) {
 				cards.push_back(spHandCards[i]);
 
-				RotateTo* rotate = RotateTo::create(.7f, 0);
 				int rot = spHandCards[i]->getRotation();
 				float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spHandCards[i]->getContentSize().height + vecUsers[index]->getPositionX();
 				float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spHandCards[i]->getContentSize().height + vecUsers[index]->getPositionY();
 				spHandCards[i]->setName(to_string((int)data.CardId));
 				spHandCards[i]->setPosition(x, y);
-				spHandCards[i]->runAction(rotate);
 
 				spHandCards.erase(spHandCards.begin() + i);
 				if (cards.size() == 4) break;
@@ -1970,8 +1980,11 @@ void GameScene::onUserPenet(PenetData data)
 
 		MoveTo* move = MoveTo::create(cardSpeed, pos - Vec2(0, 15) * i);
 		ScaleTo* scaleTo = ScaleTo::create(cardSpeed, cardScaleTable);
+		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
+		cards[i]->stopAllActions();
 		cards[i]->runAction(move);
 		cards[i]->runAction(scaleTo);
+		cards[i]->runAction(rotate);
 		changeZOrderAfterFly(cards[i], constant::GAME_ZORDER_USER + i);
 	}
 	if (data.UId == sfsIdMe) {
@@ -2043,6 +2056,7 @@ void GameScene::onCrestResponse(CrestResponseData data)
 	tableEndMatch->setVisible(true);
 	progressTimer->setVisible(false);
 	progressTimer->stopAllActions();
+	lbCrestTime->pauseSchedulerAndActions();
 
 	string strwin = vecUsers[userIndexs[data.UId]]->getPlayerName() + " " + Utils::getSingleton().getStringForKey("win") + ": ";
 	for (unsigned char c : data.CuocHo) {
@@ -2089,12 +2103,12 @@ void GameScene::onCrestResponse(CrestResponseData data)
 void GameScene::onEndMatch(EndMatchData data)
 {
 	this->endMatchData = data;
+	showSplash();
 	lbCrestTime->setVisible(true);
 	lbCrestTime->setString("40");
 	lbCrestTime->setScale(1);
 	lbCrestTime->setColor(Color3B::WHITE);
 	lbCrestTime->resumeSchedulerAndActions();
-	showSplash();
 	lbCardNoc->getParent()->setVisible(false);
 	btnPick->setVisible(false);
 	btnBash->setVisible(false);
@@ -2428,7 +2442,7 @@ void GameScene::initChatTable()
 	tableChat = Node::create();
 	tableChat->setPosition(560, 200);
 	tableChat->setVisible(false);
-	mLayer->addChild(tableChat, constant::GAME_ZORDER_BUTTON);
+	mLayer->addChild(tableChat, constant::ZORDER_POPUP);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("white.png");
 	bg->setContentSize(Size(1120, 400));
@@ -2460,7 +2474,7 @@ void GameScene::initChatTable()
 		if (string(input->getText()).length() == 0) return;
 		SFSRequest::getSingleton().SendPublicMessage(string(input->getText()));
 		input->setText("");
-		tableChat->setVisible(false);
+		hidePopup(tableChat);
 	});
 	tableChat->addChild(btnSend);
 
@@ -2469,7 +2483,7 @@ void GameScene::initChatTable()
 	btnClose->setScale(.6f);
 	addTouchEventListener(btnClose, [=]() {
 		input->setText("");
-		tableChat->setVisible(false);
+		hidePopup(tableChat);
 	});
 	tableChat->addChild(btnClose);
 
@@ -2496,7 +2510,7 @@ void GameScene::initChatTable()
 		btn->setName(iter->first);
 		addTouchEventListener(btn, [=]() {
 			SFSRequest::getSingleton().SendPublicMessage(btn->getName());
-			tableChat->setVisible(false);
+			hidePopup(tableChat);
 		});
 		scroll->addChild(btn);
 		i++;
@@ -2510,7 +2524,7 @@ void GameScene::initCrestTable()
 	tableCrest = Node::create();
 	tableCrest->setPosition(560, 490);
 	tableCrest->setVisible(false);
-	mLayer->addChild(tableCrest, constant::GAME_ZORDER_SPLASH + 1);
+	mLayer->addChild(tableCrest, constant::ZORDER_POPUP + 10);
 	Utils::getSingleton().autoScaleNode(tableCrest);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
@@ -2549,12 +2563,11 @@ void GameScene::initCrestTable()
 	ui::Button* btnCrest = ui::Button::create("board/btn_xuong.png", "board/btn_xuong_clicked.png");
 	btnCrest->setPosition(Vec2(370, -210));
 	addTouchEventListener(btnCrest, [=]() {
-		lbCrestTime->setVisible(false);
-		tableCrest->setVisible(false);
 		vector<unsigned char> crestIds;
 		for (int i = 0; i < chosenCuocs.size();i++) {
 			crestIds.push_back(chosenCuocs[i] + chosenCuocNumbs[i]);
 		}
+		tableCrest->setVisible(false);
 		lbCrestTime->setVisible(false);
 		lbCrestTime->pauseSchedulerAndActions();
 		SFSRequest::getSingleton().RequestGameWinCrest(crestIds);
@@ -2570,7 +2583,7 @@ void GameScene::initEndMatchTable()
 	tableEndMatch = Node::create();
 	tableEndMatch->setPosition(560, 500);
 	tableEndMatch->setVisible(false);
-	mLayer->addChild(tableEndMatch, constant::ZORDER_POPUP + 1);
+	mLayer->addChild(tableEndMatch, constant::ZORDER_POPUP + 10);
 	Utils::getSingleton().autoScaleNode(tableEndMatch);
 
 	Sprite* bg = Sprite::create("popup/bg.png");

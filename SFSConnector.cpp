@@ -240,8 +240,15 @@ void SFSConnector::OnExtensionResponse(unsigned long long ptrContext, boost::sha
 	} else if (ptrNotifiedCmd->compare(cmd::REGISTER) == 0) {
 
 	} else if (ptrNotifiedCmd->compare(cmd::USER_INFO) == 0) {
-		if(Utils::getSingleton().userDataMe.UserID == 0)
-			SFSResponse::getUserData(ptrNotifiedISFSObject, Utils::getSingleton().userDataMe);
+		//if(Utils::getSingleton().userDataMe.UserID == 0)
+		SFSResponse::getUserData(ptrNotifiedISFSObject, Utils::getSingleton().userDataMe);
+		Utils::getSingleton().IsPlayMoneyReal = Utils::getSingleton().userDataMe.MoneyType == 1;
+		if (EventHandler::getSingleton().onUserDataMeSFSResponse != NULL) {
+			EventHandler::getSingleton().onUserDataMeSFSResponse();
+		}
+	} else if (ptrNotifiedCmd->compare(cmd::RESPONSE_UPDATE_USERINFO) == 0) {
+		SFSResponse::getUserData(ptrNotifiedISFSObject, Utils::getSingleton().userDataMe);
+		Utils::getSingleton().IsPlayMoneyReal = Utils::getSingleton().userDataMe.MoneyType == 1;
 		if (EventHandler::getSingleton().onUserDataMeSFSResponse != NULL) {
 			EventHandler::getSingleton().onUserDataMeSFSResponse();
 		}

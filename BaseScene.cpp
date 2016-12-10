@@ -178,6 +178,13 @@ void BaseScene::showWaiting()
 	isWaiting = true;
 	showPopup(spWaiting->getParent());
 	spWaiting->resumeSchedulerAndActions();
+
+	DelayTime* delay = DelayTime::create(30);
+	CallFunc* func = CallFunc::create([=]() {
+		if (isWaiting) {
+			SFSRequest::getSingleton().Disconnect();
+		}
+	});
 }
 
 void BaseScene::showPopup(cocos2d::Node * popup)
@@ -355,7 +362,7 @@ void BaseScene::setMoneyType(int type)
 {
 	moneyBg->setTag(type);
 	chosenBg->setPosition(type == 0 ? 100 : -95, 0);
-	UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), type == 1);
+	//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), type == 1);
 }
 
 void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> func, float scale)
@@ -384,7 +391,7 @@ void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> fun
 void BaseScene::initHeaderWithInfos()
 {
 	hasHeader = true;
-	bool isRealMoney = UserDefault::getInstance()->getBoolForKey(constant::KEY_MONEY_TYPE.c_str(), false);
+	bool isRealMoney = Utils::getSingleton().IsPlayMoneyReal;
 
 	std::vector<Vec2> vecPos;
 	vecPos.push_back(Vec2(62, 650));
@@ -430,12 +437,12 @@ void BaseScene::initHeaderWithInfos()
 			moneyBg->setTag(1);
 			chosenBg->setPosition(-95, 0);
 			onChangeMoneyType(1);
-			UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), true);
+			//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), true);
 		} else {
 			moneyBg->setTag(0);
 			chosenBg->setPosition(100, 0);
 			onChangeMoneyType(0);
-			UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), false);
+			//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), false);
 		}
 	});
 
