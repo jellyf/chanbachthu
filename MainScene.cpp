@@ -13,7 +13,7 @@ void MainScene::onInit()
 	BaseScene::onInit();
 
 	bool paymentEnabled = Utils::getSingleton().gameConfig.paymentEnabled;
-	currentMoneyType = Utils::getSingleton().userDataMe.MoneyType;
+	currentMoneyType = Utils::getSingleton().moneyType;
 
 	std::vector<Vec2> vecPos;
 	vecPos.push_back(Vec2(240, 65));
@@ -280,6 +280,7 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 
 void MainScene::onTableDataResponse(LobbyListTable data)
 {
+	Utils::getSingleton().moneyType = currentMoneyType;
 	Utils::getSingleton().goToLobbyScene();
 }
 

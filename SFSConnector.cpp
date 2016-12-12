@@ -242,13 +242,14 @@ void SFSConnector::OnExtensionResponse(unsigned long long ptrContext, boost::sha
 	} else if (ptrNotifiedCmd->compare(cmd::USER_INFO) == 0) {
 		//if(Utils::getSingleton().userDataMe.UserID == 0)
 		SFSResponse::getUserData(ptrNotifiedISFSObject, Utils::getSingleton().userDataMe);
-		Utils::getSingleton().IsPlayMoneyReal = Utils::getSingleton().userDataMe.MoneyType == 1;
+		if (Utils::getSingleton().moneyType == -1) {
+			Utils::getSingleton().moneyType = Utils::getSingleton().userDataMe.MoneyType;
+		}
 		if (EventHandler::getSingleton().onUserDataMeSFSResponse != NULL) {
 			EventHandler::getSingleton().onUserDataMeSFSResponse();
 		}
 	} else if (ptrNotifiedCmd->compare(cmd::RESPONSE_UPDATE_USERINFO) == 0) {
 		SFSResponse::getUserData(ptrNotifiedISFSObject, Utils::getSingleton().userDataMe);
-		Utils::getSingleton().IsPlayMoneyReal = Utils::getSingleton().userDataMe.MoneyType == 1;
 		if (EventHandler::getSingleton().onUserDataMeSFSResponse != NULL) {
 			EventHandler::getSingleton().onUserDataMeSFSResponse();
 		}
@@ -361,7 +362,7 @@ void SFSConnector::OnExtensionResponse(unsigned long long ptrContext, boost::sha
 		LobbyListRoomType data;
 		SFSResponse::getLobbyRoomTypeData(ptrNotifiedISFSObject, data);
 		Utils::getSingleton().lobbyListRoomType = data;
-		Utils::getSingleton().IsPlayMoneyReal = data.IsRealMoney;
+		Utils::getSingleton().moneyType = (int)data.IsRealMoney;
 		if (EventHandler::getSingleton().onLobbyRoomTypeSFSResponse != NULL) {
 			EventHandler::getSingleton().onLobbyRoomTypeSFSResponse(data);
 		}

@@ -2208,7 +2208,7 @@ void GameScene::onTableResponse(GameTableData data)
 	lbName->setString(Utils::getSingleton().getStringForKey("table") + " " + tableId);
 	lbBet->setString(Utils::getSingleton().formatMoneyWithComma(data.Money));
 	lbType->setString(Utils::getSingleton().getStringForKey(data.IsU411 ? "win_411" : "win_free") + ", " + to_string((int)timeTurn) + "s");
-	icMoney->initWithFile(Utils::getSingleton().IsPlayMoneyReal ? "main/icon_gold.png" : "main/icon_silver.png");
+	icMoney->initWithFile(Utils::getSingleton().moneyType == 1 ? "main/icon_gold.png" : "main/icon_silver.png");
 
 	vector<ui::CheckBox*> cbs;
 	for (int i = 0; i < 3; i++) {
@@ -2231,7 +2231,7 @@ void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
 	scroll->setInnerContainerSize(Size(sx, y + 25));
 
 	scroll->removeAllChildren();
-	bool isRealMoney = Utils::getSingleton().IsPlayMoneyReal;
+	bool isRealMoney = Utils::getSingleton().moneyType == 1;
 	for (UserData u : listUser) {
 		Label* lb1 = Label::create();
 		lb1->setString(u.DisplayName.length() > 0 ? u.DisplayName : u.Name);
@@ -2567,6 +2567,7 @@ void GameScene::initCrestTable()
 		for (int i = 0; i < chosenCuocs.size();i++) {
 			crestIds.push_back(chosenCuocs[i] + chosenCuocNumbs[i]);
 		}
+		lbChonCuoc->setString("");
 		tableCrest->setVisible(false);
 		lbCrestTime->setVisible(false);
 		lbCrestTime->pauseSchedulerAndActions();
@@ -2640,7 +2641,7 @@ void GameScene::initInviteTable()
 	bg->setScale(1.1f, 1.5f);
 	tableInvite->addChild(bg);
 
-	Sprite* title = Sprite::create("popup/title_caidat.png");
+	Sprite* title = Sprite::create("popup/title_moichoi.png");
 	title->setPosition(0, 280);
 	//title->setScale(.8f);
 	tableInvite->addChild(title);

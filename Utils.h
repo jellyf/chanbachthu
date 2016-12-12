@@ -53,8 +53,8 @@ public:
 	int currentLobbyId;
 	int loginType;
 	int currentEventPosX;
+	int moneyType;
 	bool isRunningEvent;
-	bool IsPlayMoneyReal;
 	bool SoundEnabled;
 private:
 	cocos2d::ValueMap viLang;

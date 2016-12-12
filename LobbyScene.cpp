@@ -156,6 +156,7 @@ void LobbyScene::onLoginZone()
 	if (isBackToMain) {
 		SFSRequest::getSingleton().RequestLogin(Utils::getSingleton().username, Utils::getSingleton().password);
 	}
+	Utils::getSingleton().moneyType = currentMoneyType;
 }
 
 void LobbyScene::onConfigZoneReceived()
@@ -218,7 +219,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 	} else {
 		zone = "VuongPhu";
 	}
-	Color3B colorMoney = Utils::getSingleton().IsPlayMoneyReal ? Color3B::YELLOW : Color3B(0, 255, 255);
+	Color3B colorMoney = Utils::getSingleton().moneyType == 1 ? Color3B::YELLOW : Color3B(0, 255, 255);
 	vector<Vec2> ppos;
 	ppos.push_back(Vec2(60, 100));
 	ppos.push_back(Vec2(160, 100));
@@ -284,9 +285,9 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 		}
 		addTouchEventListener(btn, [=]() {
 			long requiredMoney = 20 * data.Money;
-			if ((Utils::getSingleton().IsPlayMoneyReal && Utils::getSingleton().userDataMe.MoneyReal < requiredMoney)
-				|| (!Utils::getSingleton().IsPlayMoneyReal && Utils::getSingleton().userDataMe.MoneyFree < requiredMoney)) {
-				double money = Utils::getSingleton().IsPlayMoneyReal ? Utils::getSingleton().userDataMe.MoneyReal : Utils::getSingleton().userDataMe.MoneyFree;
+			if ((Utils::getSingleton().moneyType == 1 && Utils::getSingleton().userDataMe.MoneyReal < requiredMoney)
+				|| (!Utils::getSingleton().moneyType == 1 && Utils::getSingleton().userDataMe.MoneyFree < requiredMoney)) {
+				double money = Utils::getSingleton().moneyType == 1 ? Utils::getSingleton().userDataMe.MoneyReal : Utils::getSingleton().userDataMe.MoneyFree;
 				string str1 = Utils::getSingleton().formatMoneyWithComma(data.Money);
 				string str2 = Utils::getSingleton().formatMoneyWithComma(requiredMoney);
 				string str3 = Utils::getSingleton().formatMoneyWithComma(money);

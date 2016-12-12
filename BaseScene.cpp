@@ -391,7 +391,7 @@ void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> fun
 void BaseScene::initHeaderWithInfos()
 {
 	hasHeader = true;
-	bool isRealMoney = Utils::getSingleton().IsPlayMoneyReal;
+	bool isRealMoney = Utils::getSingleton().moneyType == 1;
 
 	std::vector<Vec2> vecPos;
 	vecPos.push_back(Vec2(62, 650));

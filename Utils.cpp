@@ -26,6 +26,7 @@ Utils& Utils::getSingleton(void)
 
 Utils::Utils()
 {
+	moneyType = -1;
 	isRunningEvent = false;
 	currentEventPosX = constant::EVENT_START_POSX;
 	userDataMe.UserID = 0;
@@ -210,6 +211,7 @@ void Utils::saveUsernameAndPassword(std::string username, std::string password)
 
 void Utils::logoutGame()
 {
+	moneyType = -1;
 	userDataMe.UserID = 0;
 	userDataMe.Name = "";
 	logoutZone();
