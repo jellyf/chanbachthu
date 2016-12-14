@@ -478,7 +478,7 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(btnSettings, constant::MAIN_ZORDER_HEADER);
 	Utils::getSingleton().autoScaleNode(btnSettings);
 
-	ui::Button* btnAvar = ui::Button::create("board/avatar_default.jpg");
+	ui::Button* btnAvar = ui::Button::create("board/avatar_default.png");
 	btnAvar->setPosition(vecPos[7]);
 	addTouchEventListener(btnAvar, [=]() {
 		showPopupUserInfo(Utils::getSingleton().userDataMe);
@@ -848,7 +848,7 @@ void BaseScene::initPopupUserInfo()
 	});
 	popupUserInfo->addChild(btnClose);
 
-	Sprite* avatar = Sprite::create("board/avatar_default.jpg");
+	Sprite* avatar = Sprite::create("board/avatar_default.png");
 	avatar->setPosition(-186, 23);
 	avatar->setScale(1.5f);
 	avatar->setName("avatar");

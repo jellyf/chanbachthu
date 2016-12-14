@@ -11,7 +11,7 @@ bool UserNode::init()
 	Sprite* bg = Sprite::create("board/bg_avatar.png");
 	addChild(bg);
 
-	Sprite* avatar = Sprite::create("board/avatar_default.jpg");
+	Sprite* avatar = Sprite::create("board/avatar_default.png");
 	addChild(avatar);
 
 	Sprite* mask = Sprite::create("board/mask_avar.png");
