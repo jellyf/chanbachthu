@@ -127,6 +127,16 @@ void LoginScene::onInit()
 	mLayer->addChild(btnPhone);
 	Utils::getSingleton().autoScaleNode(btnPhone);
 
+	labelPhone = Label::create("", "fonts/arialbd.ttf",25);
+	labelPhone->setPosition(btnPhone->getPosition() + Vec2(50, 0));
+	labelPhone->setAnchorPoint(Vec2(0, .5f));
+	mLayer->addChild(labelPhone);
+
+	Label* labelVersion = Label::create("ver 1.0.0", "fonts/arial.ttf", 18);
+	labelVersion->setPosition(1115, 3);
+	labelVersion->setAnchorPoint(Vec2(1, 0));
+	mLayer->addChild(labelVersion);
+
 	std::string lastUsername = UserDefault::getInstance()->getStringForKey(constant::KEY_USERNAME.c_str());
 	std::string lastPassword = UserDefault::getInstance()->getStringForKey(constant::KEY_PASSWORD.c_str());
 	tfUsername->setText(lastUsername.c_str());
@@ -258,6 +268,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		config.smsKH = d["smsKH"].GetString();
 		config.smsMK = d["smsMK"].GetString();
 		Utils::getSingleton().gameConfig = config;
+		labelPhone->setString(config.phone);
 	}
 	hideWaiting();
 }

@@ -16,6 +16,8 @@ public:
 	void onConfigZoneReceived();
 	void onLoginZoneError(short int code, std::string msg);
 	void onErrorSFSResponse(unsigned char code, std::string msg);
+	void onJoinRoom(long roomId, std::string roomName);
+	void onJoinRoomError(std::string msg);
 	void onInviteDataResponse(InviteData data);
 	void onTableDataResponse(LobbyListTable data);
 	void onRoomTypeDataResponse(LobbyListRoomType data);

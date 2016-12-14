@@ -174,6 +174,7 @@ void Utils::replaceScene(cocos2d::Scene* newScene) {
 	if (currentScene != nullptr) {
 		currentScene->unscheduleUpdate();
 	}
+	isWaitingScene = true;
 	currentScene = newScene;
 	cocos2d::Director::getInstance()->replaceScene(newScene);
 }
@@ -295,4 +296,9 @@ void Utils::loginFacebook()
     });
     IOSHelperCPlus::loginFacebook();
 #endif
+}
+
+void Utils::onInitSceneCompleted()
+{
+	isWaitingScene = false;
 }

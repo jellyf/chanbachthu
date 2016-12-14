@@ -95,6 +95,8 @@ void LobbyScene::registerEventListenner()
 	EventHandler::getSingleton().onConfigZoneReceived = bind(&LobbyScene::onConfigZoneReceived, this);
 	EventHandler::getSingleton().onLoginZoneError = bind(&LobbyScene::onLoginZoneError, this, placeholders::_1, placeholders::_2);
 	EventHandler::getSingleton().onErrorSFSResponse = bind(&LobbyScene::onErrorSFSResponse, this, placeholders::_1, placeholders::_2);
+	EventHandler::getSingleton().onJoinRoom = bind(&LobbyScene::onJoinRoom, this, placeholders::_1, placeholders::_2);
+	EventHandler::getSingleton().onJoinRoomError = bind(&LobbyScene::onJoinRoomError, this, placeholders::_1);
 	EventHandler::getSingleton().onLobbyTableSFSResponse = bind(&LobbyScene::onTableDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onLobbyRoomTypeSFSResponse = bind(&LobbyScene::onRoomTypeDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onLobbyInviteDataSFSResponse = bind(&LobbyScene::onInviteDataResponse, this, placeholders::_1);
@@ -110,6 +112,8 @@ void LobbyScene::unregisterEventListenner()
 	EventHandler::getSingleton().onConfigZoneReceived = NULL;
 	EventHandler::getSingleton().onLoginZoneError = NULL;
 	EventHandler::getSingleton().onErrorSFSResponse = NULL;
+	EventHandler::getSingleton().onJoinRoom = NULL;
+	EventHandler::getSingleton().onJoinRoomError = NULL;
 	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
 	EventHandler::getSingleton().onLobbyRoomTypeSFSResponse = NULL;
 	EventHandler::getSingleton().onLobbyInviteDataSFSResponse = NULL;
@@ -147,7 +151,7 @@ void LobbyScene::onConnectionLost()
 	} else {
 		showPopupNotice(Utils::getSingleton().getStringForKey("mat_ket_noi_dang_nhap_lai"), [=]() {
 			Utils::getSingleton().goToLoginScene();
-		});
+		}, false);
 	}
 }
 
@@ -181,12 +185,24 @@ void LobbyScene::onErrorSFSResponse(unsigned char code, std::string msg)
 		showPopupNotice(msg, [=]() {
 			SFSRequest::getSingleton().Disconnect();
 			Utils::getSingleton().goToLoginScene();
-		});
+		}, false);
 		return;
 	}
 	if(code != 48) hideWaiting();
 	if (msg.length() == 0) return;
 	showPopupNotice(msg, [=]() {});
+}
+
+void LobbyScene::onJoinRoom(long roomId, std::string roomName)
+{
+	if (roomName.at(0) == 'g' && roomName.at(2) == 'b') {
+		Utils::getSingleton().goToGameScene();
+	}
+}
+
+void LobbyScene::onJoinRoomError(std::string msg)
+{
+	showPopupNotice(msg, [=]() {}, false);
 }
 
 void LobbyScene::onInviteDataResponse(InviteData data)
@@ -198,7 +214,7 @@ void LobbyScene::onInviteDataResponse(InviteData data)
 	string content = String::createWithFormat(strformat.c_str(), data.InviterName.c_str(), tableId, strmoney.c_str(), data.RoomTime)->getCString();
 	showPopupNotice(content, [=]() {
 		SFSRequest::getSingleton().RequestJoinRoom(data.RoomName);
-		Utils::getSingleton().goToGameScene();
+		showWaiting();
 	});
 }
 
@@ -299,7 +315,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			string strformat = listRoomData.ListRoomType[currentRoomType].Group + "%d";
 			string name = String::createWithFormat(strformat.c_str(), btn->getTag())->getCString();
 			SFSRequest::getSingleton().RequestJoinRoom(name);
-			Utils::getSingleton().goToGameScene();
+			showWaiting();
 		}, .8f);
 
 		Sprite* spga = (Sprite*)btn->getChildByName("iconga");
@@ -371,6 +387,7 @@ void LobbyScene::onRoomTypeDataResponse(LobbyListRoomType data)
 				Utils::getSingleton().currentLobbyId = data.ListRoomType[i].Id;
 				Utils::getSingleton().currentLobbyName = data.ListRoomType[i].Name;
 				SFSRequest::getSingleton().RequestJoinRoom(data.ListRoomType[i].Name);
+				showWaiting();
 			});
 			scrollListRoom->addChild(btn);
 		} else {
@@ -396,7 +413,7 @@ void LobbyScene::onRoomTypeDataResponse(LobbyListRoomType data)
 void LobbyScene::onTableReconnectDataResponse(TableReconnectData data)
 {
 	SFSRequest::getSingleton().RequestJoinRoom(data.Room, false);
-	Utils::getSingleton().goToGameScene();
+	showWaiting();
 }
 
 void LobbyScene::onBackScene()

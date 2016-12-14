@@ -151,7 +151,8 @@ void MainScene::onInit()
 	if (Utils::getSingleton().isRunningEvent) {
 		runEventView(Utils::getSingleton().events, Utils::getSingleton().currentEventPosX);
 	}
-	for (int i = 1; i < 4; i++) {
+
+	for (int i = 1; i <= 4; i++) {
 		string host = "http://125.212.192.96:8899/cbt/NhaMang/";
 		string name1 = "provider" + to_string(i);
 		string name2 = name1 + "_dark";
@@ -162,8 +163,8 @@ void MainScene::onInit()
 				Sprite* sp = (Sprite*)popupCharge->getChildByName("providerimg" + to_string(i));
 				sp->initWithTexture(texture);
 			}
-			if (textures.size() == 6) {
-				for (int k = 1; k < 4; k++) {
+			if (textures.size() == 8) {
+				for (int k = 1; k <= 4; k++) {
 					ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + to_string(k));
 					btn->setTouchEnabled(true);
 				}
@@ -172,12 +173,12 @@ void MainScene::onInit()
 		Utils::getSingleton().LoadTextureFromURL(host + name2 + ".png", [=](Texture2D* texture) {
 			if (Utils::getSingleton().currentScene != this) return;
 			textures[name2] = texture;
-			if (i == 2 || i == 3) {
+			if (i > 1) {
 				Sprite* sp = (Sprite*)popupCharge->getChildByName("providerimg" + to_string(i));
 				sp->initWithTexture(texture);
 			}
-			if (textures.size() == 6) {
-				for (int k = 1; k < 4; k++) {
+			if (textures.size() == 8) {
+				for (int k = 1; k <= 4; k++) {
 					ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + to_string(k));
 					btn->setTouchEnabled(true);
 				}
@@ -195,6 +196,8 @@ void MainScene::registerEventListenner()
 	EventHandler::getSingleton().onConfigZoneReceived = std::bind(&MainScene::onConfigZoneReceived, this);
 	EventHandler::getSingleton().onLoginZoneError = std::bind(&MainScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
 	EventHandler::getSingleton().onErrorSFSResponse = std::bind(&MainScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
+	EventHandler::getSingleton().onJoinRoom = std::bind(&MainScene::onJoinRoom, this, std::placeholders::_1, std::placeholders::_2);
+	EventHandler::getSingleton().onJoinRoomError = std::bind(&MainScene::onJoinRoomError, this, std::placeholders::_1);
 	EventHandler::getSingleton().onLobbyTableSFSResponse = bind(&MainScene::onTableDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onShopHistoryDataSFSResponse = bind(&MainScene::onShopHistoryDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onShopItemsDataSFSResponse = bind(&MainScene::onShopItemsDataResponse, this, placeholders::_1);
@@ -213,6 +216,8 @@ void MainScene::unregisterEventListenner()
 	EventHandler::getSingleton().onConfigZoneReceived = NULL;
 	EventHandler::getSingleton().onLoginZoneError = NULL;
 	EventHandler::getSingleton().onErrorSFSResponse = NULL;
+	EventHandler::getSingleton().onJoinRoom = NULL;
+	EventHandler::getSingleton().onJoinRoomError = NULL;
 	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
 	EventHandler::getSingleton().onShopHistoryDataSFSResponse = NULL;
 	EventHandler::getSingleton().onShopItemsDataSFSResponse = NULL;
@@ -239,12 +244,16 @@ void MainScene::onConnectionLost()
 {
 	if (isBackToLogin) return;
 	if (isGoToLobby && tmpZoneId >= 0) {
-		SFSRequest::getSingleton().Connect(Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZoneIp
-			, Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZonePort);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+		host = Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZoneIpIos;
+#else
+		std::string host = Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZoneIp;
+#endif
+		SFSRequest::getSingleton().Connect(host, Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZonePort);
 	} else {
 		showPopupNotice(Utils::getSingleton().getStringForKey("mat_ket_noi_dang_nhap_lai"), [=]() {
 			Utils::getSingleton().goToLoginScene();
-		});
+		}, false);
 	}
 }
 
@@ -265,7 +274,7 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 		showPopupNotice(msg, [=]() {
 			SFSRequest::getSingleton().Disconnect();
 			Utils::getSingleton().goToLoginScene();
-		});
+		}, false);
 		return;
 	}
 	if (code == 51 && popupDisplayName->isVisible()) {
@@ -276,6 +285,16 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 	hideWaiting();
 	if (msg.length() == 0) return;
 	showPopupNotice(msg, [=]() {});
+}
+
+void MainScene::onJoinRoom(long roomId, std::string roomName)
+{
+
+}
+
+void MainScene::onJoinRoomError(std::string msg)
+{
+	showPopupNotice(msg, [=]() {}, false);
 }
 
 void MainScene::onTableDataResponse(LobbyListTable data)
@@ -768,6 +787,8 @@ void MainScene::initPopupCharge()
 		nodeSms->setVisible(false);
 		btnCard->loadTextureNormal("popup/box2.png");
 		btnSms->loadTextureNormal("popup/box1.png");
+		popupCharge->getChildByName("btn4")->setVisible(true);
+		popupCharge->getChildByName("providerimg4")->setVisible(true);
 	});
 	popupCharge->addChild(btnCard);
 
@@ -785,6 +806,17 @@ void MainScene::initPopupCharge()
 		nodeSms->setVisible(true);
 		btnCard->loadTextureNormal("popup/box1.png");
 		btnSms->loadTextureNormal("popup/box2.png");
+
+		Node* btn1 = popupCharge->getChildByName("btn1");
+		Node* btn4 = popupCharge->getChildByName("btn4");
+		Sprite* img1 = (Sprite*)popupCharge->getChildByName("providerimg1");
+		Sprite* img4 = (Sprite*)popupCharge->getChildByName("providerimg4");
+		btn1->setTag(1);
+		btn4->setTag(0);
+		btn4->setVisible(false);
+		img4->setVisible(false);
+		img4->initWithTexture(textures["provider4_dark"]);
+		img1->initWithTexture(textures["provider1"]);
 
 		int btnIndex;
 		for (int i = 1; i < 4; i++) {
@@ -819,15 +851,15 @@ void MainScene::initPopupCharge()
 	lbTitleBtnSms->setColor(Color3B::BLACK);
 	btnSms->addChild(lbTitleBtnSms);
 
-	int x = -250;
-	vector<string> strProviders = { "viettel", "mobifone", "vinaphone" };
+	int x = -300;
+	vector<string> strProviders = { "viettel", "mobifone", "vinaphone", "megacard" };
 
 	string smsContent = Utils::getSingleton().gameConfig.smsVT;
 	int strIndex = smsContent.find_last_of(' ');
 	string smsTarget = smsContent.substr(strIndex + 1, smsContent.length() - strIndex);
 	smsContent = smsContent.substr(0, strIndex);
 	smsContent = Utils::getSingleton().replaceString(smsContent, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
-	for (int i = 1; i < 4; i++) {
+	for (int i = 1; i <= strProviders.size(); i++) {
 		Sprite* sp = Sprite::create();
 
 		string stri = to_string(i);
@@ -841,9 +873,10 @@ void MainScene::initPopupCharge()
 		btnProvider->setName("btn" + stri);
 		btnProvider->setBright(false);
 		btnProvider->setTouchEnabled(false);
+		btnProvider->setScale(.9f);
 		addTouchEventListener(btnProvider, [=]() {
 			int btnIndex;
-			for (int j = 1; j < 4; j++) {
+			for (int j = 1; j <= strProviders.size(); j++) {
 				string strj = to_string(j);
 				Sprite* img = (Sprite*)popupCharge->getChildByName("providerimg" + strj);
 				ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + strj);
@@ -857,13 +890,13 @@ void MainScene::initPopupCharge()
 			}
 			sp->initWithTexture(textures["provider" + stri]);
 
-			string smsct = btnIndex == 1 ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
-			int strid = smsct.find_last_of(' ');
-			string smstg = smsct.substr(strid + 1, smsct.length() - strid);
-			smsct = smsct.substr(0, strid);
-			smsct = Utils::getSingleton().replaceString(smsct, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
+			if (i < strProviders.size() && nodeSms->isVisible()) {
+				string smsct = btnIndex == 1 ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
+				int strid = smsct.find_last_of(' ');
+				string smstg = smsct.substr(strid + 1, smsct.length() - strid);
+				smsct = smsct.substr(0, strid);
+				smsct = Utils::getSingleton().replaceString(smsct, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 
-			if (nodeSms->isVisible()) {
 				ui::ScrollView* scroll = (ui::ScrollView*)nodeSms->getChildByName("scrollsms");
 				for (int i = 0; i < moneys.size(); i++) {
 					string strMoney = to_string(moneys[i]);
@@ -881,9 +914,10 @@ void MainScene::initPopupCharge()
 
 		sp->setPosition(btnProvider->getPosition());
 		sp->setName("providerimg" + stri);
+		sp->setScale(.9f);
 		popupCharge->addChild(sp);
 
-		x += 250;
+		x += 200;
 	}
 
 	//Node Card
@@ -1011,7 +1045,7 @@ void MainScene::initPopupCharge()
 		string seri = tfSeri->getText();
 		if (code.length() == 0 || seri.length() == 0) return;
 		int providerId;
-		for (int i = 1; i < 4; i++) {
+		for (int i = 1; i <= 4; i++) {
 			Node* n = popupCharge->getChildByName("btn" + to_string(i));
 			if (n->getTag() == 1) {
 				providerId = i - 1;
@@ -1177,8 +1211,8 @@ void MainScene::initPopupGuide()
 	for (int i = 0; i < 4; i++) {
 		ui::Button* btn = ui::Button::create(i == 0 ? "popup/box2.png" : "popup/box1.png");
 		btn->setTitleText(Utils::getSingleton().getStringForKey(texts[i]));
-		btn->setTitleFontName("fonts/arial.ttf");
-		btn->setTitleFontSize(35);
+		btn->setTitleFontName("fonts/guanine.ttf");
+		btn->setTitleFontSize(25);
 		btn->setTitleColor(Color3B::BLACK);
 		btn->setContentSize(Size(210, 70));
 		btn->setPosition(Vec2(x, 160));

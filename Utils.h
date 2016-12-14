@@ -35,6 +35,7 @@ public:
 	void openSMS(std::string number, std::string text);
 	void openTel(std::string number);
 	void loginFacebook();
+	void onInitSceneCompleted();
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;
@@ -56,6 +57,7 @@ public:
 	int moneyType;
 	bool isRunningEvent;
 	bool SoundEnabled;
+	bool isWaitingScene;
 private:
 	cocos2d::ValueMap viLang;
 	std::map<std::string, cocos2d::Texture2D*> textures;

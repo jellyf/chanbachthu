@@ -163,6 +163,9 @@ void SFSConnector::OnSmartFoxRoomJoin(unsigned long long ptrContext, boost::shar
 	Utils::getSingleton().currentRoomId = ptrNotifiedRoom->Id();
 	Utils::getSingleton().currentRoomName = *(ptrNotifiedRoom->Name());
 	CCLOG("RoomJoin: %d %s", ptrNotifiedRoom->Id(), ptrNotifiedRoom->Name()->c_str());
+	if (EventHandler::getSingleton().onJoinRoom != NULL) {
+		EventHandler::getSingleton().onJoinRoom(ptrNotifiedRoom->Id(), *(ptrNotifiedRoom->Name()));
+	}
 }
 
 void SFSConnector::OnSmartFoxRoomJoinError(unsigned long long ptrContext, boost::shared_ptr<BaseEvent> ptrEvent)
@@ -172,6 +175,9 @@ void SFSConnector::OnSmartFoxRoomJoinError(unsigned long long ptrContext, boost:
 	boost::shared_ptr<string> ptrErrorMessage = ((boost::static_pointer_cast<string>))(ptrEventParamValueErrorMessage);
 
 	CCLOG("RoomJoinError: %s", (*ptrErrorMessage).c_str());
+	if (EventHandler::getSingleton().onJoinRoomError != NULL) {
+		EventHandler::getSingleton().onJoinRoomError(*ptrErrorMessage);
+	}
 }
 
 void SFSConnector::OnUserExitRoom(unsigned long long ptrContext, boost::shared_ptr<BaseEvent> ptrEvent)

@@ -78,6 +78,7 @@ void BaseScene::onEnter()
 	onInit();
 	registerEventListenner();
 	scheduleUpdate();
+	Utils::getSingleton().onInitSceneCompleted();
 }
 
 void BaseScene::onExit()
@@ -85,6 +86,7 @@ void BaseScene::onExit()
 	Scene::onExit();
 	unscheduleUpdate();
 	unregisterEventListenner();
+	CCLOG("unscheduleUpdate");
 }
 
 void BaseScene::update(float delta)
@@ -146,13 +148,15 @@ void BaseScene::onTouchEnded(Touch * touch, Event * _event)
 		CCLOG("%d %d, %d", tmpIndex, (int)tmps.at(tmpIndex)->getPosition().x, (int)tmps.at(tmpIndex)->getPosition().y);
 }
 
-void BaseScene::showPopupNotice(std::string msg, std::function<void()> func)
+void BaseScene::showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose)
 {
 	showPopup(popupNotice);
 	Label* lbcontent = (Label*)popupNotice->getChildByName("lbcontent");
 	lbcontent->setString(msg);
-	ui::Button* btn = (ui::Button*)popupNotice->getChildByName("btnsubmit");
-	addTouchEventListener(btn, [=]() {
+	ui::Button* btnClose = (ui::Button*)popupNotice->getChildByName("btnclose");
+	btnClose->setVisible(showBtnClose);
+	ui::Button* btnSubmit = (ui::Button*)popupNotice->getChildByName("btnsubmit");
+	addTouchEventListener(btnSubmit, [=]() {
 		func();
 		hidePopup(popupNotice);
 	});
@@ -474,7 +478,7 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(btnSettings, constant::MAIN_ZORDER_HEADER);
 	Utils::getSingleton().autoScaleNode(btnSettings);
 
-	ui::Button* btnAvar = ui::Button::create("main/avatar.png");
+	ui::Button* btnAvar = ui::Button::create("board/avatar_default.jpg");
 	btnAvar->setPosition(vecPos[7]);
 	addTouchEventListener(btnAvar, [=]() {
 		showPopupUserInfo(Utils::getSingleton().userDataMe);
@@ -565,6 +569,7 @@ void BaseScene::hidePopup(cocos2d::Node * popup)
 	while (i >= 0 && popups[i] != popup) {
 		i--;
 	}
+	if (i == -1) return;
 	if (i == popups.size() - 1) {
 		popups.pop_back();
 		if (popups.size() == 0) {
@@ -685,6 +690,7 @@ void BaseScene::initPopupNotice()
 	ui::Button* btndong = ui::Button::create("popup/btn_dong.png", "popup/btn_dong_clicked.png");
 	btndong->setPosition(Vec2(290, 170));
 	btndong->setScale(.7f);
+	btndong->setName("btnclose");
 	addTouchEventListener(btndong, [=]() {
 		hidePopup(popupNotice);
 	}, .7f);

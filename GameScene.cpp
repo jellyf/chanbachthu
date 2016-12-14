@@ -363,11 +363,24 @@ void GameScene::onInit()
 	lbNoticeAction->setVisible(false);
 	mLayer->addChild(lbNoticeAction);
 
-	Sprite* bgDiaNoc = Sprite::create("board/bg_dianoc.png");
+	/*Sprite* bgDiaNoc = Sprite::create("board/bg_dianoc.png");
 	bgDiaNoc->setPosition(564, 422);
 	mLayer->addChild(bgDiaNoc);
 	bgDiaNoc->setVisible(false);
+	Utils::getSingleton().autoScaleNode(bgDiaNoc);*/
+
+	ui::Button* bgDiaNoc = ui::Button::create("board/bg_dianoc.png");
+	bgDiaNoc->setPosition(Vec2(564, 422));
+	mLayer->addChild(bgDiaNoc);
+	bgDiaNoc->setVisible(false);
 	Utils::getSingleton().autoScaleNode(bgDiaNoc);
+	addTouchEventListener(bgDiaNoc, [=]() {
+		if (btnPick->isVisible()) {
+			SFSRequest::getSingleton().RequestGamePick();
+			progressTimer->setVisible(false);
+			progressTimer->stopAllActions();
+		}
+	});
 
 	Sprite* spCardNoc = Sprite::create("board/bg_card_up.png");
 	spCardNoc->setRotation(-20);
@@ -418,6 +431,7 @@ void GameScene::onInit()
 		user->setVisible(false);
 		mLayer->addChild(user, constant::GAME_ZORDER_USER);
 		vecUsers.push_back(user);
+		Utils::getSingleton().autoScaleNode(user);
 
 		Sprite* spSS = Sprite::create("board/txt_sansang.png");
 		spSS->setPosition(vecUserPos[i]);
@@ -555,6 +569,7 @@ void GameScene::onInit()
 
 void GameScene::registerEventListenner()
 {
+	CCLOG("registerEventListenner");
 	EventHandler::getSingleton().onConnectionLost = std::bind(&GameScene::onConnectionLost, this);
 	EventHandler::getSingleton().onUserDataSFSResponse = std::bind(&GameScene::onUserDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onUserExitRoom = std::bind(&GameScene::onUserExitRoom, this, std::placeholders::_1);
@@ -911,7 +926,7 @@ void GameScene::runTimeWaiting(long uid, float time)
 	if (uid == sfsIdMe && state == PLAY) {
 		DelayTime* delay = DelayTime::create(time);
 		CallFunc* func = CallFunc::create([=]() {
-			if (chosenCard > 0) {
+			if (chosenCard >= 0) {
 				spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
 				chosenCard = -1;
 			}
@@ -1199,7 +1214,7 @@ void GameScene::onConnectionLost()
 	showPopupNotice(Utils::getSingleton().getStringForKey("mat_ket_noi_dang_nhap_lai"), [=]() {
 		SFSRequest::getSingleton().Disconnect();
 		Utils::getSingleton().goToLoginScene();
-	});
+	}, false);
 }
 
 void GameScene::onUserDataResponse(UserData data)
@@ -1213,7 +1228,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 		showPopupNotice(Utils::getSingleton().getStringForKey("bi_day_khoi_ban"), [=]() {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
-		});
+		}, false);
 		return;
 	}
 	int index = userIndexs[sfsUId];
@@ -1235,7 +1250,7 @@ void GameScene::onErrorResponse(unsigned char code, std::string msg)
 		showPopupNotice(Utils::getSingleton().getStringForKey("bi_thoat_do_khong_san_sang"), [=]() {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
-		});
+		}, false);
 		return;
 	}
 	if(code != 29) showError(msg);
@@ -1466,7 +1481,13 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 		while ((chosenStiltHost = rand() % vecStilts.size()) == stilt1 - 1);
 	}
 	//chosenHost = (startGameData.CardStilt / 3 + userIndexs[startGameData.LastWinner] - myServerSlot + vecPlayers.size()) % vecPlayers.size();
-	chosenHost = (startGameData.CardStilt / 3 + userIndexs[startGameData.LastWinner]) % vecPlayers.size();
+
+	int winnerIndex = userIndexs[startGameData.LastWinner];
+	if (vecPlayers.size() == 2 && winnerIndex == 2 ) {
+		winnerIndex = 1;
+	}
+
+	chosenHost = (startGameData.CardStilt / 3 + winnerIndex) % vecPlayers.size();
 
 	if (vecPlayers.size() == 2 && (chosenHost == 1 || chosenHost == 3)) {
 		chosenHost = 2;
@@ -1576,9 +1597,11 @@ void GameScene::onUserBash(BashData data)
 		if (chosenCard > 0 && atoi(spHandCards[chosenCard]->getName().c_str()) % 1000 == data.CardId) {
 			spCard = spHandCards[chosenCard];
 			spHandCards.erase(spHandCards.begin() + chosenCard);
-			spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
 			chosenCard = -1;
 		} else {
+			if (chosenCard >= 0) {
+				spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
+			}
 			for (int i = 0; i < spHandCards.size(); i++) {
 				if (atoi(spHandCards[i]->getName().c_str()) % 1000 == data.CardId) {
 					spCard = spHandCards[i];
@@ -1674,9 +1697,11 @@ void GameScene::onUserBashBack(BashBackData data)
 		if (chosenCard > 0 && atoi(spHandCards[chosenCard]->getName().c_str()) % 1000 == data.CardId) {
 			spCard = spHandCards[chosenCard];
 			spHandCards.erase(spHandCards.begin() + chosenCard);
-			spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
 			chosenCard = -1;
 		} else {
+			if (chosenCard >= 0) {
+				spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
+			}
 			for (int i = 0; i < spHandCards.size(); i++) {
 				if (atoi(spHandCards[i]->getName().c_str()) % 1000 == data.CardId) {
 					spCard = spHandCards[i];
@@ -1782,9 +1807,11 @@ void GameScene::onUserHold(HoldData data)
 		if (chosenCard > 0 && atoi(spHandCards[chosenCard]->getName().c_str()) % 1000 == data.CardId) {
 			spCard = spHandCards[chosenCard];
 			spHandCards.erase(spHandCards.begin() + chosenCard);
-			spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
 			chosenCard = -1;
 		} else {
+			if (chosenCard >= 0) {
+				spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
+			}
 			for (int i = 0; i < spHandCards.size(); i++) {
 				if (atoi(spHandCards[i]->getName().c_str()) % 1000 == data.CardId) {
 					spCard = spHandCards[i];

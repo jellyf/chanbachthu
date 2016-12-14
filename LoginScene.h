@@ -33,5 +33,6 @@ private:
 	cocos2d::ui::EditBox* tfResPass;
 	cocos2d::ui::EditBox* tfResPassAgain;
 	//cocos2d::ui::EditBox* tfResEmail;
+	cocos2d::Label* labelPhone;
 };
 

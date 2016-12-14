@@ -27,6 +27,8 @@ public:
 	std::function<void(long)> onUserExitRoom = NULL;
 	std::function<void(short int, std::string)> onLoginZoneError = NULL;
 	std::function<void(long, std::string)> onPublicMessage = NULL;
+	std::function<void(long, std::string)> onJoinRoom = NULL;
+	std::function<void(std::string)> onJoinRoomError = NULL;
 	std::function<void(std::vector<std::vector<RankData>>)> onRankDataSFSResponse = NULL;
 	std::function<void(std::vector<PlayLogData>)> onPlayLogDataSFSResponse = NULL;
 	std::function<void(std::vector<ShopHistoryData>)> onShopHistoryDataSFSResponse = NULL;
