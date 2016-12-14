@@ -446,17 +446,21 @@ void SFSRequest::onRequestImgCompleted(cocos2d::network::HttpClient * client, co
 	}
 	//CCLOG("onHttpRequestCompleted - Response code: %s", response->getResponseDataString());
 
-	std::vector<char> *buffer = response->getResponseData();
-	const char* file_char = buffer->data();
-	cocos2d::Image * image = new  cocos2d::Image();
-	image->initWithImageData(reinterpret_cast<const unsigned char*>(&(buffer->front())), buffer->size());
-	cocos2d::Texture2D * texture = new  cocos2d::Texture2D();
-	texture->initWithImage(image);
-	
-	//CCLOG("onHttpRequestCompleted height %d", image->getHeight());
-	int tag = atoi(response->getHttpRequest()->getTag());
-	if (SFSRequest::getSingleton().onLoadImageResponse != NULL) {
-		SFSRequest::getSingleton().onLoadImageResponse(tag, texture);
+	try {
+		std::vector<char> *buffer = response->getResponseData();
+		const char* file_char = buffer->data();
+		cocos2d::Image * image = new  cocos2d::Image();
+		image->initWithImageData(reinterpret_cast<const unsigned char*>(&(buffer->front())), buffer->size());
+		cocos2d::Texture2D * texture = new  cocos2d::Texture2D();
+		texture->initWithImage(image);
+
+		//CCLOG("onHttpRequestCompleted height %d", image->getHeight());
+		int tag = atoi(response->getHttpRequest()->getTag());
+		if (SFSRequest::getSingleton().onLoadImageResponse != NULL) {
+			SFSRequest::getSingleton().onLoadImageResponse(tag, texture);
+		}
+	} catch (exception e) {
+		CCLOG("Load image error: %s", e.what());
 	}
 }
 
@@ -479,16 +483,20 @@ void SFSRequest::onRequestTextureCompleted(cocos2d::network::HttpClient * client
 	}
 	//CCLOG("onHttpRequestCompleted - Response code: %s", response->getResponseDataString());
 
-	std::vector<char> *buffer = response->getResponseData();
-	const char* file_char = buffer->data();
-	cocos2d::Image * image = new  cocos2d::Image();
-	image->initWithImageData(reinterpret_cast<const unsigned char*>(&(buffer->front())), buffer->size());
-	cocos2d::Texture2D * texture = new  cocos2d::Texture2D();
-	texture->initWithImage(image);
+	try {
+		std::vector<char> *buffer = response->getResponseData();
+		const char* file_char = buffer->data();
+		cocos2d::Image * image = new  cocos2d::Image();
+		image->initWithImageData(reinterpret_cast<const unsigned char*>(&(buffer->front())), buffer->size());
+		cocos2d::Texture2D * texture = new  cocos2d::Texture2D();
+		texture->initWithImage(image);
 
-	//CCLOG("onHttpRequestCompleted height %d", image->getHeight());
-	std::string url = response->getHttpRequest()->getUrl();
-	if (SFSRequest::getSingleton().onLoadTextureResponse != NULL) {
-		SFSRequest::getSingleton().onLoadTextureResponse(url, texture);
+		//CCLOG("onHttpRequestCompleted height %d", image->getHeight());
+		std::string url = response->getHttpRequest()->getUrl();
+		if (SFSRequest::getSingleton().onLoadTextureResponse != NULL) {
+			SFSRequest::getSingleton().onLoadTextureResponse(url, texture);
+		}
+	} catch (exception e) {
+		CCLOG("Load texture error: %s", e.what());
 	}
 }

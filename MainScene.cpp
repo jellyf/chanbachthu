@@ -245,7 +245,7 @@ void MainScene::onConnectionLost()
 	if (isBackToLogin) return;
 	if (isGoToLobby && tmpZoneId >= 0) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-		host = Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZoneIpIos;
+		std::string host = Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZoneIpIos;
 #else
 		std::string host = Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZoneIp;
 #endif
