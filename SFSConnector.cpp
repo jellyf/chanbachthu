@@ -485,9 +485,11 @@ void SFSConnector::OnExtensionResponse(unsigned long long ptrContext, boost::sha
 			EventHandler::getSingleton().onListMailDataSFSResponse(list);
 		}
 	} else if (ptrNotifiedCmd->compare(cmd::MAIL_CONTENT) == 0) {
+		long tmp;
 		std::string content;
 		boost::shared_ptr<ByteArray> byteArray = ptrNotifiedISFSObject->GetByteArray("d");
 		if (byteArray->Length() > 0) {
+			byteArray->ReadInt(tmp);
 			byteArray->ReadUTF(content);
 		}
 		if (EventHandler::getSingleton().onMailContentSFSResponse != NULL) {
