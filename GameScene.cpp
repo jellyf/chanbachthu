@@ -423,8 +423,8 @@ void GameScene::onInit()
 		Sprite* spInvite = Sprite::create("board/btn_invite.png");
 		spInvite->setPosition(vecUserPos[i]);
 		mLayer->addChild(spInvite);
-		Utils::getSingleton().autoScaleNode(spInvite);
 		spInvites.push_back(spInvite);
+		Utils::getSingleton().autoScaleNode(spInvite);
 
 		UserNode* user = UserNode::create();
 		user->setPosition(vecUserPos[i]);
@@ -438,12 +438,14 @@ void GameScene::onInit()
 		spSS->setVisible(false);
 		mLayer->addChild(spSS, constant::GAME_ZORDER_USER + 9);
 		spSanSangs.push_back(spSS);
+		Utils::getSingleton().autoScaleNode(spSS);
 
 		Sprite* spBB = Sprite::create("board/txt_bat_bao.png");
 		spBB->setPosition(vecUserPos[i]);
 		spBB->setVisible(false);
 		mLayer->addChild(spBB, constant::GAME_ZORDER_USER + 9);
 		spBatBaos.push_back(spBB);
+		Utils::getSingleton().autoScaleNode(spBB);
 
 		Label* lb1 = Label::createWithTTF("100,000", "fonts/UTM AZUKI.ttf", 45);
 		lb1->setPosition(vecUserPos[i]);
@@ -459,6 +461,7 @@ void GameScene::onInit()
 	progressTimer->setVisible(false);
 	progressTimer->setColor(Color3B::GREEN);
 	mLayer->addChild(progressTimer, constant::GAME_ZORDER_USER + 9);
+	Utils::getSingleton().autoScaleNode(progressTimer);
 
 	spChuPhong = Sprite::create("board/chuphong.png");
 	spChuPhong->setVisible(false);
