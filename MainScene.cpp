@@ -328,44 +328,60 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 	}
 	scrollHistory->setInnerContainerSize(Size(scrollHistory->getContentSize().width, heightHistory));
 	for (int i = 0; i < list.size(); i++) {
+		int tag = i * 6;
+		ui::Button* btn;
 		Label *lb1, *lb2, *lb3, *lb4, *lb5;
-		lb1 = (Label*)scrollHistory->getChildByTag(i * 5);
+		lb1 = (Label*)scrollHistory->getChildByTag(tag);
 		if (lb1 == nullptr) {
 			lb1 = Label::create("", "fonts/aurora.ttf", 25);
 			lb1->setPosition(posX[0] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
-			lb1->setTag(i * 5);
+			lb1->setTag(tag);
 			scrollHistory->addChild(lb1);
 
 			lb2 = Label::create("", "fonts/aurora.ttf", 25);
 			lb2->setPosition(posX[1] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
 			lb2->setHorizontalAlignment(TextHAlignment::CENTER);
 			lb2->setColor(Color3B::YELLOW);
-			lb2->setTag(i * 5 + 1);
+			lb2->setTag(tag + 1);
 			lb2->setWidth(210);
 			lb2->setHeight(30);
 			scrollHistory->addChild(lb2);
 
 			lb3 = Label::create("", "fonts/aurora.ttf", 25);
 			lb3->setPosition(posX[2] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
-			lb3->setTag(i * 5 + 2);
+			lb3->setTag(tag + 2);
 			scrollHistory->addChild(lb3);
 
 			lb4 = Label::create("", "fonts/aurora.ttf", 25);
 			lb4->setPosition(posX[3] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
-			lb4->setTag(i * 5 + 3);
+			lb4->setTag(tag + 3);
 			scrollHistory->addChild(lb4);
 
 			lb5 = Label::create("", "fonts/aurora.ttf", 25);
 			lb5->setPosition(posX[4] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
 			lb5->setColor(Color3B::YELLOW);
-			lb5->setTag(i * 5 + 4);
+			lb5->setTag(tag + 4);
 			scrollHistory->addChild(lb5);
+
+			btn = ui::Button::create("popup/box1.png");
+			btn->setContentSize(Size(scrollHistory->getContentSize().width, 25));
+			btn->setPosition(Vec2(scrollHistory->getContentSize().width / 2, heightHistory - 10));
+			btn->setScale9Enabled(true);
+			btn->setOpacity(0);
+			btn->setTag(tag + 5);
+			scrollHistory->addChild(btn);
 		} else {
-			lb2 = (Label*)scrollHistory->getChildByTag(i * 5 + 1);
-			lb3 = (Label*)scrollHistory->getChildByTag(i * 5 + 2);
-			lb4 = (Label*)scrollHistory->getChildByTag(i * 5 + 3);
-			lb5 = (Label*)scrollHistory->getChildByTag(i * 5 + 4);
+			lb2 = (Label*)scrollHistory->getChildByTag(tag + 1);
+			lb3 = (Label*)scrollHistory->getChildByTag(tag + 2);
+			lb4 = (Label*)scrollHistory->getChildByTag(tag + 3);
+			lb5 = (Label*)scrollHistory->getChildByTag(tag + 4);
+			btn = (ui::Button*)scrollHistory->getChildByTag(tag + 5);
 		}
+		addTouchEventListener(btn, [=]() {
+			showPopupNotice(list[i].Content, [=]() {}, false);
+			showPopupNotice(list[1].Content, [=]() {}, false);
+			showPopupNotice(list[2].Content, [=]() {}, false);
+		});
 		if (list[i].Status < 1) {
 			list[i].Status = 1;
 		} else if (list[i].Status > strStatus.size()) {
@@ -385,7 +401,7 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 		heightHistory -= 30;
 	}
 	int count = scrollHistory->getChildrenCount();
-	for (int j = list.size() * 5; j < count; j++) {
+	for (int j = list.size() * 6; j < count; j++) {
 		((Label*)scrollHistory->getChildByTag(j))->setString("");
 	}
 }

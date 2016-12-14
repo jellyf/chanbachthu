@@ -72,7 +72,6 @@ void BaseScene::onEnter()
 	spWaiting->runAction(RepeatForever::create(rotate));
 	spWaiting->pauseSchedulerAndActions();
 
-	initPopupNotice(); 
 	initPopupUserInfo();
 
 	onInit();
@@ -150,6 +149,7 @@ void BaseScene::onTouchEnded(Touch * touch, Event * _event)
 
 void BaseScene::showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose)
 {
+	Node* popupNotice = createPopupNotice();
 	showPopup(popupNotice);
 	Label* lbcontent = (Label*)popupNotice->getChildByName("lbcontent");
 	lbcontent->setString(msg);
@@ -164,16 +164,6 @@ void BaseScene::showPopupNotice(std::string msg, std::function<void()> func, boo
 
 void BaseScene::showSplash()
 {
-	for (ui::Button* btn : buttons) {
-		Node* n = btn;
-		while (n->getParent() != mLayer) {
-			n = n->getParent();
-		}
-		if (n->getLocalZOrder() < splash->getLocalZOrder()) {
-			btn->setTouchEnabled(false);
-			blockedButtons.push_back(btn);
-		}
-	}
 	splash->setVisible(true);
 }
 
@@ -193,18 +183,17 @@ void BaseScene::showWaiting()
 
 void BaseScene::showPopup(cocos2d::Node * popup)
 {
+	if (popup->isVisible()) return;
 	popup->setVisible(true);
 	popups.push_back(popup);
 	if (popups.size() == 1) {
-		popup->setLocalZOrder(constant::ZORDER_POPUP);
-		splash->setLocalZOrder(popup->getLocalZOrder() - 1);
 		showSplash();
+		popup->setLocalZOrder(constant::ZORDER_POPUP);
+		setSplashZOrder(popup->getLocalZOrder() - 1);
 	} else {
-		//CCLOG("%d %d", popups[popups.size() - 1]->getLocalZOrder(), splash->getLocalZOrder());
 		popup->setLocalZOrder(popups[popups.size() - 2]->getLocalZOrder() + 2);
-		splash->setLocalZOrder(popup->getLocalZOrder() - 1);
+		setSplashZOrder(popup->getLocalZOrder() - 1);
 	}
-	//CCLOG("%d %d", popup->getLocalZOrder(), splash->getLocalZOrder());
 }
 
 void BaseScene::setDisplayName(std::string name)
@@ -478,7 +467,7 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(btnSettings, constant::MAIN_ZORDER_HEADER);
 	Utils::getSingleton().autoScaleNode(btnSettings);
 
-	ui::Button* btnAvar = ui::Button::create("board/avatar_default.png");
+	ui::Button* btnAvar = ui::Button::create("main/avatar.png");
 	btnAvar->setPosition(vecPos[7]);
 	addTouchEventListener(btnAvar, [=]() {
 		showPopupUserInfo(Utils::getSingleton().userDataMe);
@@ -575,7 +564,7 @@ void BaseScene::hidePopup(cocos2d::Node * popup)
 		if (popups.size() == 0) {
 			hideSplash();
 		} else {
-			splash->setLocalZOrder(popups[i - 1]->getLocalZOrder() - 1);
+			setSplashZOrder(popups[i - 1]->getLocalZOrder() - 1);
 		}
 	} else {
 		popups.erase(popups.begin() + i);
@@ -657,9 +646,19 @@ void BaseScene::showToast(std::string msg, Vec2 pos, Color3B textColor, Color3B 
 	nodeChat->runAction(Sequence::create(DelayTime::create(3), RemoveSelf::create(), nullptr));
 }
 
-void BaseScene::initPopupNotice()
+Node* BaseScene::createPopupNotice()
 {
-	popupNotice = Node::create();
+	Node* popupNotice = nullptr;
+	for (Node* n : vecPopupNotices) {
+		if (!n->isVisible()) {
+			popupNotice = n;
+			break;
+		}
+	}
+	if (popupNotice == nullptr) {
+		popupNotice = Node::create();
+	}
+
 	popupNotice->setPosition(560, 350);
 	popupNotice->setVisible(false);
 	mLayer->addChild(popupNotice, constant::ZORDER_POPUP_NOTICE);
@@ -695,6 +694,8 @@ void BaseScene::initPopupNotice()
 		hidePopup(popupNotice);
 	}, .7f);
 	popupNotice->addChild(btndong);
+
+	return popupNotice;
 }
 
 void BaseScene::initPopupRank()
@@ -1255,4 +1256,38 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 		}
 	});
 	node->addChild(btnNext);
+}
+
+void BaseScene::setSplashZOrder(int zorder)
+{
+	if (zorder == splash->getLocalZOrder() || !splash->isVisible()) return;
+	bool increase = zorder > splash->getLocalZOrder();
+	splash->setLocalZOrder(zorder);
+	if (increase) {
+		for (ui::Button* btn : buttons) {
+			Node* n = btn;
+			while (n->getParent() != mLayer) {
+				n = n->getParent();
+			}
+			if (n->getLocalZOrder() < splash->getLocalZOrder()) {
+				btn->setTouchEnabled(false);
+				blockedButtons.push_back(btn);
+			}
+		}
+	} else {
+		int i = blockedButtons.size() - 1;
+		while (i >= 0) {
+			Node* n = blockedButtons[i];
+			while (n->getParent() != mLayer) {
+				n = n->getParent();
+			}
+			if (n->getLocalZOrder() >= splash->getLocalZOrder()) {
+				blockedButtons[i]->setTouchEnabled(true);
+				blockedButtons.pop_back();
+			} else {
+				break;
+			}
+			i--;
+		}
+	}
 }

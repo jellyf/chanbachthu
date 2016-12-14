@@ -35,7 +35,6 @@ protected:
 	void hideWaiting();
 	void hidePopup(cocos2d::Node* popup);
 	void initEventView(cocos2d::Vec2 pos, cocos2d::Size size);
-	void initPopupNotice();
 	void initPopupRank();
 	void initPopupSettings();
 	void initPopupUserInfo();
@@ -52,6 +51,9 @@ protected:
 	void setDisplayName(std::string name);
 	void runEventView(std::vector<EventData> list, int currentPosX = 1500);
 	void addBtnChoosePage(int x, int y, cocos2d::Node* node, std::function<void(int)> funcPage);
+	void setSplashZOrder(int zorder);
+
+	cocos2d::Node* createPopupNotice();
 
 	bool hasHeader = false;
 	bool isWaiting = false;
@@ -82,8 +84,7 @@ protected:
 
 private:
 	cocos2d::ui::Scale9Sprite* splash;
-	cocos2d::Node* popupNotice;
-
 	std::vector<std::vector<RankData>> listRanks;
+	cocos2d::Vector<Node*> vecPopupNotices;
 };
 

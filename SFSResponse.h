@@ -674,7 +674,7 @@ public:
 			byteArray->ReadUTF(data.UpdateDate);
 			byteArray->ReadUTF(data.Content);
 			list.push_back(data);
-			//CCLOG("%d %d %s %d %d %s %s %s", data.Id, data.ItemId, data.Name.c_str(), data.Price, data.Status, data.CreateDate.c_str(), data.Content);
+			//CCLOG("%d %d %s %d %d %s %s %s", data.Id, data.ItemId, data.Name.c_str(), data.Price, data.Status, data.CreateDate.c_str(), data.UpdateDate.c_str(), data.Content.c_str());
 		}
 	}
 
