@@ -4,6 +4,7 @@
 #include "MainScene.h"
 #include "LobbyScene.h"
 #include "SFSRequest.h"
+#include "SFSResponse.h"
 #include "SFSConnector.h"
 #include "EventHandler.h"
 #include "Utils.h"
@@ -61,6 +62,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	connector->InitializeSmartFox();
 
 	SFSRequest* request = new SFSRequest();
+	SFSResponse* response = new SFSResponse();
 	EventHandler* handler = new EventHandler();
 	Utils* utils = new Utils();
 

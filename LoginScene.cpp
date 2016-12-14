@@ -85,6 +85,10 @@ void LoginScene::onInit()
 	ui::Button* btnLogin = ui::Button::create("login/btn_login.png", "login/btn_login_clicked.png");
 	btnLogin->setPosition(Vec2(-110, -115));
 	addTouchEventListener(btnLogin, [=]() {
+		if (Utils::getSingleton().gameConfig.phone.length() == 0) {
+			requestGameConfig();
+			return;
+		}
 		string username = tfUsername->getText();// Utils::getSingleton().trim(tfUsername->getText());
 		if (username.length() == 0) {
 			showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_tai_khoan"), [=]() {});
@@ -143,9 +147,7 @@ void LoginScene::onInit()
 	tfPassword->setText(lastPassword.c_str());
 
 	if (Utils::getSingleton().gameConfig.phone.length() == 0) {
-		showWaiting();
-		//SFSRequest::getSingleton().RequestHttpGet(this, "http://125.212.207.71/config/configChan.txt", 1);
-		SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchan.txt", 1);
+		requestGameConfig();
 	}
 }
 
@@ -279,6 +281,7 @@ void LoginScene::onHttpResponseFailed()
 		currentConfigLink = 1;
 		SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
 	} else {
+		hideWaiting();
 		showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"), [=]() {});
 	}
 }
@@ -362,6 +365,10 @@ void LoginScene::initRegisterNode()
 	ui::Button* btnRegister = ui::Button::create("login/btn_register.png", "login/btn_register_clicked.png");
 	btnRegister->setPosition(Vec2(110, -130));
 	addTouchEventListener(btnRegister, [=]() {
+		if (Utils::getSingleton().gameConfig.phone.length() == 0) {
+			requestGameConfig();
+			return;
+		}
 		if (!Utils::getSingleton().isUsernameValid(tfResUname->getText())
 			|| !Utils::getSingleton().isPasswordValid(tfResPass->getText())) {
 			showPopupNotice(Utils::getSingleton().getStringForKey("error_password_must_6_char"), [=]() {});
@@ -380,4 +387,11 @@ void LoginScene::initRegisterNode()
 		SFSRequest::getSingleton().Connect();
 	});
 	registerNode->addChild(btnRegister);
+}
+
+void LoginScene::requestGameConfig()
+{
+	showWaiting();
+	//SFSRequest::getSingleton().RequestHttpGet(this, "http://125.212.207.71/config/configChan.txt", 1);
+	SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchan.txt", 1);
 }

@@ -21,6 +21,7 @@ public:
 	void onHttpResponseFailed();
 private:
 	void initRegisterNode();
+	void requestGameConfig();
 
 	int currentConfigLink = 0;
 	std::string fbToken = "";

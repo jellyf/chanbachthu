@@ -4,6 +4,7 @@
 #include "Utils.h"
 #include "Constant.h"
 #include "AudioEngine.h"
+#include "SFSResponse.h"
 
 using namespace cocos2d;
 using namespace std;
@@ -76,8 +77,9 @@ void BaseScene::onEnter()
 
 	onInit();
 	registerEventListenner();
-	scheduleUpdate();
 	Utils::getSingleton().onInitSceneCompleted();
+	SFSResponse::getSingleton().RunCachedResponses();
+	scheduleUpdate();
 }
 
 void BaseScene::onExit()
@@ -176,9 +178,11 @@ void BaseScene::showWaiting()
 	DelayTime* delay = DelayTime::create(30);
 	CallFunc* func = CallFunc::create([=]() {
 		if (isWaiting) {
+			hideWaiting();
 			SFSRequest::getSingleton().Disconnect();
 		}
 	});
+	runAction(Sequence::create(delay, func, nullptr));
 }
 
 void BaseScene::showPopup(cocos2d::Node * popup)

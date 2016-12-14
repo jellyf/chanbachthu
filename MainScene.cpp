@@ -379,8 +379,6 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 		}
 		addTouchEventListener(btn, [=]() {
 			showPopupNotice(list[i].Content, [=]() {}, false);
-			showPopupNotice(list[1].Content, [=]() {}, false);
-			showPopupNotice(list[2].Content, [=]() {}, false);
 		});
 		if (list[i].Status < 1) {
 			list[i].Status = 1;
@@ -798,6 +796,7 @@ void MainScene::initPopupCharge()
 	btnCard->setScale9Enabled(true);
 	btnCard->setContentSize(Size(250, 80));
 	addTouchEventListener(btnCard, [=]() {
+		if (popupCharge->getTag() == 0) return;
 		popupCharge->setTag(0);
 		nodeCard->setVisible(true);
 		nodeSms->setVisible(false);
@@ -817,29 +816,35 @@ void MainScene::initPopupCharge()
 	btnSms->setScale9Enabled(true);
 	btnSms->setContentSize(Size(250, 80));
 	addTouchEventListener(btnSms, [=]() {
+		if (popupCharge->getTag() == 1) return;
 		popupCharge->setTag(1);
 		nodeCard->setVisible(false);
 		nodeSms->setVisible(true);
 		btnCard->loadTextureNormal("popup/box1.png");
 		btnSms->loadTextureNormal("popup/box2.png");
 
-		Node* btn1 = popupCharge->getChildByName("btn1");
+		int btnIndex = -1;
 		Node* btn4 = popupCharge->getChildByName("btn4");
-		Sprite* img1 = (Sprite*)popupCharge->getChildByName("providerimg1");
 		Sprite* img4 = (Sprite*)popupCharge->getChildByName("providerimg4");
-		btn1->setTag(1);
-		btn4->setTag(0);
+		if (btn4->getTag() == 1) {
+			Node* btn1 = popupCharge->getChildByName("btn1");
+			Sprite* img1 = (Sprite*)popupCharge->getChildByName("providerimg1");
+			btn1->setTag(1);
+			img1->initWithTexture(textures["provider1"]);
+			btnIndex = 1;
+		}
 		btn4->setVisible(false);
 		img4->setVisible(false);
+		btn4->setTag(0);
 		img4->initWithTexture(textures["provider4_dark"]);
-		img1->initWithTexture(textures["provider1"]);
 
-		int btnIndex;
-		for (int i = 1; i < 4; i++) {
-			ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + to_string(i));
-			if (btn->getTag() == 1) {
-				btnIndex = i;
-				break;
+		if (btnIndex == -1) {
+			for (int i = 1; i < 4; i++) {
+				ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + to_string(i));
+				if (btn->getTag() == 1) {
+					btnIndex = i;
+					break;
+				}
 			}
 		}
 		string smsct = btnIndex == 1 ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
@@ -891,6 +896,7 @@ void MainScene::initPopupCharge()
 		btnProvider->setTouchEnabled(false);
 		btnProvider->setScale(.9f);
 		addTouchEventListener(btnProvider, [=]() {
+			if (btnProvider->getTag() == 1) return;
 			int btnIndex;
 			for (int j = 1; j <= strProviders.size(); j++) {
 				string strj = to_string(j);
