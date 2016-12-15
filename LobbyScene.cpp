@@ -68,7 +68,7 @@ void LobbyScene::onInit()
 	lbId->setString(strId);
 	lbLevel->setString(strLevel);
 
-	initEventView(Vec2(270, 562), Size(Director::sharedDirector()->getVisibleSize().width - 270, 40));
+	initEventView(Vec2(270, 562), Size(850, 40));
 	//initEventView(Vec2(0, 562), Size(Director::sharedDirector()->getVisibleSize().width, 40));
 
 	if (Utils::getSingleton().lobbyListRoomType.ListRoomType.size() > 0) {

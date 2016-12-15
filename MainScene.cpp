@@ -142,7 +142,7 @@ void MainScene::onInit()
 	initPopupSettings();
 	initPopupHistory();
 	initPopupDisplayName();
-	initEventView(Vec2(0, 562), Size(Director::sharedDirector()->getVisibleSize().width, 40));
+	initEventView(Vec2(0, 562), Size(1120, 40));
 	//initWebView();
 
 	if (Utils::getSingleton().userDataMe.Name.length() > 0 && Utils::getSingleton().userDataMe.DisplayName.length() == 0) {
