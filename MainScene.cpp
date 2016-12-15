@@ -1012,7 +1012,7 @@ void MainScene::initPopupCharge()
 	tfSeri->setMaxLength(24);
 	tfSeri->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfSeri->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
-	tfSeri->setInputMode(ui::EditBox::InputMode::NUMERIC);
+	tfSeri->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
 	tfSeri->setDelegate(this);
 	nodeInput->addChild(tfSeri);
 
@@ -1024,7 +1024,7 @@ void MainScene::initPopupCharge()
 	tfCode->setMaxLength(24);
 	tfCode->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfCode->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
-	tfCode->setInputMode(ui::EditBox::InputMode::NUMERIC);
+	tfCode->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
 	tfCode->setDelegate(this);
 	nodeInput->addChild(tfCode);
 
