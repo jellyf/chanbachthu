@@ -2342,7 +2342,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 				}
 				for (char c : player.SingleCards) {
 					Sprite* spCard = getCardSprite(c);
-					spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2]);
+					spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2] + 1);
 					spCard->setTag(constant::TAG_CARD_TABLE + index2);
 					spCard->setName(to_string((int)c));
 					spCard->setAnchorPoint(Vec2(.5f, .5f));
@@ -2368,7 +2368,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 					}
 					for (int i = 0; i < v.size(); i++) {
 						Sprite* spCard = getCardSprite(v[i]);
-						spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2] * 4 + i);
+						spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2] * 4 + i + 1);
 						spCard->setTag(constant::TAG_CARD_TABLE + index2);
 						spCard->setName(to_string((int)v[i]));
 						spCard->setAnchorPoint(Vec2(.5f, .5f));
