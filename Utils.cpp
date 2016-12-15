@@ -49,6 +49,7 @@ string Utils::formatMoneyWithComma(double money) {
 	unsigned int i = 3;
 	while (i < ret.length())
 	{
+		if (ret[ret.length() - i - 1] == '-') break;
 		ret.insert(ret.length() - i, ".");
 		i = i + 3 + 1;
 	}
