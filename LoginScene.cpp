@@ -131,7 +131,7 @@ void LoginScene::onInit()
 	mLayer->addChild(btnPhone);
 	Utils::getSingleton().autoScaleNode(btnPhone);
 
-	labelPhone = Label::create("", "fonts/arialbd.ttf",25);
+	labelPhone = Label::create("01639070707", "fonts/arialbd.ttf",25);
 	labelPhone->setPosition(btnPhone->getPosition() + Vec2(50, 0));
 	labelPhone->setAnchorPoint(Vec2(0, .5f));
 	mLayer->addChild(labelPhone);
