@@ -97,7 +97,7 @@ void GameScene::onInit()
 	vecSoundCuocs = { "thong", "thienu", "diau", "chi", "bachthu", "bachthuchi", "chiuu", "ubon", "thapthanh", "bachdinh", "tamdo", "leo", 
 		"haileo", "baleo", "bonleo", "tom", "haitom", "batom", "bontom", "kinhtuchi", "cothienkhai", "haithienkhai", "bathienkhai", 
 		"bonthienkhai", "cobon", "haibon", "babon", "bonbon", "cochiu", "haichiu", "bachiu", "bonchiu", "hoaroicuaphat", "xuong", 
-		"caloisandinh", "canhaydauthuyen", "nhalauxehoihoaroicuaphat", "thienu", "chuadonathoa" };
+		"caloisandinh", "canhaydauthuyen", "nhalauxehoihoaroicuaphat", "thienu", "chuadonathoa", "nguongbatca" };
 	
 	string zone = Utils::getSingleton().currentZoneName;
 	int index = zone.find_last_of("Q");
@@ -2554,7 +2554,7 @@ void GameScene::initChatTable()
 
 void GameScene::initCrestTable()
 {
-	vector<unsigned char> ids = { 33, 0, 3, 15, 11, 4, 5, 2, 6, 8, 28, 1, 37, 10, 9, 19, 20, 7, 24, 32, 35, 38, 34, 36 };
+	vector<unsigned char> ids = { 33, 0, 3, 15, 11, 4, 5, 2, 6, 8, 28, 1, 37, 10, 9, 19, 20, 7, 24, 32, 35, 38, 34, 39, 36 };
 
 	tableCrest = Node::create();
 	tableCrest->setPosition(560, 490);
@@ -2595,7 +2595,7 @@ void GameScene::initCrestTable()
 		vecCrests.push_back(lb);
 
 		if (i == ids.size() - 1) {
-			lb->setPosition(x + 75, y - (i / 4 + 1) * 34);
+			lb->setPosition(x + 75, y - (i / 4) * 34);
 		}
 	}
 
