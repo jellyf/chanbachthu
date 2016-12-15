@@ -551,6 +551,7 @@ void SFSConnector::Connect(std::string host, int port)
 
 void SFSConnector::Disconnect()
 {
+	CCLOG("SFSConnector::Disconnect");
 	mSmartFox->Disconnect();
 }
 

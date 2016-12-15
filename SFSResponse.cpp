@@ -25,6 +25,8 @@ SFSResponse::SFSResponse()
 	mapFunctions[cmd::USER_INFO] = std::bind(&SFSResponse::onUserDataMeResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::RESPONSE_UPDATE_USERINFO] = std::bind(&SFSResponse::onUpdateUserDataMeResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::GAME_ROOM_DATA] = std::bind(&SFSResponse::onRoomDataResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::GAME_ROOM_DATA_GA] = std::bind(&SFSResponse::onGameRoomGaResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::GAME_READY] = std::bind(&SFSResponse::onGameReadyResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::GAME_START] = std::bind(&SFSResponse::onStartGameResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::GAME_RESPONSE_STILT] = std::bind(&SFSResponse::onGameChooseStiltResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::GAME_RESPONSE_HOST] = std::bind(&SFSResponse::onGameChooseHostResponse, this, std::placeholders::_1);
@@ -39,20 +41,18 @@ SFSResponse::SFSResponse()
 	mapFunctions[cmd::GAME_RESPONSE_END_MATCH] = std::bind(&SFSResponse::onEndMatchResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::GAME_RESPONSE_END_MATCH_TIE] = std::bind(&SFSResponse::onEndMatchTieResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::GAME_RESPONSE_END_MATCH_MONEY] = std::bind(&SFSResponse::onEndMatchMoneyResponse, this, std::placeholders::_1);
-	mapFunctions[cmd::LOBBY_RESPONSE_DATA_ROOM] = std::bind(&SFSResponse::onLobbyTableResponse, this, std::placeholders::_1);
-	mapFunctions[cmd::LOBBY_RESPONSE_DATA_ROOM_TYPE] = std::bind(&SFSResponse::onLobbyRoomTypeResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::GAME_RESPONSE_PUNISH] = std::bind(&SFSResponse::onGamePunishResponse, this, std::placeholders::_1);
-	mapFunctions[cmd::GAME_READY] = std::bind(&SFSResponse::onGameReadyResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::GAME_RESPONSE_TABLE_INFO] = std::bind(&SFSResponse::onGameTableResponse, this, std::placeholders::_1);
-	mapFunctions[cmd::LOBBY_RESPONSE_DATA_USER] = std::bind(&SFSResponse::onLobbyUserResponse, this, std::placeholders::_1);
-	mapFunctions[cmd::LOBBY_RESPONSE_INVITE_PLAYER] = std::bind(&SFSResponse::onLobbyInviteResponse, this, std::placeholders::_1);
-	mapFunctions[cmd::GAME_ROOM_DATA_GA] = std::bind(&SFSResponse::onGameRoomGaResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::GAME_RESPONSE_PLAYING_DATA] = std::bind(&SFSResponse::onGamePlayingTableResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::GAME_RESPONSE_SPECTATOR_DATA] = std::bind(&SFSResponse::onGameSpectatorResponse, this, std::placeholders::_1);
-	mapFunctions[cmd::RESPONSE_RANK] = std::bind(&SFSResponse::onRankResponse, this, std::placeholders::_1);
-	mapFunctions[cmd::PLAY_HISTORY] = std::bind(&SFSResponse::onPlayLogResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::GAME_RESPONSE_MY_RECONNECT_DATA] = std::bind(&SFSResponse::onGameMyReconnectResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::GAME_RESPONSE_USER_RECONNECT_DATA] = std::bind(&SFSResponse::onGameUserReconnectResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::LOBBY_RESPONSE_DATA_ROOM] = std::bind(&SFSResponse::onLobbyTableResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::LOBBY_RESPONSE_DATA_ROOM_TYPE] = std::bind(&SFSResponse::onLobbyRoomTypeResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::LOBBY_RESPONSE_DATA_USER] = std::bind(&SFSResponse::onLobbyUserResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::LOBBY_RESPONSE_INVITE_PLAYER] = std::bind(&SFSResponse::onLobbyInviteResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::RESPONSE_RANK] = std::bind(&SFSResponse::onRankResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::PLAY_HISTORY] = std::bind(&SFSResponse::onPlayLogResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::SHOP_HISTORY] = std::bind(&SFSResponse::onShopHistoryResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::SHOP_ITEMS] = std::bind(&SFSResponse::onShopItemsResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::EXCHANGE_ITEM] = std::bind(&SFSResponse::onExchangeItemResponse, this, std::placeholders::_1);
@@ -732,7 +732,7 @@ void SFSResponse::onGamePlayingTableResponse(boost::shared_ptr<ISFSObject> isfsO
 		byteArray->ReadByte(player.Info.Device);
 		byteArray->ReadUTF(str1);
 		byteArray->ReadUTF(str2);
-		//CCLOG("%s ___ %s", str1.c_str(), str2.c_str());
+		CCLOG("%s ___ %s", str1.c_str(), str2.c_str());
 		if (str1.length() > 2) {
 			SFSResponse::onPlayingCardFromJson(str1, player.PairCards);
 		}
@@ -744,8 +744,8 @@ void SFSResponse::onGamePlayingTableResponse(boost::shared_ptr<ISFSObject> isfsO
 		}
 
 		data.Players.push_back(player);
-		//CCLOG("%s %d %d %d %d %s %.0f %s %d ___ %s ___ %s", player.Info.Name.c_str(), player.Index, player.Info.SfsUserId, player.Info.UserID,
-		//	player.UType, player.Ip.c_str(), player.PMoney, player.Info.GroupAvatar.c_str(), player.Info.Device, str1.c_str(), str2.c_str());
+		CCLOG("%s %d %d %d %d %s %.0f %s %d ___ %s ___ %s", player.Info.Name.c_str(), player.Index, player.Info.SfsUserId, player.Info.UserID,
+			player.UType, player.Ip.c_str(), player.PMoney, player.Info.GroupAvatar.c_str(), player.Info.Device, str1.c_str(), str2.c_str());
 	}
 	if (EventHandler::getSingleton().onGamePlayingDataSFSResponse != NULL) {
 		EventHandler::getSingleton().onGamePlayingDataSFSResponse(data);
