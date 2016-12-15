@@ -648,9 +648,11 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 		Point pos = touch->getLocation();
 		pos = mLayer->convertToNodeSpace(pos);
 
-		if (tableCrest->isVisible()) {
+		/*if (tableCrest->isVisible()) {
+			Node* scroll = tableCrest->getChildByName("scroll");
 			Point pos2 = touch->getLocation();
-			pos2 = tableCrest->convertToNodeSpace(pos2);
+			pos2 = scroll->convertToNodeSpace(pos2);
+			CCLOG("%.0f %.0f", pos2.x, pos2.y);
 			for (Label* lb : vecCrests) {
 				if (lb->getBoundingBox().containsPoint(pos2)) {
 					int i = lb->getTag();
@@ -707,7 +709,7 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 				}
 			}
 			return false;
-		}
+		}*/
 
 		if (myServerSlot == 0 && (state == NONE || state == READY)
 			&& iconGa->getBoundingBox().containsPoint(pos)) {
@@ -1028,6 +1030,7 @@ void GameScene::updateCardHand(CardHandData data)
 
 void GameScene::showStiltCards()
 {
+	if (state == NONE || state == READY) return;
 	btnXemNoc->setVisible(false);
 	btnDongNoc->setVisible(true);
 	for (Sprite* sp : spCards) {
@@ -1047,6 +1050,7 @@ void GameScene::showStiltCards()
 
 void GameScene::showWinnerCards()
 {
+	if (state == NONE || state == READY) return;
 	btnXemNoc->setVisible(true);
 	btnDongNoc->setVisible(false);
 	for (Sprite* sp : spCards) {
@@ -2115,8 +2119,10 @@ void GameScene::onCrestResponse(CrestResponseData data)
 	if (data.Msg.length() > 0) {
 		string strnoted = Utils::getSingleton().getStringForKey("noted") + ": " + data.Msg;
 		lbNoted->setString(strnoted);
+		lbNotedGa->setPosition(-235, -112);
 	} else {
 		lbNoted->setString("");
+		lbNotedGa->setPosition(lbNoted->getPosition());
 	}
 
 	if (data.MsgAnGa.length() > 0) {
@@ -2170,6 +2176,7 @@ void GameScene::onEndMatchMoney(EndMatchMoneyData data)
 
 void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 {
+	if (state == NONE || state == READY) return;
 	btnXemNoc->setVisible(false);
 	btnDongNoc->setVisible(false);
 	progressTimer->setVisible(false);
@@ -2583,20 +2590,106 @@ void GameScene::initCrestTable()
 	lbChonCuoc->setHeight(40);
 	tableCrest->addChild(lbChonCuoc);
 
-	int x = -375;
-	int y = 75;
+	Size size1 = Size(1000, 225);
+	Size size2 = Size(1000, ((ids.size() - 2) / 4 + 2) * 46);
+	ui::ScrollView* scroll = ui::ScrollView::create();
+	scroll->setDirection(ui::ScrollView::Direction::VERTICAL);
+	scroll->setScrollBarColor(Color3B::WHITE);
+	scroll->setScrollBarOpacity(100);
+	scroll->setScrollBarPositionFromCorner(Vec2(5, 10));
+	scroll->setScrollBarAutoHideEnabled(false);
+	scroll->setBounceEnabled(true);
+	scroll->setContentSize(size1);
+	scroll->setName("scroll");
+	tableCrest->addChild(scroll);
+	scroll->setInnerContainerSize(size2);
+	scroll->setPosition(Vec2(-size1.width / 2, -size1.height / 2 - 30));
+
+	int x = 130;
+	int y = size2.height - 10;
 	for (int i = 0; i < ids.size(); i++) {
 		string name = String::createWithFormat("cuoc_%d", ids[i])->getCString();
-		Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey(name), "fonts/guanine.ttf", 23);
-		lb->setPosition(x + (i % 4) * 250, y - (i/4) * 34);
+		/*Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey(name), "fonts/guanine.ttf", 25);
+		lb->setPosition(x + (i % 4) * 250, y - (i/4) * 45);
 		lb->setColor(Color3B::WHITE);
 		lb->setTag(ids[i]);
-		tableCrest->addChild(lb);
+		scroll->addChild(lb);
 		vecCrests.push_back(lb);
 
 		if (i == ids.size() - 1) {
-			lb->setPosition(x + 75, y - (i / 4) * 34);
+			lb->setPosition(x + 80, y - (i / 4) * 45);
+		}*/
+
+		ui::Button* btn = ui::Button::create("", "");
+		btn->setTitleText(Utils::getSingleton().getStringForKey(name));
+		btn->setTitleFontName("fonts/guanine.ttf");
+		btn->setTitleColor(Color3B::WHITE);
+		btn->setTitleFontSize(23);
+		btn->setPosition(Vec2(x + (i % 4) * 250, y - (i / 4) * 46));
+		btn->setContentSize(Size(240, 40));
+		btn->setScale9Enabled(true);
+		btn->setBright(false);
+		btn->setTag(ids[i]);
+		scroll->addChild(btn);
+		vecCrests.push_back(btn);
+
+		if (i == ids.size() - 1) {
+			btn->setContentSize(Size(430, 40));
+			btn->setPosition(Vec2(x + 75, y - (i / 4) * 46));
 		}
+
+		addTouchEventListener(btn, [=]() {
+			int i = btn->getTag();
+			if (i == 33) {
+				if (chosenCuocs.size() == 1 && chosenCuocs[0] == 33) {
+					chosenCuocs.clear();
+					chosenCuocNumbs.clear();
+					vecCrests[0]->setTitleColor(Color3B::WHITE);
+					lbChonCuoc->setString("");
+					return true;
+				}
+
+				for (int j = 1; j < vecCrests.size(); j++) {
+					vecCrests[j]->setTitleColor(Color3B::WHITE);
+				}
+				vecCrests[0]->setTitleColor(Color3B::YELLOW);
+				chosenCuocs.clear();
+				chosenCuocNumbs.clear();
+				chosenCuocs.push_back(33);
+				chosenCuocNumbs.push_back(0);
+				lbChonCuoc->setString(Utils::getSingleton().getStringForKey("cuoc_33"));
+			} else {
+				if (chosenCuocs.size() == 1 && chosenCuocs[0] == 33) {
+					chosenCuocs.clear();
+					chosenCuocNumbs.clear();
+					vecCrests[0]->setTitleColor(Color3B::WHITE);
+				}
+
+				int index = 0;
+				while (index < chosenCuocs.size() && chosenCuocs[index] != i) index++;
+				if (index == chosenCuocs.size()) {
+					chosenCuocs.push_back(i);
+					chosenCuocNumbs.push_back(0);
+					btn->setTitleColor(Color3B::YELLOW);
+				} else {
+					chosenCuocNumbs[index] ++;
+					if (chosenCuocNumbs[index] > maxChosenCuocs[i]) {
+						chosenCuocs.erase(chosenCuocs.begin() + index);
+						chosenCuocNumbs.erase(chosenCuocNumbs.begin() + index);
+						btn->setTitleColor(Color3B::WHITE);
+					}
+				}
+
+				string strcuoc = "";
+				for (int j = 0; j < chosenCuocs.size(); j++) {
+					if (strcuoc.length() > 0) {
+						strcuoc += ", ";
+					}
+					strcuoc += Utils::getSingleton().getStringForKey("cuoc_" + to_string(chosenCuocs[j] + chosenCuocNumbs[j]));
+				}
+				lbChonCuoc->setString(strcuoc);
+			}
+		});
 	}
 
 	ui::Button* btnCrest = ui::Button::create("board/btn_xuong.png", "board/btn_xuong_clicked.png");
@@ -2611,8 +2704,11 @@ void GameScene::initCrestTable()
 		lbCrestTime->setVisible(false);
 		lbCrestTime->pauseSchedulerAndActions();
 		SFSRequest::getSingleton().RequestGameWinCrest(crestIds);
-		for (Label* lb : vecCrests) {
+		/*for (Label* lb : vecCrests) {
 			lb->setColor(Color3B::WHITE);
+		}*/
+		for (ui::Button* btn : vecCrests) {
+			btn->setTitleColor(Color3B::WHITE);
 		}
 	});
 	tableCrest->addChild(btnCrest);
