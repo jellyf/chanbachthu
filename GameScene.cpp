@@ -2807,6 +2807,7 @@ void GameScene::initTableInfo()
 	tableInfo = Node::create();
 	tableInfo->setPosition(195, 650);
 	mLayer->addChild(tableInfo, constant::GAME_ZORDER_BUTTON);
+	Utils::getSingleton().autoScaleNode(tableInfo);
 
 	Sprite* bg = Sprite::create("board/bg_table_info.png");
 	bg->setScaleX(.85f);
