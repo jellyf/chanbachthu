@@ -97,7 +97,7 @@ void GameScene::onInit()
 	vecSoundCuocs = { "thong", "thienu", "diau", "chi", "bachthu", "bachthuchi", "chiuu", "ubon", "thapthanh", "bachdinh", "tamdo", "leo", 
 		"haileo", "baleo", "bonleo", "tom", "haitom", "batom", "bontom", "kinhtuchi", "cothienkhai", "haithienkhai", "bathienkhai", 
 		"bonthienkhai", "cobon", "haibon", "babon", "bonbon", "cochiu", "haichiu", "bachiu", "bonchiu", "hoaroicuaphat", "xuong", 
-		"caloisandinh", "canhaydauthuyen", "nhalauxehoi", "thienu", "chuadonathoa" };
+		"caloisandinh", "canhaydauthuyen", "nhalauxehoihoaroicuaphat", "thienu", "chuadonathoa" };
 	
 	string zone = Utils::getSingleton().currentZoneName;
 	int index = zone.find_last_of("Q");
@@ -2549,7 +2549,7 @@ void GameScene::initChatTable()
 
 void GameScene::initCrestTable()
 {
-	vector<unsigned char> ids = { 33, 0, 3, 15, 11, 4, 5, 2, 6, 8, 28, 1, 37, 10, 9, 19, 20, 7, 24, 36, 32, 35, 38, 34 };
+	vector<unsigned char> ids = { 33, 0, 3, 15, 11, 4, 5, 2, 6, 8, 28, 1, 37, 10, 9, 19, 20, 7, 24, 32, 35, 38, 34, 36 };
 
 	tableCrest = Node::create();
 	tableCrest->setPosition(560, 490);
@@ -2558,7 +2558,7 @@ void GameScene::initCrestTable()
 	Utils::getSingleton().autoScaleNode(tableCrest);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
-	bg->setContentSize(Size(1100, 430));
+	bg->setContentSize(Size(1130, 430));
 	bg->setInsetLeft(100);
 	bg->setInsetRight(100);
 	bg->setInsetTop(0);
@@ -2583,11 +2583,15 @@ void GameScene::initCrestTable()
 	for (int i = 0; i < ids.size(); i++) {
 		string name = String::createWithFormat("cuoc_%d", ids[i])->getCString();
 		Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey(name), "fonts/guanine.ttf", 23);
-		lb->setPosition(x + (i % 4) * 250, y - (i/4) * 40);
+		lb->setPosition(x + (i % 4) * 250, y - (i/4) * 34);
 		lb->setColor(Color3B::WHITE);
 		lb->setTag(ids[i]);
 		tableCrest->addChild(lb);
 		vecCrests.push_back(lb);
+
+		if (i == ids.size() - 1) {
+			lb->setPosition(x + 90, y - (i / 4 + 1) * 34);
+		}
 	}
 
 	ui::Button* btnCrest = ui::Button::create("board/btn_xuong.png", "board/btn_xuong_clicked.png");
