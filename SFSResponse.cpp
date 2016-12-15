@@ -74,7 +74,11 @@ void SFSResponse::onExtensionResponse(boost::shared_ptr<string> ptrNotifiedCmd, 
 		cachedResponses.push_back(pair<boost::shared_ptr<string>, boost::shared_ptr<ISFSObject>>(ptrNotifiedCmd, ptrNotifiedISFSObject));
 	} else {
 		if (mapFunctions.find(*ptrNotifiedCmd) != mapFunctions.end()) {
-			mapFunctions[*ptrNotifiedCmd](ptrNotifiedISFSObject);
+			try {
+				mapFunctions[*ptrNotifiedCmd](ptrNotifiedISFSObject);
+			} catch (exception e) {
+				CCLOG("SFSResponse::onExtensionResponse::Exception: %s", e.what());
+			}
 		}
 	}
 }
@@ -1005,13 +1009,16 @@ void SFSResponse::onListMailResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	byteArray->ReadInt(tmp);
 	while (byteArray->Position() < byteArray->Length()) {
 		MailData data;
-		byteArray->ReadInt(data.Id);
+		unsigned char c;
+		//byteArray->ReadInt(data.Id);
+		byteArray->ReadByte(c);
+		data.Id = c;
 		byteArray->ReadUTF(data.Sender);
 		byteArray->ReadUTF(data.Title);
 		byteArray->ReadBool(data.IsRead);
 		byteArray->ReadUTF(data.Date);
 		list.push_back(data);
-		////CCLOG("%d %s %s %s %s", data.Id, data.Date.c_str(), data.Title.c_str(), data.Sender.c_str(), data.IsRead ? "true" : "false");
+		//CCLOG("%d %s %s %s %s", data.Id, data.Date.c_str(), data.Title.c_str(), data.Sender.c_str(), data.IsRead ? "true" : "false");
 	}
 	if (EventHandler::getSingleton().onListMailDataSFSResponse != NULL) {
 		EventHandler::getSingleton().onListMailDataSFSResponse(list);
