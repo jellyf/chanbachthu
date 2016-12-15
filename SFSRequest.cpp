@@ -23,7 +23,12 @@ SFSRequest::~SFSRequest()
 
 void SFSRequest::Connect()
 {
-	SFSConnector::getSingleton().Connect(Utils::getSingleton().gameConfig.host, Utils::getSingleton().gameConfig.port);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	std::string host = Utils::getSingleton().gameConfig.ip_rs;
+#else
+	std::string host = Utils::getSingleton().gameConfig.host;
+#endif
+	SFSConnector::getSingleton().Connect(host, Utils::getSingleton().gameConfig.port);
 }
 
 void SFSRequest::Connect(std::string host, int port)

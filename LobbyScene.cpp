@@ -132,13 +132,6 @@ void LobbyScene::onConnected()
 		}
 		return;*/
 	}
-	if (tmpZoneName.length() == 0) return;
-	int index = tmpZoneName.find_last_of("Q");
-	if (index > 0 && index < tmpZoneName.length()) {
-		tmpZoneName = tmpZoneName.substr(0, index);
-	} else {
-		tmpZoneName += "Quan";
-	}
 	Utils::getSingleton().currentZoneName = tmpZoneName;
 	SFSRequest::getSingleton().LoginZone(Utils::getSingleton().username, Utils::getSingleton().password, tmpZoneName);
 	tmpZoneName = "";
@@ -146,8 +139,27 @@ void LobbyScene::onConnected()
 
 void LobbyScene::onConnectionLost()
 {
-	if (isBackToMain || isChangeMoney) {
+	if (isBackToMain) {
 		SFSRequest::getSingleton().Connect();
+	} else if (isChangeMoney && tmpZoneName.length() > 0) {
+		int index = tmpZoneName.find_last_of("Q");
+		if (index > 0 && index < tmpZoneName.length()) {
+			tmpZoneName = tmpZoneName.substr(0, index);
+		} else {
+			tmpZoneName += "Quan";
+		}
+
+		vector<vector<ZoneData>> zones = Utils::getSingleton().zones;
+		for (ZoneData z : zones[currentMoneyType]) {
+			if (z.ZoneName.compare(tmpZoneName) == 0) {
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+				SFSRequest::getSingleton().Connect(z.ZoneIpIos, z.ZonePort);
+#else
+				SFSRequest::getSingleton().Connect(z.ZoneIp, z.ZonePort);
+#endif
+				break;
+			}
+		}
 	} else {
 		showPopupNotice(Utils::getSingleton().getStringForKey("mat_ket_noi_dang_nhap_lai"), [=]() {
 			Utils::getSingleton().goToLoginScene();
