@@ -21,11 +21,11 @@ void GameScene::onInit()
 	myServerSlot = -1;
 	timeTurn = 0;
 
+	dealPos.push_back(Vec2(-120, -170));
 	dealPos.push_back(Vec2(120, -170));
 	dealPos.push_back(Vec2(180, 15));
 	dealPos.push_back(Vec2(0, 155));
 	dealPos.push_back(Vec2(-180, 15));
-	dealPos.push_back(Vec2(-120, -170));
 
 	/*handPos.push_back(Vec2(560, 240));
 	handPos.push_back(Vec2(720, 350));
@@ -1179,6 +1179,9 @@ void GameScene::changeZOrderAfterFly(Sprite * card, int zorder)
 	DelayTime* delay = DelayTime::create(cardSpeed);
 	CallFunc* func = CallFunc::create([=]() {
 		card->setLocalZOrder(tmp);
+		if (card != runningSpCard && card->getScale() == cardScaleTableNew) {
+			card->setScale(cardScaleTable);
+		}
 	});
 	card->runAction(Sequence::create(delay, func, nullptr));
 }
@@ -1384,6 +1387,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	btnDongNoc->setVisible(false);
 	tableCrest->setVisible(false);
 	tableEndMatch->setVisible(false);
+	lbCardNoc->getParent()->setVisible(false);
 	hideSplash();
 	spHandCards.clear();
 	chosenCuocs.clear();
@@ -2132,6 +2136,7 @@ void GameScene::onCrestResponse(CrestResponseData data)
 
 void GameScene::onEndMatch(EndMatchData data)
 {
+	if (state == NONE || state == READY) return;
 	this->endMatchData = data;
 	showSplash();
 	lbCrestTime->setVisible(true);
@@ -2590,7 +2595,7 @@ void GameScene::initCrestTable()
 		vecCrests.push_back(lb);
 
 		if (i == ids.size() - 1) {
-			lb->setPosition(x + 90, y - (i / 4 + 1) * 34);
+			lb->setPosition(x + 75, y - (i / 4 + 1) * 34);
 		}
 	}
 
