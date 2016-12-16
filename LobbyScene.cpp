@@ -90,9 +90,9 @@ void LobbyScene::registerEventListenner()
 {
 	BaseScene::registerEventListenner();
 	EventHandler::getSingleton().onConnected = bind(&LobbyScene::onConnected, this);
-	EventHandler::getSingleton().onConnectionLost = bind(&LobbyScene::onConnectionLost, this);
 	EventHandler::getSingleton().onLoginZone = bind(&LobbyScene::onLoginZone, this);
 	EventHandler::getSingleton().onConfigZoneReceived = bind(&LobbyScene::onConfigZoneReceived, this);
+	EventHandler::getSingleton().onConnectionLost = bind(&LobbyScene::onConnectionLost, this, placeholders::_1);
 	EventHandler::getSingleton().onLoginZoneError = bind(&LobbyScene::onLoginZoneError, this, placeholders::_1, placeholders::_2);
 	EventHandler::getSingleton().onErrorSFSResponse = bind(&LobbyScene::onErrorSFSResponse, this, placeholders::_1, placeholders::_2);
 	EventHandler::getSingleton().onJoinRoom = bind(&LobbyScene::onJoinRoom, this, placeholders::_1, placeholders::_2);
@@ -137,7 +137,7 @@ void LobbyScene::onConnected()
 	tmpZoneName = "";
 }
 
-void LobbyScene::onConnectionLost()
+void LobbyScene::onConnectionLost(std::string reason)
 {
 	if (isBackToMain) {
 		SFSRequest::getSingleton().Connect();
@@ -161,7 +161,7 @@ void LobbyScene::onConnectionLost()
 			}
 		}
 	} else {
-		showPopupNotice(Utils::getSingleton().getStringForKey("mat_ket_noi_dang_nhap_lai"), [=]() {
+		showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
 			Utils::getSingleton().goToLoginScene();
 		}, false);
 	}

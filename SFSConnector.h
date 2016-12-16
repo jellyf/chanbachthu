@@ -27,6 +27,7 @@ public:
 	static void OnUserEnterRoom(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
 	static void OnExtensionResponse(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
 	static void OnPublicMessage(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
+	static void OnPingPong(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
 
 	void Connect(std::string host, int port);
 	void Disconnect();
@@ -34,11 +35,11 @@ public:
 	void LoginZone(std::string username, std::string password, std::string zone);
 	void LogoutZone();
 	void RequestLeaveRoom();
+	void EnableLagMonitor();
 
 	void SendPublicMessage(std::string msg, boost::shared_ptr<ISFSObject> params, boost::shared_ptr<Room> room = NULL);
 	void SendExtensionRequest(std::string cmd, boost::shared_ptr<ISFSObject> params, boost::shared_ptr<Room> room = NULL);
 private:
 	boost::shared_ptr<Sfs2X::SmartFox> mSmartFox;
-	string lastRequestCmd;
 };
 

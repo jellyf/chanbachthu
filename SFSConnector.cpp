@@ -54,7 +54,8 @@ void SFSConnector::InitializeSmartFox()
 	mSmartFox->AddEventListener(SFSEvent::USER_ENTER_ROOM, boost::shared_ptr<EventListenerDelegate>(new EventListenerDelegate(SFSConnector::OnUserEnterRoom, (unsigned long long)this)));
 	mSmartFox->AddEventListener(SFSEvent::EXTENSION_RESPONSE, boost::shared_ptr<EventListenerDelegate>(new EventListenerDelegate(SFSConnector::OnExtensionResponse, (unsigned long long)this)));
 	mSmartFox->AddEventListener(SFSEvent::PUBLIC_MESSAGE, boost::shared_ptr<EventListenerDelegate>(new EventListenerDelegate(SFSConnector::OnPublicMessage, (unsigned long long)this)));
-	mSmartFox->AddEventListener(BitSwarmEvent::DISCONNECT, boost::shared_ptr<EventListenerDelegate>(new EventListenerDelegate(SFSConnector::OnSmartFoxDisconnection, (unsigned long long)this)));
+	mSmartFox->AddEventListener(SFSEvent::PING_PONG, boost::shared_ptr<EventListenerDelegate>(new EventListenerDelegate(SFSConnector::OnPingPong, (unsigned long long)this)));
+	//mSmartFox->AddEventListener(BitSwarmEvent::DISCONNECT, boost::shared_ptr<EventListenerDelegate>(new EventListenerDelegate(SFSConnector::OnSmartFoxDisconnection, (unsigned long long)this)));
 }
 
 void SFSConnector::OnSmartFoxConnection(unsigned long long ptrContext, boost::shared_ptr<BaseEvent> ptrEvent)
@@ -85,9 +86,13 @@ void SFSConnector::OnSmartFoxConnection(unsigned long long ptrContext, boost::sh
 // -------------------------------------------------------------------------
 void SFSConnector::OnSmartFoxConnectionLost(unsigned long long ptrContext, boost::shared_ptr<BaseEvent> ptrEvent)
 {
-	CCLOG("OnSmartFoxConnectionLost");
+	boost::shared_ptr<map<string, boost::shared_ptr<void> > > ptrEventParams = ptrEvent->Params();
+	boost::shared_ptr<void> ptrEventParamReason = (*ptrEventParams)["reason"];
+	boost::shared_ptr<string> ptrReason = ((boost::static_pointer_cast<string>))(ptrEventParamReason);
+
+	CCLOG("OnSmartFoxConnectionLost: %s", (*ptrReason).c_str());
 	if (EventHandler::getSingleton().onConnectionLost != NULL) {
-		EventHandler::getSingleton().onConnectionLost();
+		EventHandler::getSingleton().onConnectionLost(*ptrReason);
 	}
 }
 
@@ -96,9 +101,13 @@ void SFSConnector::OnSmartFoxConnectionLost(unsigned long long ptrContext, boost
 // -------------------------------------------------------------------------
 void SFSConnector::OnSmartFoxDisconnection(unsigned long long ptrContext, boost::shared_ptr<BaseEvent> ptrEvent)
 {
-	CCLOG("OnSmartFoxDisconnection");
+	boost::shared_ptr<map<string, boost::shared_ptr<void> > > ptrEventParams = ptrEvent->Params();
+	boost::shared_ptr<void> ptrEventParamReason = (*ptrEventParams)["reason"];
+	boost::shared_ptr<string> ptrReason = ((boost::static_pointer_cast<string>))(ptrEventParamReason);
+
+	CCLOG("OnSmartFoxDisconnection: %s", (*ptrReason).c_str());
 	if (EventHandler::getSingleton().onDisconnected != NULL) {
-		EventHandler::getSingleton().onDisconnected();
+		EventHandler::getSingleton().onDisconnected(*ptrReason);
 	}
 }
 
@@ -112,6 +121,7 @@ void SFSConnector::OnSmartFoxLoginZone(unsigned long long ptrContext, boost::sha
 	boost::shared_ptr<void> ptrEventParamValueZone = (*ptrEventParams)["zone"];
 	boost::shared_ptr<string> ptrNotifiedZone = ((boost::static_pointer_cast<string>))(ptrEventParamValueZone);
 
+	SFSConnector::getSingleton().EnableLagMonitor();
 	Utils::getSingleton().currentZoneName = *ptrNotifiedZone;
 	CCLOG("%s", ptrNotifiedZone->c_str());
 	/*for (auto iter = ptrEventParams->begin(); iter != ptrEventParams->end(); iter++) {
@@ -536,6 +546,15 @@ void SFSConnector::OnPublicMessage(unsigned long long ptrContext, boost::shared_
 	}
 }
 
+void SFSConnector::OnPingPong(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent)
+{
+	//get the user parameter of the event
+	boost::shared_ptr<map<string, boost::shared_ptr<void> > > ptrEventParams = ptrEvent->Params();
+	boost::shared_ptr<void> ptrEventParamValue = (*ptrEventParams)["lagValue"];
+	boost::shared_ptr<long> ptrValue = ((boost::static_pointer_cast<long>))(ptrEventParamValue);
+	CCLOG("Measured lag is: %dms", *ptrValue);
+}
+
 void SFSConnector::Connect(std::string host, int port)
 {
 	SFSConnector::getSingleton().InitializeSmartFox();
@@ -580,6 +599,11 @@ void SFSConnector::RequestLeaveRoom()
 	mSmartFox->Send(request);
 }
 
+void SFSConnector::EnableLagMonitor()
+{
+	mSmartFox->EnableLagMonitor(true, 30);
+}
+
 void SFSConnector::SendPublicMessage(std::string msg, boost::shared_ptr<ISFSObject> params, boost::shared_ptr<Room> room)
 {
 	boost::shared_ptr<IRequest> request(new PublicMessageRequest(msg, params, room));
@@ -588,7 +612,6 @@ void SFSConnector::SendPublicMessage(std::string msg, boost::shared_ptr<ISFSObje
 
 void SFSConnector::SendExtensionRequest(std::string cmd, boost::shared_ptr<ISFSObject> params, boost::shared_ptr<Room> room)
 {
-	lastRequestCmd = cmd;
 	CCLOG("SendExtensionRequest: %s", cmd.c_str());
 	boost::shared_ptr<IRequest> request(new ExtensionRequest(cmd, params, room));
 	mSmartFox->Send(request);

@@ -16,13 +16,13 @@ public:
 	std::function<void(std::string)> onLoginFacebook = NULL;
 
 	std::function<void()> onConnected = NULL;
-	std::function<void()> onDisconnected = NULL;
 	std::function<void()> onLoginZone = NULL;
 	std::function<void()> onLogoutZone = NULL;
-	std::function<void()> onConnectionLost = NULL;
 	std::function<void()> onConnectionFailed = NULL;
 	std::function<void()> onConfigZoneReceived = NULL;
 	std::function<void()> onUserDataMeSFSResponse = NULL;
+	std::function<void(std::string)> onDisconnected = NULL;
+	std::function<void(std::string)> onConnectionLost = NULL;
 	std::function<void(UserData)> onUserDataSFSResponse = NULL;
 	std::function<void(long)> onUserExitRoom = NULL;
 	std::function<void(short int, std::string)> onLoginZoneError = NULL;

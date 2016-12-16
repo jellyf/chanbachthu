@@ -192,8 +192,8 @@ void MainScene::registerEventListenner()
 {
 	BaseScene::registerEventListenner();
 	EventHandler::getSingleton().onConnected = std::bind(&MainScene::onConnected, this);
-	EventHandler::getSingleton().onConnectionLost = std::bind(&MainScene::onConnectionLost, this);
 	EventHandler::getSingleton().onConfigZoneReceived = std::bind(&MainScene::onConfigZoneReceived, this);
+	EventHandler::getSingleton().onConnectionLost = std::bind(&MainScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onLoginZoneError = std::bind(&MainScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
 	EventHandler::getSingleton().onErrorSFSResponse = std::bind(&MainScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
 	EventHandler::getSingleton().onJoinRoom = std::bind(&MainScene::onJoinRoom, this, std::placeholders::_1, std::placeholders::_2);
@@ -240,7 +240,7 @@ void MainScene::onConnected()
 	tmpZoneId = -1;
 }
 
-void MainScene::onConnectionLost()
+void MainScene::onConnectionLost(std::string reason)
 {
 	if (isBackToLogin) return;
 	if (isGoToLobby && tmpZoneId >= 0) {
@@ -251,7 +251,7 @@ void MainScene::onConnectionLost()
 #endif
 		SFSRequest::getSingleton().Connect(host, Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZonePort);
 	} else {
-		showPopupNotice(Utils::getSingleton().getStringForKey("mat_ket_noi_dang_nhap_lai"), [=]() {
+		showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
 			Utils::getSingleton().goToLoginScene();
 		}, false);
 	}
@@ -408,7 +408,7 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 {
 	ui::ScrollView* scrollCard = (ui::ScrollView*)(popupShop->getChildByTag(10)->getChildByName("scrollcard"));
 	vector<vector<ShopItemData>> cards;
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 4; i++) {
 		cards.push_back(vector<ShopItemData>());
 	}
 	for (int i = 0; i < list.size(); i++) {
@@ -419,17 +419,28 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 			cards[1].push_back(list[i]);
 		} else if (list[i].ItemType == 4) {
 			cards[2].push_back(list[i]);
+		} else if (list[i].ItemType == 5) {
+			cards[3].push_back(list[i]);
 		}
 	}
-	int size = cards[0].size();
+
+	/*int size = cards[0].size();
 	if (size < cards[1].size()) size = cards[1].size();
 	if (size < cards[2].size()) size = cards[2].size();
+	if (size < cards[3].size()) size = cards[3].size();
 
 	int widthCard = size * 165;
 	if (widthCard < scrollCard->getContentSize().width) {
 		widthCard = scrollCard->getContentSize().width;
 	}
-	scrollCard->setInnerContainerSize(Size(widthCard, scrollCard->getContentSize().height));
+	scrollCard->setInnerContainerSize(Size(widthCard, scrollCard->getContentSize().height));*/
+
+	int heightCard = ((cards[0].size() + cards[1].size() + cards[2].size() + cards[3].size() - 1) / 5 + 1) * 120;
+	if (heightCard < scrollCard->getContentSize().height) {
+		heightCard = scrollCard->getContentSize().height;
+	}
+	scrollCard->setInnerContainerSize(Size(scrollCard->getContentSize().width, heightCard));
+
 	for (int i = 0; i < cards.size(); i++) {
 		for (int j = 0; j < cards[i].size(); j++) {
 			string str = Utils::getSingleton().getStringForKey("xac_nhan_mua_vat_pham");
@@ -437,7 +448,8 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 			string msg = String::createWithFormat(str.c_str(), cards[i][j].Name.c_str(), strMoney.c_str())->getCString();
 
 			ui::Button* btn = ui::Button::create("popup/box_shop.png");
-			btn->setPosition(Vec2(80 + j * 165, scrollCard->getContentSize().height - 50 - i * 110));
+			//btn->setPosition(Vec2(80 + j * 165, scrollCard->getContentSize().height - 50 - i * 110));
+			btn->setPosition(Vec2(80 + (j % 5) * 165, heightCard - 50 - (i + j/5) * 120));
 			btn->setBright(false);
 			btn->setTag((i + 1) * 100 + j);
 			addTouchEventListener(btn, [=]() {
@@ -1345,7 +1357,7 @@ void MainScene::initPopupMail()
 	nodeDetail->addChild(btnCloseDetail);
 
 	addBtnChoosePage(-100, -260, popupMail, [=](int page) {
-		SFSRequest::getSingleton().RequestListMail(page - 1);
+		SFSRequest::getSingleton().RequestListMail(page);
 		//onListMailDataResponse(vector<MailData>());
 	});
 }
@@ -1504,7 +1516,8 @@ void MainScene::initPopupShop()
 	}
 
 	ui::ScrollView* scrollCard = ui::ScrollView::create();
-	scrollCard->setDirection(ui::ScrollView::Direction::HORIZONTAL);
+	//scrollCard->setDirection(ui::ScrollView::Direction::HORIZONTAL);
+	scrollCard->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scrollCard->setBounceEnabled(true);
 	scrollCard->setPosition(Vec2(bgContent->getPositionX() - bgContent->getContentSize().width / 2, bgContent->getPositionY() - bgContent->getContentSize().height / 2 + 5));
 	scrollCard->setContentSize(Size(bgContent->getContentSize().width, bgContent->getContentSize().height - 10));
@@ -1618,7 +1631,7 @@ void MainScene::initPopupDisplayName()
 void MainScene::showPopupMail()
 {
 	showPopup(popupMail);
-	SFSRequest::getSingleton().RequestListMail(0);
+	SFSRequest::getSingleton().RequestListMail(1);
 	lbNewMail->getParent()->setVisible(false);
 }
 

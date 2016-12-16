@@ -974,7 +974,7 @@ void SFSResponse::onShopItemsResponse(boost::shared_ptr<ISFSObject> isfsObject)
 		byteArray->ReadUTF(data.Image);
 		byteArray->ReadShort(data.IsActived);
 		list.push_back(data);
-		////CCLOG("%d %s %d %d %d %s %d", data.Id, data.Name.c_str(), data.Price, data.PriceChange, data.ItemType, data.Image.c_str(), data.IsActived);
+		//CCLOG("%d %s %d %d %d %s %d", data.Id, data.Name.c_str(), data.Price, data.PriceChange, data.ItemType, data.Image.c_str(), data.IsActived);
 	}
 	if (EventHandler::getSingleton().onShopItemsDataSFSResponse != NULL) {
 		EventHandler::getSingleton().onShopItemsDataSFSResponse(list);
@@ -1009,10 +1009,10 @@ void SFSResponse::onListMailResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	byteArray->ReadInt(tmp);
 	while (byteArray->Position() < byteArray->Length()) {
 		MailData data;
-		unsigned char c;
-		//byteArray->ReadInt(data.Id);
-		byteArray->ReadByte(c);
-		data.Id = c;
+		//unsigned char c;
+		byteArray->ReadInt(data.Id);
+		//byteArray->ReadByte(c);
+		//data.Id = c;
 		byteArray->ReadUTF(data.Sender);
 		byteArray->ReadUTF(data.Title);
 		byteArray->ReadBool(data.IsRead);

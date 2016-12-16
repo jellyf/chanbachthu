@@ -572,8 +572,7 @@ void GameScene::onInit()
 
 void GameScene::registerEventListenner()
 {
-	CCLOG("registerEventListenner");
-	EventHandler::getSingleton().onConnectionLost = std::bind(&GameScene::onConnectionLost, this);
+	EventHandler::getSingleton().onConnectionLost = std::bind(&GameScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onUserDataSFSResponse = std::bind(&GameScene::onUserDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onUserExitRoom = std::bind(&GameScene::onUserExitRoom, this, std::placeholders::_1);
 	EventHandler::getSingleton().onErrorSFSResponse = std::bind(&GameScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
@@ -1219,9 +1218,9 @@ int GameScene::getCardName(unsigned char cardId)
 	return (cardId / 3 + 1) * 10 + cardId % 3 + 1;
 }
 
-void GameScene::onConnectionLost()
+void GameScene::onConnectionLost(std::string reason)
 {
-	showPopupNotice(Utils::getSingleton().getStringForKey("mat_ket_noi_dang_nhap_lai"), [=]() {
+	showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
 		SFSRequest::getSingleton().Disconnect();
 		Utils::getSingleton().goToLoginScene();
 	}, false);

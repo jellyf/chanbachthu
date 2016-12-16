@@ -21,7 +21,7 @@ public:
 	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
 	virtual bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* _event);
 
-	void onConnectionLost();
+	void onConnectionLost(std::string reason);
 	void onUserDataResponse(UserData data);
 	void onUserExitRoom(long sfsUId);
 	void onErrorResponse(unsigned char code, std::string msg);

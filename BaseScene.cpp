@@ -63,7 +63,7 @@ void BaseScene::onEnter()
 	Node* nodeWaiting = Node::create();
 	nodeWaiting->setPosition(560, 350);
 	nodeWaiting->setVisible(false);
-	mLayer->addChild(nodeWaiting, constant::GAME_ZORDER_SPLASH + 1);
+	mLayer->addChild(nodeWaiting, constant::ZORDER_POPUP);
 	Utils::getSingleton().autoScaleNode(nodeWaiting);
 
 	spWaiting = Sprite::create("loadingicon.png");
@@ -87,7 +87,6 @@ void BaseScene::onExit()
 	Scene::onExit();
 	unscheduleUpdate();
 	unregisterEventListenner();
-	CCLOG("unscheduleUpdate");
 }
 
 void BaseScene::update(float delta)
@@ -427,7 +426,6 @@ void BaseScene::initHeaderWithInfos()
 	chosenBg->setPosition(isRealMoney ? -95 : 100, 0);
 	moneyNode->addChild(chosenBg, 1);
 	
-	buttons.push_back(moneyBg);
 	moneyBg->setBright(false);
 	addTouchEventListener(moneyBg, [=]() {
 		if (moneyBg->getTag() == 0) {
@@ -840,7 +838,7 @@ void BaseScene::initPopupUserInfo()
 	Sprite* bg = Sprite::create("popup/bg.png");
 	popupUserInfo->addChild(bg);
 
-	Sprite* title = Sprite::create("popup/title_tintuc.png");
+	Sprite* title = Sprite::create("popup/title_thongtin.png");
 	title->setPosition(0, 180);
 	title->setScale(.8f);
 	popupUserInfo->addChild(title);
@@ -1269,11 +1267,12 @@ void BaseScene::setSplashZOrder(int zorder)
 	splash->setLocalZOrder(zorder);
 	if (increase) {
 		for (ui::Button* btn : buttons) {
+			if (!btn->isTouchEnabled()) continue;
 			Node* n = btn;
 			while (n->getParent() != mLayer) {
 				n = n->getParent();
 			}
-			if (n->getLocalZOrder() < splash->getLocalZOrder()) {
+			if (n->isVisible() && n->getLocalZOrder() < splash->getLocalZOrder()) {
 				btn->setTouchEnabled(false);
 				blockedButtons.push_back(btn);
 			}
@@ -1287,9 +1286,8 @@ void BaseScene::setSplashZOrder(int zorder)
 			}
 			if (n->getLocalZOrder() >= splash->getLocalZOrder()) {
 				blockedButtons[i]->setTouchEnabled(true);
+				//blockedButtons.erase(blockedButtons.begin() + i);
 				blockedButtons.pop_back();
-			} else {
-				break;
 			}
 			i--;
 		}

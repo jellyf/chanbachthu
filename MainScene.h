@@ -12,8 +12,8 @@ public:
 	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
 
 	void onConnected();
-	void onConnectionLost();
 	void onConfigZoneReceived();
+	void onConnectionLost(std::string reason);
 	void onLoginZoneError(short int code, std::string msg);
 	void onErrorResponse(unsigned char code, std::string msg);
 	void onJoinRoom(long roomId, std::string roomName);

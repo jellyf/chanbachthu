@@ -11,9 +11,9 @@ public:
 	virtual void unregisterEventListenner();
 
 	void onConnected();
-	void onConnectionLost();
 	void onLoginZone();
 	void onConfigZoneReceived();
+	void onConnectionLost(std::string reason);
 	void onLoginZoneError(short int code, std::string msg);
 	void onErrorSFSResponse(unsigned char code, std::string msg);
 	void onJoinRoom(long roomId, std::string roomName);
