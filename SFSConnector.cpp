@@ -601,7 +601,7 @@ void SFSConnector::RequestLeaveRoom()
 
 void SFSConnector::EnableLagMonitor()
 {
-	mSmartFox->EnableLagMonitor(true, 30);
+	//mSmartFox->EnableLagMonitor(true, 30);
 }
 
 void SFSConnector::SendPublicMessage(std::string msg, boost::shared_ptr<ISFSObject> params, boost::shared_ptr<Room> room)
