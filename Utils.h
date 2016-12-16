@@ -16,6 +16,7 @@ public:
 	std::string getStringForKey(std::string key);
 	std::string replaceString(std::string str, std::string strSearch, std::string strReplace);
 	std::string trim(std::string str);
+	std::string getUserCountry();
 	bool isEmailValid(std::string email);
 	bool isUsernameValid(std::string username);
 	bool isPasswordValid(std::string password);

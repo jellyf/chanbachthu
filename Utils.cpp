@@ -87,6 +87,23 @@ std::string Utils::trim(std::string str)
 	return str.substr(i, j + 1);
 }
 
+std::string Utils::getUserCountry()
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	JniMethodInfo methodInfo;
+	if (!JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/cpp/AppActivity", "getUserCountry", "()Ljava/lang/String;")) {
+		return "vn";
+	}
+	jstring s = (jstring)methodInfo.env->CallStaticObjectMethod(methodInfo.classID, methodInfo.methodID);
+	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+
+	std::string str = JniHelper::jstring2string(s);
+	return str;
+#else
+	return "vn";
+#endif
+}
+
 bool Utils::isEmailValid(std::string email)
 {
 	int length = email.length();
