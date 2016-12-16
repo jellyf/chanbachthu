@@ -248,6 +248,7 @@ void LoginScene::onErrorResponse(unsigned char code, std::string msg)
 	}
 	if (msg.length() == 0) return;
 	showPopupNotice(msg, [=]() {});
+	fbToken = "";
 }
 
 void LoginScene::onHttpResponse(int tag, std::string content)
