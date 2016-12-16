@@ -168,13 +168,14 @@ void BaseScene::showSplash()
 	splash->setVisible(true);
 }
 
-void BaseScene::showWaiting()
+void BaseScene::showWaiting(int time)
 {
 	isWaiting = true;
 	showPopup(spWaiting->getParent());
 	spWaiting->resumeSchedulerAndActions();
+	spWaiting->getParent()->stopAllActions();
 
-	DelayTime* delay = DelayTime::create(30);
+	DelayTime* delay = DelayTime::create(time);
 	CallFunc* func = CallFunc::create([=]() {
 		if (isWaiting) {
 			hideWaiting();
@@ -184,7 +185,7 @@ void BaseScene::showWaiting()
 			});
 		}
 	});
-	runAction(Sequence::create(delay, func, nullptr));
+	spWaiting->getParent()->runAction(Sequence::create(delay, func, nullptr));
 }
 
 void BaseScene::showPopup(cocos2d::Node * popup)
@@ -553,6 +554,7 @@ void BaseScene::hideWaiting()
 	isWaiting = false;
 	hidePopup(spWaiting->getParent());
 	spWaiting->pauseSchedulerAndActions();
+	spWaiting->getParent()->stopAllActions();
 }
 
 void BaseScene::hidePopup(cocos2d::Node * popup)

@@ -129,7 +129,7 @@ void MainScene::onInit()
 	ui::Button* btnLoiDai = ui::Button::create("main/loidai.png", "main/loidai.png");
 	btnLoiDai->setPosition(vecPos[8]);
 	addTouchEventListener(btnLoiDai, [=]() {
-		
+		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
 	});
 	mLayer->addChild(btnLoiDai);
 

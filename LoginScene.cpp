@@ -115,6 +115,7 @@ void LoginScene::onInit()
 	ui::Button* btnFB = ui::Button::create("login/btn_fb.png", "login/btn_fb_clicked.png");
 	btnFB->setPosition(Vec2(0, -195));
 	addTouchEventListener(btnFB, [=]() {
+		showWaiting(300);
 		Utils::getSingleton().loginFacebook();
 	});
 	loginNode->addChild(btnFB);
@@ -229,7 +230,11 @@ void LoginScene::onUserDataMeResponse()
 
 void LoginScene::onLoginFacebook(std::string token)
 {
-	if (token.length() == 0) return;
+	hideWaiting();
+	if (token.length() == 0) {
+		showPopupNotice(Utils::getSingleton().getStringForKey("error_unknown"), [=]() {});
+		return;
+	}
 	fbToken = token;
 	showWaiting();
 	SFSRequest::getSingleton().Connect();
@@ -270,8 +275,11 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		config.smsVNPVMS = d["smsVNPVMS"].GetString();
 		config.smsKH = d["smsKH"].GetString();
 		config.smsMK = d["smsMK"].GetString();
+
 		Utils::getSingleton().gameConfig = config;
 		labelPhone->setString(config.phone);
+		string location = Utils::getSingleton().getUserCountry();
+		Utils::getSingleton().gameConfig.paymentEnabled = config.paymentEnabled && location.compare("vn") == 0;
 	}
 	hideWaiting();
 }
