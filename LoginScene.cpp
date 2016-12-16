@@ -132,8 +132,8 @@ void LoginScene::onInit()
 	Utils::getSingleton().autoScaleNode(btnPhone);
 
 	labelPhone = Label::create("01639070707", "fonts/arialbd.ttf",25);
-	labelPhone->setPosition(btnPhone->getPosition() + Vec2(50, 0));
-	labelPhone->setAnchorPoint(Vec2(0, .5f));
+	labelPhone->setPosition(90, 3);
+	labelPhone->setAnchorPoint(Vec2(0, 0));
 	mLayer->addChild(labelPhone);
 
 	Label* labelVersion = Label::create("ver 1.0.0", "fonts/arial.ttf", 18);
