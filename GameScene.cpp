@@ -116,13 +116,13 @@ void GameScene::onInit()
 	ui::Button* btnBack = ui::Button::create("board/btn_back.png", "board/btn_back_clicked.png");
 	btnBack->setPosition(Vec2(50, 650));
 	addTouchEventListener(btnBack, [=]() {
-		//if (state == NONE || state == READY || myServerSlot < 0) {
+		if (state == NONE || state == READY || myServerSlot < 0) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
-		/*} else {
+		} else {
 			hasRegisterOut = !hasRegisterOut;
 			showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
-		}*/
+		}
 	});
 	mLayer->addChild(btnBack, constant::GAME_ZORDER_BUTTON);
 	Utils::getSingleton().autoScaleNode(btnBack);
