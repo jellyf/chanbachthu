@@ -24,6 +24,7 @@ public:
 	void LoginZone(std::string username, std::string password, std::string zone);
 	void LogoutZone();
 	void SendPublicMessage(std::string message);
+	void Ping(long long time);
 	void Ping();
 
 	void RequestRegister(std::string username, std::string password, std::string email);

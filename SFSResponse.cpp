@@ -95,9 +95,7 @@ void SFSResponse::RunCachedResponses()
 void SFSResponse::onPingResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
 	boost::shared_ptr<long long> ptrTime = isfsObject->GetLong("s");
-	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
-	parameters->PutLong("s", *ptrTime);
-	SFSRequest::getSingleton().Ping();
+	SFSRequest::getSingleton().Ping(*ptrTime);
 }
 
 void SFSResponse::onErrorResponse(boost::shared_ptr<ISFSObject> isfsObject)

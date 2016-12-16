@@ -62,6 +62,13 @@ void SFSRequest::SendPublicMessage(std::string message)
 	SFSConnector::getSingleton().SendPublicMessage(message, parameters);
 }
 
+void SFSRequest::Ping(long long time)
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	parameters->PutLong("s", time);
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::REQUEST_PING, parameters);
+}
+
 void SFSRequest::Ping()
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
