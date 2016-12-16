@@ -1089,6 +1089,7 @@ void MainScene::initPopupCharge()
 		string provider = strProviders[providerId];
 		CCLOG("%s %s %s", code.c_str(), seri.c_str(), provider.c_str());
 		SFSRequest::getSingleton().RequestChargeCard(code, seri, provider);
+		showWaiting();
 	});
 	nodeInput->addChild(btnCharge);
 
@@ -1236,7 +1237,9 @@ void MainScene::initPopupGuide()
 	scroll->addChild(lb);
 
 	int height = lb->getContentSize().height;
-	if (height < 350) height = 350;
+	if (height < scroll->getContentSize().height) {
+		height = scroll->getContentSize().height;
+	}
 	lb->setPosition(0, height);
 	scroll->setInnerContainerSize(Size(w, height));
 
@@ -1262,8 +1265,11 @@ void MainScene::initPopupGuide()
 			btn->loadTextureNormal("popup/box2.png");
 			lb->setString(content);
 			popupGuide->setTag(btn->getTag());
+
 			int height = lb->getContentSize().height;
-			if (height < 350) height = 350;
+			if (height < scroll->getContentSize().height) {
+				height = scroll->getContentSize().height;
+			}
 			lb->setPosition(0, height);
 			scroll->setInnerContainerSize(Size(w, height));
 		});
