@@ -178,7 +178,10 @@ void BaseScene::showWaiting()
 	CallFunc* func = CallFunc::create([=]() {
 		if (isWaiting) {
 			hideWaiting();
-			SFSRequest::getSingleton().Disconnect();
+			showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_unknown"), [=]() {
+				SFSRequest::getSingleton().Disconnect();
+				Utils::getSingleton().goToLoginScene();
+			});
 		}
 	});
 	runAction(Sequence::create(delay, func, nullptr));
