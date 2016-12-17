@@ -46,10 +46,13 @@ void BaseScene::onEnter()
 	addChild(mLayer, 10);
 	auto visibleSize = Director::sharedDirector()->getVisibleSize();
 	
+	scaleScene = Vec2(1, 1);
 	if (visibleSize.width < 1120) {
-		mLayer->setScaleX(visibleSize.width / 1120);
+		scaleScene.x = visibleSize.width / 1120;
+		mLayer->setScaleX(scaleScene.x);
 	} else if (visibleSize.height < 700) {
-		mLayer->setScaleY(visibleSize.height / 700);
+		scaleScene.y = visibleSize.height / 700;
+		mLayer->setScaleY(scaleScene.y);
 	}
 
 	splash = ui::Scale9Sprite::create("white.png");
@@ -182,7 +185,7 @@ void BaseScene::showWaiting(int time)
 			showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_unknown"), [=]() {
 				SFSRequest::getSingleton().Disconnect();
 				Utils::getSingleton().goToLoginScene();
-			});
+			}, false);
 		}
 	});
 	spWaiting->getParent()->runAction(Sequence::create(delay, func, nullptr));

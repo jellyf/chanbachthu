@@ -83,6 +83,7 @@ private:
 	std::vector<std::string> vecChats;
 	std::vector<std::string> vecSoundActions;
 	std::vector<std::string> vecSoundCuocs;
+	std::vector<cocos2d::Vec2> vecUserPos;
 	std::vector<cocos2d::Vec2> tableCardPos;
 	std::vector<cocos2d::Vec2> tableCardDistance;
 	std::vector<cocos2d::Vec2> dealPos;
@@ -102,6 +103,8 @@ private:
 	std::vector<char> chosenCuocs;
 	std::vector<char> chosenCuocNumbs;
 	std::vector<char> maxChosenCuocs;
+	cocos2d::Layer* playLayer;
+	cocos2d::Layer* endLayer;
 	cocos2d::ProgressTimer* progressTimer;
 	cocos2d::ui::Button* btnReady;
 	cocos2d::ui::Button* btnBash;

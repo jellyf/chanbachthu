@@ -78,11 +78,18 @@ void GameScene::onInit()
 	maxChosenCuocs[24] = 3;
 	maxChosenCuocs[28] = 3;
 
-	vector<Vec2> vecUserPos;
 	vecUserPos.push_back(Vec2(560, 90));
 	vecUserPos.push_back(Vec2(1050, 320));
 	vecUserPos.push_back(Vec2(560, 610));
 	vecUserPos.push_back(Vec2(70, 320));
+
+	for (int i = 0; i < tableCardPos.size(); i++) {
+		int k = (i / 2) % 4;
+		if (i == 1) k = 3;
+		Vec2 d = vecUserPos[k] - tableCardPos[i];
+		tableCardPos[i].x = vecUserPos[k].x / scaleScene.y - d.x;
+		tableCardPos[i].y = vecUserPos[k].y / scaleScene.x - d.y;
+	}
 
 	vecSoundActions = { "anchoso", "angidanhnay", "angidanhnaychangmaymau", "anluon", "baovecheocanh", "batsach", "batvan", 
 		"batvanj", "bomdo", "bottom", "botomomleo", "cakheo", "caulai", "chayrothoi", "chichi", "chiuchiu", "chonggay", 
@@ -111,7 +118,18 @@ void GameScene::onInit()
 
 	Sprite* bg = Sprite::create("game/bg" + zone + ".jpg");
 	bg->setPosition(560, 350);
-	addChild(bg);
+	mLayer->addChild(bg);
+
+	playLayer = Layer::create();
+	mLayer->addChild(playLayer, 10);
+	Utils::getSingleton().autoScaleNode(playLayer);
+	playLayer->setPosition(1120 * (scaleScene.y - 1) / 2, 700 * (scaleScene.x - 1) / 2);
+
+	endLayer = Layer::create();
+	mLayer->addChild(endLayer, constant::ZORDER_POPUP + 10);
+	Utils::getSingleton().autoScaleNode(endLayer);
+	//endLayer->setPosition(1120 * (scaleScene.y - 1) / 2, 700 * (scaleScene.x - 1) / 2);
+	endLayer->setPositionY(700 * (scaleScene.x - 1) / 4);
 
 	ui::Button* btnBack = ui::Button::create("board/btn_back.png", "board/btn_back_clicked.png");
 	btnBack->setPosition(Vec2(50, 650));
@@ -427,11 +445,10 @@ void GameScene::onInit()
 		Utils::getSingleton().autoScaleNode(spInvite);
 
 		UserNode* user = UserNode::create();
-		user->setPosition(vecUserPos[i]);
+		user->setPosition(Vec2(vecUserPos[i].x / scaleScene.y, vecUserPos[i].y / scaleScene.x));
 		user->setVisible(false);
-		mLayer->addChild(user, constant::GAME_ZORDER_USER);
+		playLayer->addChild(user, constant::GAME_ZORDER_USER);
 		vecUsers.push_back(user);
-		Utils::getSingleton().autoScaleNode(user);
 
 		Sprite* spSS = Sprite::create("board/txt_sansang.png");
 		spSS->setPosition(vecUserPos[i]);
@@ -487,6 +504,11 @@ void GameScene::onInit()
 
 	DelayTime* delay = DelayTime::create(1);
 	CallFunc* func = CallFunc::create([=]() {
+		if (state != PLAY && (btnXemNoc->isVisible() || btnDongNoc->isVisible())) {
+			btnXemNoc->setVisible(false);
+			btnDongNoc->setVisible(false);
+			endLayer->removeAllChildren();
+		}
 		if (lbCrestTime->getString().compare("0") == 0) {
 			lbCrestTime->setVisible(false);
 			lbCrestTime->pauseSchedulerAndActions();
@@ -550,7 +572,9 @@ void GameScene::onInit()
 			}
 		}
 	}*/
-/*
+
+	/*state = PLAY;
+	btnXemNoc->setVisible(true);
 	for (int i = 0; i < 7; i++) {
 		endMatchData.ListChanU.push_back(5);
 	}
@@ -716,7 +740,7 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 		}
 
 		for (int i = 0; i < 4; i++) {
-			if (pos.distance(vecUsers[i]->getPosition()) < 100) {
+			if (pos.distance(vecUserPos[i]) < 100) {
 				if (vecUsers[i]->isVisible() && vecUsers[i]->getName().length() > 0) {
 					if (vecUsers[i]->getName().compare(Utils::getSingleton().userDataMe.Name) == 0) {
 						showPopupUserInfo(Utils::getSingleton().userDataMe, false);
@@ -753,7 +777,7 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 				}
 			}
 		}
-		if (state == PLAY && pos.distance(vecUsers[0]->getPosition()) < 300) {
+		/*if (state == PLAY && pos.distance(vecUsers[0]->getPosition()) < 300) {
 			float rot = CC_RADIANS_TO_DEGREES(Vec2::angle(pos - vecUsers[0]->getPosition(), Vec2(0, 1)));
 			if (pos.x < 560) rot *= -1;
 			for (int i = 0; i < spHandCards.size(); i++) {
@@ -769,6 +793,29 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 					}
 					return true;
 					break;
+				}
+			}
+		}*/
+		if (state == PLAY) {
+			Point pos2 = touch->getLocation();
+			pos2 = playLayer->convertToNodeSpace(pos2);
+			if (pos2.distance(vecUsers[0]->getPosition()) < 300) {
+				float rot = CC_RADIANS_TO_DEGREES(Vec2::angle(pos2 - vecUsers[0]->getPosition(), Vec2(0, 1)));
+				if (pos2.x < vecUsers[0]->getPositionX()) rot *= -1;
+				for (int i = 0; i < spHandCards.size(); i++) {
+					if (abs(rot - spHandCards[i]->getRotation()) < 5) {
+						if (chosenCard >= 0 && chosenCard < spHandCards.size()) {
+							spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
+						}
+						if (chosenCard != i) {
+							chosenCard = i;
+							spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.35f));
+						} else {
+							chosenCard = -1;
+						}
+						return true;
+						break;
+					}
 				}
 			}
 		}
@@ -846,7 +893,7 @@ void GameScene::dealCards()
 			lbNoticeAction->setString(Utils::getSingleton().getStringForKey("choose_stilt"));
 		}
 		spChonCai->setVisible(true);
-		spChonCai->setPosition(vecUsers[userIndexs[startGameData.LastWinner]]->getPosition());
+		spChonCai->setPosition(vecUserPos[userIndexs[startGameData.LastWinner]]);
 
 		runTimeWaiting(startGameData.LastWinner, timeChooseHost);
 	});
@@ -924,7 +971,7 @@ void GameScene::runTimeWaiting(long uid, float time)
 	progressTimer->stopAllActions();
 	progressTimer->setVisible(true);
 	progressTimer->setPercentage(100);
-	progressTimer->setPosition(vecUsers[userIndexs[uid]]->getPosition());
+	progressTimer->setPosition(vecUserPos[userIndexs[uid]]);
 	progressTimer->runAction(ProgressTo::create(time, 0));
 
 	if (uid == sfsIdMe && state == PLAY) {
@@ -1030,19 +1077,26 @@ void GameScene::updateCardHand(CardHandData data)
 void GameScene::showStiltCards()
 {
 	if (state == NONE || state == READY) return;
+	endLayer->removeAllChildren();
 	btnXemNoc->setVisible(false);
 	btnDongNoc->setVisible(true);
 	for (Sprite* sp : spCards) {
 		sp->setVisible(false);
 	}
-	int x = 575 - endMatchData.ListStiltCard.size() * 23;
+	int size = endMatchData.ListStiltCard.size() > 20 ? 23 : 25;
+	float scale = endMatchData.ListStiltCard.size() > 20 ? .92f : 1;
+	int x = 575 - endMatchData.ListStiltCard.size() * size;
 	Sprite* sp;
 	for (unsigned char c : endMatchData.ListStiltCard) {
-		sp = getCardSprite(c);
-		sp->setScale(.92);
+		//sp = getCardSprite(c);
+		int cardName = getCardName(c);
+		sp = Sprite::create(String::createWithFormat("cards/%d.png", getCardName(c))->getCString());
+		endLayer->addChild(sp);
+
+		sp->setScale(scale);
 		sp->setPosition(x, 125);
 		sp->setLocalZOrder(constant::ZORDER_POPUP + 10);
-		x += 46;
+		x += size * 2;
 	}
 	sp->setPosition(x - 26, 125);
 }
@@ -1050,6 +1104,7 @@ void GameScene::showStiltCards()
 void GameScene::showWinnerCards()
 {
 	if (state == NONE || state == READY) return;
+	endLayer->removeAllChildren();
 	btnXemNoc->setVisible(true);
 	btnDongNoc->setVisible(false);
 	for (Sprite* sp : spCards) {
@@ -1068,7 +1123,11 @@ void GameScene::showWinnerCards()
 			color = Color3B::WHITE;
 		}
 		for (int i = 0; i < 2; i++) {
-			Sprite* sp = getCardSprite(c);
+			//Sprite* sp = getCardSprite(c);
+			int cardName = getCardName(c);
+			Sprite* sp = Sprite::create(String::createWithFormat("cards/%d.png", getCardName(c))->getCString());
+			endLayer->addChild(sp);
+
 			sp->setScale(1);
 			sp->setRotation(0);
 			sp->setColor(i == 0 ? color : Color3B::WHITE);
@@ -1089,7 +1148,11 @@ void GameScene::showWinnerCards()
 			} else {
 				color = Color3B::WHITE;
 			}
-			Sprite* sp = getCardSprite(endMatchData.ListCaU[i]);
+			//Sprite* sp = getCardSprite(endMatchData.ListCaU[i]);
+			int cardName = getCardName(endMatchData.ListCaU[i]);
+			Sprite* sp = Sprite::create(String::createWithFormat("cards/%d.png", getCardName(endMatchData.ListCaU[i]))->getCString());
+			endLayer->addChild(sp);
+
 			sp->setScale(1);
 			sp->setRotation(0);
 			sp->setColor(color);
@@ -1110,7 +1173,11 @@ void GameScene::showWinnerCards()
 			} else {
 				color = Color3B::WHITE;
 			}
-			Sprite* sp = getCardSprite(endMatchData.ListCardU[i]);
+			//Sprite* sp = getCardSprite(endMatchData.ListCardU[i]);
+			int cardName = getCardName(endMatchData.ListCardU[i]);
+			Sprite* sp = Sprite::create(String::createWithFormat("cards/%d.png", getCardName(endMatchData.ListCardU[i]))->getCString());
+			endLayer->addChild(sp);
+
 			sp->setScale(1);
 			sp->setRotation(0);
 			sp->setColor(color);
@@ -1125,6 +1192,14 @@ void GameScene::showWinnerCards()
 			}
 		}
 	}
+
+	/*for (Sprite* sp : spCards) {
+		if (sp->isVisible() && sp->getParent() == playLayer) {
+			sp->setParent(nullptr);
+			endLayer->addChild(sp);
+			playLayer->removeChild(sp);
+		}
+	}*/
 }
 
 void GameScene::showSettings()
@@ -1269,7 +1344,7 @@ void GameScene::onPublicMessage(long uid, std::string msg)
 {
 	int index = userIndexs[uid];
 	if (index < 0 || index > 3 || (index == 0 && uid != sfsIdMe)) return;
-	showToast(msg, vecUsers[index]->getPosition() + Vec2(0, 30));
+	showToast(msg, vecUserPos[index] + Vec2(0, 30));
 }
 
 void GameScene::onRoomDataResponse(RoomData roomData)
@@ -1330,7 +1405,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 				vecUsers[index]->setName(player.Info.Name);
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
-					spChuPhong->setPosition(vecUsers[index]->getPosition() + Vec2(50, 0));
+					spChuPhong->setPosition(vecUserPos[index] + Vec2(50, 0));
 				}
 			}
 		}
@@ -1353,7 +1428,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		vecUsers[index]->setName(player.Info.Name);
 		if (player.Index == 0) {
 			spChuPhong->setVisible(true);
-			spChuPhong->setPosition(vecUsers[index]->getPosition() + Vec2(50, 0));
+			spChuPhong->setPosition(vecUserPos[index] + Vec2(50, 0));
 		}
 	}*/
 	if (roomData.Players.size() > 1 && roomData.TimeStart > 0 && myServerSlot >= 0) {
@@ -1395,6 +1470,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	spHandCards.clear();
 	chosenCuocs.clear();
 	chosenCuocNumbs.clear();
+	endLayer->removeAllChildren();
 	for (int i = 0; i < tableCardNumb.size(); i++) {
 		tableCardNumb[i] = 0;
 	}
@@ -1419,7 +1495,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			std::string str1 = Utils::getSingleton().formatMoneyWithComma(winMoneyData.ListUserAmount[i]);// > 0 ? money : -money);
 			std::string moneystr = String::createWithFormat(winMoneyData.ListUserAmount[i] > 0 ? "+%s" : "%s", str1.c_str())->getCString();
 			lbWinMoneys[index]->setColor(winMoneyData.ListUserAmount[i] > 0 ? Color3B::YELLOW : Color3B::GRAY);
-			lbWinMoneys[index]->setPosition(vecUsers[index]->getPosition() + Vec2(0, -40));
+			lbWinMoneys[index]->setPosition(vecUserPos[index] + Vec2(0, -40));
 			lbWinMoneys[index]->setString(moneystr);
 			lbWinMoneys[index]->runAction(Sequence::create(fadeIn, move, fadeOut, nullptr));
 		}
@@ -1622,8 +1698,8 @@ void GameScene::onUserBash(BashData data)
 		}
 		if (spCard == NULL) return;
 		int rot = spCard->getRotation();
-		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUsers[index]->getPositionX();
-		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUsers[index]->getPositionY();
+		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUserPos[index].x;
+		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUserPos[index].y;
 		spCard->setPosition(x, y);
 		spCard->setName(to_string((int)data.CardId));
 		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
@@ -1633,7 +1709,7 @@ void GameScene::onUserBash(BashData data)
 		spCard = getCardSprite(data.CardId);
 		spCard->setRotation(0);
 		spCard->setScale(cardScaleTableNew);
-		spCard->setPosition(vecUsers[index]->getPosition());
+		spCard->setPosition(vecUserPos[index]);
 	}
 
 	spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2]);
@@ -1722,8 +1798,8 @@ void GameScene::onUserBashBack(BashBackData data)
 		}
 		if (spCard == NULL) return;
 		int rot = spCard->getRotation();
-		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUsers[index]->getPositionX();
-		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUsers[index]->getPositionY();
+		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUserPos[index].x;
+		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUserPos[index].y;
 		spCard->setPosition(x, y);
 		spCard->setName(to_string((int)data.CardId));
 		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
@@ -1733,7 +1809,7 @@ void GameScene::onUserBashBack(BashBackData data)
 		spCard = getCardSprite(data.CardId);
 		spCard->setRotation(0);
 		spCard->setScale(cardScaleTableNew);
-		spCard->setPosition(vecUsers[index]->getPosition());
+		spCard->setPosition(vecUserPos[index]);
 	}
 
 	spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2]);
@@ -1832,15 +1908,15 @@ void GameScene::onUserHold(HoldData data)
 		}
 		if (spCard == NULL) return;
 		int rot = spCard->getRotation();
-		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUsers[index]->getPositionX();
-		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUsers[index]->getPositionY();
+		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUserPos[index].x;
+		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUserPos[index].y;
 		spCard->setPosition(x, y);
 		spCard->setName(to_string((int)data.CardId));
 	} else {
 		spCard = getCardSprite(data.CardId);
 		spCard->setRotation(0);
 		spCard->setScale(cardScaleTable);
-		spCard->setPosition(vecUsers[index]->getPosition());
+		spCard->setPosition(vecUserPos[index]);
 	}
 
 	spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2] * 4 + 1);
@@ -1991,8 +2067,8 @@ void GameScene::onUserPenet(PenetData data)
 				cards.push_back(spHandCards[i]);
 
 				int rot = spHandCards[i]->getRotation();
-				float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spHandCards[i]->getContentSize().height + vecUsers[index]->getPositionX();
-				float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spHandCards[i]->getContentSize().height + vecUsers[index]->getPositionY();
+				float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spHandCards[i]->getContentSize().height + vecUserPos[index].x;
+				float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spHandCards[i]->getContentSize().height + vecUserPos[index].y;
 				spHandCards[i]->setName(to_string((int)data.CardId));
 				spHandCards[i]->setPosition(x, y);
 
@@ -2005,7 +2081,7 @@ void GameScene::onUserPenet(PenetData data)
 			Sprite* spCard = getCardSprite(data.CardId);
 			spCard->setRotation(0);
 			spCard->setScale(cardScaleTable);
-			spCard->setPosition(vecUsers[index]->getPosition());
+			spCard->setPosition(vecUserPos[index]);
 			cards.push_back(spCard);
 		}
 	}
@@ -2343,7 +2419,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 				vecUsers[index]->setName(player.Info.Name);
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
-					spChuPhong->setPosition(vecUsers[index]->getPosition() + Vec2(50, 0));
+					spChuPhong->setPosition(vecUserPos[index] + Vec2(50, 0));
 				}
 
 				int index2 = index * 2;
@@ -2457,7 +2533,7 @@ void GameScene::onGameMyReconnectDataResponse(GameReconnectData data)
 			lbNoticeAction->setString(Utils::getSingleton().getStringForKey("choose_stilt"));
 		}
 		spChonCai->setVisible(true);
-		spChonCai->setPosition(vecUsers[userIndexs[startGameData.LastWinner]]->getPosition());
+		spChonCai->setPosition(vecUserPos[userIndexs[startGameData.LastWinner]]);
 
 		runTimeWaiting(startGameData.LastWinner, timeChooseHost);*/
 	} else {
@@ -2950,7 +3026,7 @@ Sprite* GameScene::getCardSprite(int id)
 		}
 	}
 	Sprite* sp = Sprite::create(String::createWithFormat("cards/%d.png", getCardName(id))->getCString());
-	mLayer->addChild(sp);
+	playLayer->addChild(sp);
 	spCards.push_back(sp);
 	return sp;
 }

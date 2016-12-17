@@ -59,6 +59,8 @@ protected:
 	bool isWaiting = false;
 	float pingTime = 0;
 
+	cocos2d::Vec2 scaleScene;
+
 	cocos2d::ui::Button* moneyBg;
 	cocos2d::Sprite* chosenBg;
 	cocos2d::Sprite* spWaiting;
