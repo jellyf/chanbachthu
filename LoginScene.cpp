@@ -19,6 +19,9 @@ void LoginScene::onInit()
 {
 	BaseScene::onInit();
 	Utils::getSingleton().SoundEnabled = UserDefault::getInstance()->getBoolForKey(constant::KEY_SOUND.c_str(), true);
+	Utils::getSingleton().IgnoreInvitation = UserDefault::getInstance()->getBoolForKey(constant::KEY_SOUND.c_str(), false);
+	UserDefault::getInstance()->setBoolForKey(constant::KEY_SOUND.c_str(), Utils::getSingleton().SoundEnabled);
+	UserDefault::getInstance()->setBoolForKey(constant::KEY_INVITATION.c_str(), Utils::getSingleton().IgnoreInvitation);
 
 	Sprite* bg = Sprite::create("bg.jpg");
 	bg->setPosition(560, 350);
@@ -278,8 +281,8 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 
 		Utils::getSingleton().gameConfig = config;
 		labelPhone->setString(config.phone);
-		string location = Utils::getSingleton().getUserCountry();
-		Utils::getSingleton().gameConfig.paymentEnabled = config.paymentEnabled && location.compare("vn") == 0;
+		//string location = Utils::getSingleton().getUserCountry();
+		//Utils::getSingleton().gameConfig.paymentEnabled = config.paymentEnabled && location.compare("vn") == 0;
 	}
 	hideWaiting();
 }

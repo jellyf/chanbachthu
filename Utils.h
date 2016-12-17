@@ -59,6 +59,7 @@ public:
 	bool isRunningEvent;
 	bool SoundEnabled;
 	bool isWaitingScene;
+	bool IgnoreInvitation;
 private:
 	cocos2d::ValueMap viLang;
 	std::map<std::string, cocos2d::Texture2D*> textures;

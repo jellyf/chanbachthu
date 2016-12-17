@@ -821,6 +821,8 @@ void BaseScene::initPopupSettings()
 	btnOK->setPosition(Vec2(0, -190));
 	addTouchEventListener(btnOK, [=]() {
 		hidePopup(popupMainSettings);
+		Utils::getSingleton().SoundEnabled = cbs[0]->isSelected();
+		Utils::getSingleton().IgnoreInvitation = cbs[1]->isSelected();
 		UserDefault::getInstance()->setBoolForKey(constant::KEY_SOUND.c_str(), cbs[0]->isSelected());
 		UserDefault::getInstance()->setBoolForKey(constant::KEY_INVITATION.c_str(), cbs[1]->isSelected());
 	});

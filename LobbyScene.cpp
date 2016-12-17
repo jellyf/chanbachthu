@@ -219,6 +219,7 @@ void LobbyScene::onJoinRoomError(std::string msg)
 
 void LobbyScene::onInviteDataResponse(InviteData data)
 {
+	if (Utils::getSingleton().IgnoreInvitation) return;
 	int index = data.RoomName.find_last_of("b");
 	int tableId = atoi(data.RoomName.substr(index + 1, data.RoomName.length()).c_str());
 	string strformat = Utils::getSingleton().getStringForKey("invite_content");
