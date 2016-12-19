@@ -61,7 +61,7 @@ void BaseScene::onEnter()
 	splash->setColor(Color3B::BLACK);
 	splash->setOpacity(150);
 	splash->setVisible(false);
-	mLayer->addChild(splash, constant::GAME_ZORDER_SPLASH);
+	mLayer->addChild(splash);
 
 	Node* nodeWaiting = Node::create();
 	nodeWaiting->setPosition(560, 350);
@@ -550,6 +550,7 @@ void BaseScene::hideSplash()
 	}
 	blockedButtons.clear();
 	splash->setVisible(false);
+	splash->setLocalZOrder(0);
 }
 
 void BaseScene::hideWaiting()
@@ -1272,6 +1273,7 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 
 void BaseScene::setSplashZOrder(int zorder)
 {
+	CCLOG("%d %s", splash->getLocalZOrder(), splash->isVisible() ? "true" : "false");
 	if (zorder == splash->getLocalZOrder() || !splash->isVisible()) return;
 	bool increase = zorder > splash->getLocalZOrder();
 	splash->setLocalZOrder(zorder);
@@ -1302,4 +1304,5 @@ void BaseScene::setSplashZOrder(int zorder)
 			i--;
 		}
 	}
+	CCLOG("%d", blockedButtons.size());
 }

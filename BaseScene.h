@@ -61,6 +61,7 @@ protected:
 
 	cocos2d::Vec2 scaleScene;
 
+	cocos2d::ui::Scale9Sprite* splash;
 	cocos2d::ui::Button* moneyBg;
 	cocos2d::Sprite* chosenBg;
 	cocos2d::Sprite* spWaiting;
@@ -85,7 +86,6 @@ protected:
 	int tmpIndex;
 
 private:
-	cocos2d::ui::Scale9Sprite* splash;
 	std::vector<std::vector<RankData>> listRanks;
 	cocos2d::Vector<Node*> vecPopupNotices;
 };
