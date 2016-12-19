@@ -313,7 +313,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			btn->addChild(lbMoney);
 		}
 		addTouchEventListener(btn, [=]() {
-			long requiredMoney = 20 * data.Money;
+			long requiredMoney = data.Money;
 			if ((Utils::getSingleton().moneyType == 1 && Utils::getSingleton().userDataMe.MoneyReal < requiredMoney)
 				|| (!Utils::getSingleton().moneyType == 1 && Utils::getSingleton().userDataMe.MoneyFree < requiredMoney)) {
 				double money = Utils::getSingleton().moneyType == 1 ? Utils::getSingleton().userDataMe.MoneyReal : Utils::getSingleton().userDataMe.MoneyFree;
