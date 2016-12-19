@@ -1273,7 +1273,6 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 
 void BaseScene::setSplashZOrder(int zorder)
 {
-	CCLOG("%d %s", splash->getLocalZOrder(), splash->isVisible() ? "true" : "false");
 	if (zorder == splash->getLocalZOrder() || !splash->isVisible()) return;
 	bool increase = zorder > splash->getLocalZOrder();
 	splash->setLocalZOrder(zorder);
@@ -1304,5 +1303,4 @@ void BaseScene::setSplashZOrder(int zorder)
 			i--;
 		}
 	}
-	CCLOG("%d", blockedButtons.size());
 }

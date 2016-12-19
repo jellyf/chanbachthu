@@ -149,6 +149,41 @@ void GameScene::onInit()
 	btnSettings->setPosition(Vec2(1070, 650));
 	addTouchEventListener(btnSettings, [=]() {
 		showSettings();
+
+		/*nodeStilt->setRotation(0);
+		nodeStilt->setVisible(true);
+		for (int i = 0; i < vecStilts.size();i++) {
+			vecStilts[i]->setVisible(true);
+			vecStilts[i]->removeAllChildren();
+			vecStilts[i]->setRotation(0);
+			vecStilts[i]->setPosition(dealPos[i]);
+		}
+		state = CHOOSE_STILT;
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < dealPos.size(); j++) {
+				Sprite* sp = Sprite::create("cards/100.png");
+				sp->setPosition(rand() % 20 - 10, rand() % 10 - 5);
+				sp->setRotation(rand() % 60 - 30);
+				sp->setScale(.7f);
+				vecStilts[j]->addChild(sp);
+			}
+		}
+		chosenStilt = rand() % 5 + 1;
+		chosenStiltHost = 0;
+		chosenHost = rand() % 4;
+		startGameData.CardStilt = (1 + rand() % 8) * 3 + rand() % 3;
+		for (int i = 0; i < 4; i++) {
+			userIndexs[i] = i;
+			vecPlayers.push_back(PlayerData());
+		}
+		startGameData.LastWinner = rand() % 4;
+		onChooseStilt(chosenStilt);
+
+		DelayTime* delay = DelayTime::create(1);
+		CallFunc* func = CallFunc::create([=]() {
+			onChooseHost(chosenStilt, chosenStiltHost, chosenHost);
+		});
+		runAction(Sequence::create(delay, func, nullptr));*/
 	});
 	mLayer->addChild(btnSettings, constant::GAME_ZORDER_BUTTON);
 	Utils::getSingleton().autoScaleNode(btnSettings);
@@ -489,18 +524,9 @@ void GameScene::onInit()
 	spChonCai->setVisible(false);
 	mLayer->addChild(spChonCai, constant::GAME_ZORDER_USER + 9);
 
-	initChatTable();
-	initCrestTable();
-	initEndMatchTable();
-	initInviteTable();
-	initSettingsPopup();
-	initTableInfo();
-	initPopupUserInfo();
-	//initEventView(Vec2(0, 680), Size(Director::sharedDirector()->getVisibleSize().width, 40));
-
 	lbCrestTime = Label::create("", "fonts/arialbd.ttf", 50);
 	lbCrestTime->setPosition(750, 280);
-	mLayer->addChild(lbCrestTime, constant::ZORDER_POPUP + 10);
+	mLayer->addChild(lbCrestTime, constant::ZORDER_POPUP);
 
 	DelayTime* delay = DelayTime::create(1);
 	CallFunc* func = CallFunc::create([=]() {
@@ -520,6 +546,15 @@ void GameScene::onInit()
 	});
 	lbCrestTime->runAction(RepeatForever::create(Sequence::create(delay, func, nullptr)));
 	lbCrestTime->pauseSchedulerAndActions();
+
+	initChatTable();
+	initCrestTable();
+	initEndMatchTable();
+	initInviteTable();
+	initSettingsPopup();
+	initTableInfo();
+	initPopupUserInfo();
+	//initEventView(Vec2(0, 680), Size(Director::sharedDirector()->getVisibleSize().width, 40));
 
 	Sprite* bgError = Sprite::create("popup/bg.png");
 	bgError->setPosition(560, 350);
@@ -667,7 +702,7 @@ void GameScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
 
 bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 {
-	if (!BaseScene::onTouchBegan(touch, _event)) {
+	if (!BaseScene::onTouchBegan(touch, _event) && !splash->isVisible()) {
 		Point pos = touch->getLocation();
 		pos = mLayer->convertToNodeSpace(pos);
 
@@ -1351,7 +1386,8 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 {
 	if (noaction >= 3 || hasRegisterOut) {
 		hideSplash();
-		tableEndMatch->setVisible(false);
+		//tableEndMatch->setVisible(false);
+		hidePopup(tableEndMatch);
 		if (hasRegisterOut) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
@@ -1463,10 +1499,12 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	lbCardNoc->setString("23");
 	btnXemNoc->setVisible(false);
 	btnDongNoc->setVisible(false);
-	tableCrest->setVisible(false);
-	tableEndMatch->setVisible(false);
+	//tableCrest->setVisible(false);
+	//tableEndMatch->setVisible(false);
 	lbCardNoc->getParent()->setVisible(false);
-	hideSplash();
+	//hideSplash();
+	hidePopup(tableCrest);
+	hidePopup(tableEndMatch);
 	spHandCards.clear();
 	chosenCuocs.clear();
 	chosenCuocNumbs.clear();
@@ -1610,27 +1648,44 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 		//	vecStilts[k]->runAction(Sequence::create(delay2, move2, nullptr));
 		//}
 
-		int i = 0;
-		int tmpChosen = chosenStiltHost < chosenStilt ? chosenStiltHost : (chosenStiltHost - 1);
-		int diff = (chosenHost + handPos.size() - tmpChosen) % handPos.size();
-		int rotation = diff * 90;
-		float runTime = diff * .5f;
-		if (diff == 0) runTime = .5f;
-		for (Node* n : vecStilts) {
-			if (n->isVisible()) {
+		if (chosenStiltHost == chosenHost + 1) {
+			int j = chosenHost;
+			for (int i = 0; i < 5; i++) {
+				Node* n = vecStilts[(chosenStiltHost + i) % vecStilts.size()];
+				if (!n->isVisible()) continue;
 				DelayTime* delay2 = DelayTime::create(.1f);
-				DelayTime* delay21 = DelayTime::create(1.1f);
-				MoveTo* move2 = MoveTo::create(.5f, handPos[i++] - Vec2(560, 350));
-				RotateBy* rot21 = RotateBy::create(runTime, rotation);
+				MoveTo* move2 = MoveTo::create(.5f, handPos[j] - Vec2(560, 350));
 				n->runAction(Sequence::create(delay2, move2, nullptr));
-				n->runAction(Sequence::create(delay21, rot21, nullptr));
+				j = (j + 1) % handPos.size();
 			}
-		}
+		} else {
+			int i = 0;
+			int tmpChosen = chosenStiltHost < chosenStilt ? chosenStiltHost : (chosenStiltHost - 1);
+			int diff = (chosenHost + handPos.size() - tmpChosen) % handPos.size();
+			int rotation = diff * 90;
+			float runTime = diff * .5f + .5f;
+			if (diff == 0) runTime = .5f;
+			for (Node* n : vecStilts) {
+				if (n->isVisible()) {
+					DelayTime* delay2 = DelayTime::create(.1f);
+					//MoveTo* move2 = MoveTo::create(.5f, handPos[i++] - Vec2(560, 350));
+					MoveTo* move2 = MoveTo::create(runTime, handPos[i++] - Vec2(560, 350));
+					n->runAction(Sequence::create(delay2, move2, nullptr));
+					if (diff > 0) {
+						//DelayTime* delay21 = DelayTime::create(1.1f);
+						DelayTime* delay21 = DelayTime::create(.1f);
+						RotateBy* rot21 = RotateBy::create(runTime, rotation);
+						n->runAction(Sequence::create(delay21, rot21, nullptr));
+					}
+				}
+			}
 
-		if (diff > 0) {
-			DelayTime* delay22 = DelayTime::create(1.1f);
-			RotateBy* rot22 = RotateBy::create(runTime, -rotation);
-			nodeStilt->runAction(Sequence::create(delay22, rot22, nullptr));
+			if (diff > 0) {
+				//DelayTime* delay22 = DelayTime::create(1.1f);
+				DelayTime* delay22 = DelayTime::create(.1f);
+				RotateBy* rot22 = RotateBy::create(runTime, -rotation);
+				nodeStilt->runAction(Sequence::create(delay22, rot22, nullptr));
+			}
 		}
 
 		DelayTime* delay3 = DelayTime::create(3);
@@ -2164,9 +2219,11 @@ void GameScene::onUserWin(long uId, unsigned char sound)
 
 void GameScene::onCrestResponse(CrestResponseData data)
 {
+	hidePopup(tableCrest);
+	showPopup(tableEndMatch);
 	lbCrestTime->setVisible(false);
-	tableCrest->setVisible(false);
-	tableEndMatch->setVisible(true);
+	//tableCrest->setVisible(false);
+	//tableEndMatch->setVisible(true);
 	progressTimer->setVisible(false);
 	progressTimer->stopAllActions();
 	lbCrestTime->pauseSchedulerAndActions();
@@ -2220,6 +2277,7 @@ void GameScene::onEndMatch(EndMatchData data)
 	if (state == NONE || state == READY) return;
 	this->endMatchData = data;
 	showSplash();
+	setSplashZOrder(constant::ZORDER_POPUP - 1);
 	lbCrestTime->setVisible(true);
 	lbCrestTime->setString("40");
 	lbCrestTime->setScale(1);
@@ -2239,7 +2297,8 @@ void GameScene::onEndMatch(EndMatchData data)
 	runTimeWaiting(data.WinId, timeTurn);
 	showWinnerCards();
 	if (data.WinId == sfsIdMe) {
-		tableCrest->setVisible(true);
+		//tableCrest->setVisible(true);
+		showPopup(tableCrest);
 	}
 	playSoundAction(data.SoundId);
 }
@@ -2283,7 +2342,8 @@ void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 		for (Sprite* sp : spCards) {
 			sp->setVisible(false);
 		}
-		tableEndMatch->setVisible(true);
+		//tableEndMatch->setVisible(true);
+		showPopup(tableEndMatch);
 		lbWinner->setString("");
 		lbDiem->setString(Utils::getSingleton().getStringForKey("tie"));
 		lbCuocSai->setString("");
@@ -2775,7 +2835,8 @@ void GameScene::initCrestTable()
 			crestIds.push_back(chosenCuocs[i] + chosenCuocNumbs[i]);
 		}
 		lbChonCuoc->setString("");
-		tableCrest->setVisible(false);
+		//tableCrest->setVisible(false);
+		hidePopup(tableCrest);
 		lbCrestTime->setVisible(false);
 		lbCrestTime->pauseSchedulerAndActions();
 		SFSRequest::getSingleton().RequestGameWinCrest(crestIds);
