@@ -2540,6 +2540,11 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 void GameScene::onGameSpectatorDataResponse(std::vector<PlayerData> spectators)
 {
 	this->vecSpectators = spectators;
+	for (UserNode* n : vecUsers) {
+		if (n->isVisible() && n->getAlpha() < 255) {
+			n->setVisible(false);
+		}
+	}
 	if (myServerSlot < 0) {
 		for (PlayerData player : spectators) {
 			if (player.Info.UserID == Utils::getSingleton().userDataMe.UserID) {
