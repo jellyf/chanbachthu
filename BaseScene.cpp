@@ -29,6 +29,16 @@ bool BaseScene::init()
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
 	setIsTouch(true);
 
+	auto keyListener = EventListenerKeyboard::create();
+	keyListener->onKeyReleased = [=](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event)
+	{
+		if (keyCode == EventKeyboard::KeyCode::KEY_BACK)
+		{
+			onKeyBack();
+		}
+	};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
+
 	tmps = Vector<Node*>();
 	tmpIndex = 0;
 	return true;
@@ -343,6 +353,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 {
 	showPopup(popupUserInfo);
 	Node* btnHistory = popupUserInfo->getChildByName("btnhistory");
+	Node* btnActive = popupUserInfo->getChildByName("btnactive");
 	Label* lbName = (Label*)popupUserInfo->getChildByName("lbname");
 	Label* lbQuan = (Label*)popupUserInfo->getChildByName("lbquan");
 	Label* lbXu = (Label*)popupUserInfo->getChildByName("lbxu");
@@ -352,6 +363,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	Label* lbTotal = (Label*)popupUserInfo->getChildByName("lbtotal");
 
 	btnHistory->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID);
+	btnActive->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && !Utils::getSingleton().userDataMe.IsActived);
 	lbName->setString(data.DisplayName);
 	lbQuan->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyReal));
 	lbXu->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyFree));
@@ -539,6 +551,10 @@ void BaseScene::showPopupHistory()
 }
 
 void BaseScene::onChangeMoneyType(int type)
+{
+}
+
+void BaseScene::onKeyBack()
 {
 }
 
@@ -871,16 +887,35 @@ void BaseScene::initPopupUserInfo()
 	ui::Button* btnHistory = ui::Button::create("popup/btn_small_invite.png");
 	btnHistory->setTitleText(Utils::getSingleton().getStringForKey("lich_su"));
 	btnHistory->setTitleFontName("fonts/arial.ttf");
-	btnHistory->setTitleFontSize(30);
+	btnHistory->setTitleFontSize(25);
 	btnHistory->setTitleColor(Color3B::BLACK);
-	btnHistory->setPosition(Vec2(-186, -85));
-	btnHistory->setContentSize(Size(150, 60));
+	btnHistory->setPosition(Vec2(-186, -80));
+	btnHistory->setContentSize(Size(150, 50));
 	btnHistory->setScale9Enabled(true);
 	btnHistory->setName("btnhistory");
 	addTouchEventListener(btnHistory, [=]() {
 		showPopupHistory();
 	});
 	popupUserInfo->addChild(btnHistory);
+
+	ui::Button* btnActive = ui::Button::create("popup/btn_small_invite.png");
+	btnActive->setTitleText(Utils::getSingleton().getStringForKey("kich_hoat"));
+	btnActive->setTitleFontName("fonts/arial.ttf");
+	btnActive->setTitleFontSize(25);
+	btnActive->setTitleColor(Color3B::BLACK);
+	btnActive->setPosition(Vec2(-186, -135));
+	btnActive->setContentSize(Size(150, 50));
+	btnActive->setScale9Enabled(true);
+	btnActive->setName("btnactive");
+	addTouchEventListener(btnActive, [=]() {
+		string str = Utils::getSingleton().gameConfig.smsKH;
+		int index = str.find_last_of(' ');
+		string number = str.substr(index + 1, str.length() - index);
+		string content = str.substr(0, index);
+		content = Utils::getSingleton().replaceString(content, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
+		Utils::getSingleton().openSMS(number, content);
+	});
+	popupUserInfo->addChild(btnActive);
 
 	Label* lbName = Label::create("Stormus", "fonts/arialbd.ttf", 25);
 	lbName->setAnchorPoint(Vec2(0, .5f));

@@ -19,6 +19,8 @@ public:
 	void onErrorResponse(unsigned char code, std::string msg);
 	void onHttpResponse(int tag, std::string content);
 	void onHttpResponseFailed();
+protected:
+	virtual void onKeyBack();
 private:
 	void initRegisterNode();
 	void requestGameConfig();

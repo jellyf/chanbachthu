@@ -298,6 +298,11 @@ void LoginScene::onHttpResponseFailed()
 	}
 }
 
+void LoginScene::onKeyBack()
+{
+	Director::sharedDirector()->end();
+}
+
 void LoginScene::initRegisterNode()
 {
 	registerNode = Node::create();
