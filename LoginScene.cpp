@@ -126,7 +126,7 @@ void LoginScene::onInit()
 	initRegisterNode();
 
 	ui::Button* btnPhone = ui::Button::create("login/btn_phone.png", "login/btn_phone_clicked.png");
-	btnPhone->setPosition(Vec2(45, 40));
+	btnPhone->setPosition(Vec2(45, 40 * scaleScene.x));
 	addTouchEventListener(btnPhone, [=]() {
 		string phone = Utils::getSingleton().gameConfig.phone;
 		if (phone.length() == 0) return;
