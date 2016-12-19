@@ -1122,6 +1122,7 @@ void MainScene::initPopupCharge()
 	//for (int k = 0; k < 2; k++) {
 		for (int i = 0; i < moneys.size(); i++) {
 			string strMoney = to_string(moneys[i]);
+			string strMoney2 = to_string(moneys[i] / 2);
 			string smsStr = Utils::getSingleton().replaceString(smsContent, "vnd", strMoney);
 
 			Node* itemSms = Node::create();
@@ -1138,7 +1139,7 @@ void MainScene::initPopupCharge()
 			lbItemSms1->setPosition(5, 60);
 			itemSms->addChild(lbItemSms1);
 
-			Label* lbItemSms2 = Label::create(strMoney + "k Quan", "fonts/aurora.ttf", 25);
+			Label* lbItemSms2 = Label::create(strMoney2 + "k Quan", "fonts/aurora.ttf", 25);
 			lbItemSms2->setAnchorPoint(Vec2(0, .5f));
 			lbItemSms2->setColor(Color3B::YELLOW);
 			lbItemSms2->setPosition(5, 60);
