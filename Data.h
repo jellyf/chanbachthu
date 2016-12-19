@@ -22,14 +22,15 @@ struct UserData
 {
 	long UserID;
 	long SfsUserId;
-	double MoneyFree;
-	double MoneyReal;
 	long Exp;
 	long Win;
 	long Total;
 	short Level;
+	double MoneyFree;
+	double MoneyReal;
 	unsigned char MoneyType;
 	unsigned char Device;
+	unsigned char IsActived;
 	std::string Name;
 	std::string DisplayName;
 	std::string GroupAvatar;

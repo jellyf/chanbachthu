@@ -152,7 +152,10 @@ void SFSResponse::getUserDataFromSFSObject(boost::shared_ptr<ISFSObject> isfsObj
 	if (byteArray->Position() < byteArray->Length()) {
 		byteArray->ReadByte(userData.MoneyType);
 	}
-	//CCLOG("%s %s %d %.0f %.0f %d", userData.Name.c_str(), userData.DisplayName.c_str(), userData.UserID, userData.MoneyFree, userData.MoneyReal, userData.MoneyType);
+	while (byteArray->Position() < byteArray->Length()) {
+		byteArray->ReadByte(userData.IsActived);
+	}
+	//CCLOG("%s %s %d %.0f %.0f %d %s", userData.Name.c_str(), userData.DisplayName.c_str(), userData.UserID, userData.MoneyFree, userData.MoneyReal, userData.MoneyType, userData.IsActived ? "actived" : "non-active");
 }
 
 void SFSResponse::onUserDataResponse(boost::shared_ptr<ISFSObject> isfsObject)
