@@ -214,6 +214,7 @@ void LobbyScene::onJoinRoom(long roomId, std::string roomName)
 
 void LobbyScene::onJoinRoomError(std::string msg)
 {
+	hideWaiting();
 	showPopupNotice(msg, [=]() {}, false);
 }
 
