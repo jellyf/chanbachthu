@@ -355,7 +355,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	lbName->setString(data.DisplayName);
 	lbQuan->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyReal));
 	lbXu->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyFree));
-	lbId->setString("ID: " + to_string(data.UserID));
+	lbId->setString("ID: " + (data.UserID == Utils::getSingleton().userDataMe.UserID ? to_string(data.UserID) : ""));
 	lbLevel->setString(Utils::getSingleton().getStringForKey("cap_do") + ": " + to_string(data.Level));
 	lbWin->setString(Utils::getSingleton().getStringForKey("thang") + ": " + to_string(data.Win));
 	lbTotal->setString(Utils::getSingleton().getStringForKey("tong") + ": " + to_string(data.Total));
