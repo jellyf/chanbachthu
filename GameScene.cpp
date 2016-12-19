@@ -772,21 +772,7 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 		if (myServerSlot == 0 && (state == NONE || state == READY)
 			&& iconGa->getBoundingBox().containsPoint(pos)) {
 			SFSRequest::getSingleton().RequestGameGa();
-		}
-
-		for (int i = 0; i < 4; i++) {
-			if (pos.distance(vecUserPos[i]) < 100) {
-				if (vecUsers[i]->isVisible() && vecUsers[i]->getName().length() > 0) {
-					if (vecUsers[i]->getName().compare(Utils::getSingleton().userDataMe.Name) == 0) {
-						showPopupUserInfo(Utils::getSingleton().userDataMe, false);
-					} else {
-						SFSRequest::getSingleton().RequestUserInfo(vecUsers[i]->getName());
-					}
-					break;
-				} else {
-					SFSRequest::getSingleton().RequestGameLobbyUser();
-				}
-			}
+			return true;
 		}
 
 		if (startGameData.LastWinner == sfsIdMe) {
@@ -798,8 +784,7 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 						return true;
 					}
 				}
-			}
-			else if (state == CHOOSE_HOST) {
+			} else if (state == CHOOSE_HOST) {
 				Point pos2 = touch->getLocation();
 				pos2 = nodeStilt->convertToNodeSpace(pos2);
 				for (int i = 0; i < dealPos.size(); i++) {
@@ -812,6 +797,7 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 				}
 			}
 		}
+
 		/*if (state == PLAY && pos.distance(vecUsers[0]->getPosition()) < 300) {
 			float rot = CC_RADIANS_TO_DEGREES(Vec2::angle(pos - vecUsers[0]->getPosition(), Vec2(0, 1)));
 			if (pos.x < 560) rot *= -1;
@@ -831,6 +817,23 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 				}
 			}
 		}*/
+
+		for (int i = 0; i < 4; i++) {
+			if (pos.distance(vecUserPos[i]) < 60) {
+				if (vecUsers[i]->isVisible() && vecUsers[i]->getName().length() > 0) {
+					if (vecUsers[i]->getName().compare(Utils::getSingleton().userDataMe.Name) == 0) {
+						showPopupUserInfo(Utils::getSingleton().userDataMe, false);
+					} else {
+						SFSRequest::getSingleton().RequestUserInfo(vecUsers[i]->getName());
+					}
+					break;
+				} else {
+					SFSRequest::getSingleton().RequestGameLobbyUser();
+				}
+				return true;
+			}
+		}
+
 		if (state == PLAY) {
 			Point pos2 = touch->getLocation();
 			pos2 = playLayer->convertToNodeSpace(pos2);
@@ -1952,6 +1955,7 @@ void GameScene::onUserHold(HoldData data)
 		} else {
 			if (chosenCard >= 0) {
 				spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
+				chosenCard = -1;
 			}
 			for (int i = 0; i < spHandCards.size(); i++) {
 				if (atoi(spHandCards[i]->getName().c_str()) % 1000 == data.CardId) {
@@ -2119,6 +2123,9 @@ void GameScene::onUserPenet(PenetData data)
 	if (data.UId == sfsIdMe) {
 		for (int i = spHandCards.size() - 1; i >= 0; i--) {
 			if (atoi(spHandCards[i]->getName().c_str()) % 1000 == data.CardId) {
+				if (i == chosenCard) {
+					chosenCard = -1;
+				}
 				cards.push_back(spHandCards[i]);
 
 				int rot = spHandCards[i]->getRotation();
@@ -2128,8 +2135,13 @@ void GameScene::onUserPenet(PenetData data)
 				spHandCards[i]->setPosition(x, y);
 
 				spHandCards.erase(spHandCards.begin() + i);
-				if (cards.size() == 4) break;
+				//if (cards.size() == 4) break;
+			} else {
+				spHandCards[i]->setAnchorPoint(Vec2(.5f, -.2f));
 			}
+		}
+		if (chosenCard >= 0) {
+			chosenCard = -1;
 		}
 	} else {
 		for (int i = 0; i < 3; i++) {
@@ -2889,11 +2901,12 @@ void GameScene::initEndMatchTable()
 	tableEndMatch->addChild(lbDiem);
 
 	lbNoted = Label::createWithTTF("", "fonts/arial.ttf", 20);
+	lbNoted->setVerticalAlignment(TextVAlignment::CENTER);
 	lbNoted->setPosition(-300, -75);
 	lbNoted->setColor(Color3B(75, 0, 0));
 	lbNoted->setAnchorPoint(Vec2(0, .5f));
 	lbNoted->setWidth(600);
-	lbNoted->setHeight(25);
+	lbNoted->setHeight(50);
 	tableEndMatch->addChild(lbNoted);
 
 	lbNotedGa = Label::createWithTTF("", "fonts/arial.ttf", 20);
