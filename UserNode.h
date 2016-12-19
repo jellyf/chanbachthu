@@ -15,6 +15,7 @@ public:
 	double getPlayerMoney();
 private:
 	double mMoney;
+	std::string fullName;
 	cocos2d::Label* lbName;
 	cocos2d::Label* lbMoney;
 };

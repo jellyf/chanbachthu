@@ -48,6 +48,11 @@ void UserNode::setAlpha(int alpha)
 
 void UserNode::setPlayerName(std::string name)
 {
+	fullName = name;
+	int i = name.find_first_of(' ');
+	if (i == std::string::npos || i > 12) {
+		name = name.substr(0, 12);
+	}
 	lbName->setString(name);
 }
 
@@ -59,7 +64,7 @@ void UserNode::setPlayerMoney(double money)
 
 std::string UserNode::getPlayerName()
 {
-	return lbName->getString();
+	return fullName;
 }
 
 double UserNode::getPlayerMoney()
