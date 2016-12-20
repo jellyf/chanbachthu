@@ -159,6 +159,7 @@ private:
 	float cardScaleTableNew = .9f;
 	long sfsIdMe;
 	bool isBatBao;
+	bool hasClickInvite = false;
 	bool hasRegisterOut = false;
 	GameState state;
 	StartGameData startGameData;

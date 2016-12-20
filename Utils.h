@@ -37,6 +37,9 @@ public:
 	void openTel(std::string number);
 	void loginFacebook();
 	void onInitSceneCompleted();
+	void reconnect();
+	void reloginZone();
+	void rejoinRoom();
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;

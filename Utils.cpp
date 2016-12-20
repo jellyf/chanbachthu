@@ -320,3 +320,30 @@ void Utils::onInitSceneCompleted()
 {
 	isWaitingScene = false;
 }
+
+void Utils::reconnect()
+{
+	vector<vector<ZoneData>> zones = Utils::getSingleton().zones;
+	for (vector<ZoneData> v : zones) {
+		for (ZoneData z : v) {
+			if (z.ZoneName.compare(currentZoneName) == 0) {
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+				SFSRequest::getSingleton().Connect(z.ZoneIpIos, z.ZonePort);
+#else
+				SFSRequest::getSingleton().Connect(z.ZoneIp, z.ZonePort);
+#endif
+				break;
+			}
+		}
+	}
+}
+
+void Utils::reloginZone()
+{
+	SFSRequest::getSingleton().LoginZone(username, password, currentZoneName);
+}
+
+void Utils::rejoinRoom()
+{
+	SFSRequest::getSingleton().RequestJoinRoom(currentRoomName, true);
+}

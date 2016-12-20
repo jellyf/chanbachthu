@@ -828,6 +828,7 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 					}
 					break;
 				} else {
+					hasClickInvite = true;
 					SFSRequest::getSingleton().RequestGameLobbyUser();
 				}
 				return true;
@@ -2410,49 +2411,54 @@ void GameScene::onTableResponse(GameTableData data)
 
 void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
 {
-	showPopup(tableInvite);
-	ui::ScrollView* scroll = (ui::ScrollView*)tableInvite->getChildByName("scroll");
-	int sx = tableInvite->getChildByName("inside")->getContentSize().width;
+	if (hasClickInvite) {
+		hasClickInvite = false;
+		showPopup(tableInvite);
+		ui::ScrollView* scroll = (ui::ScrollView*)tableInvite->getChildByName("scroll");
+		int sx = tableInvite->getChildByName("inside")->getContentSize().width;
 
-	int y = listUser.size() * 60;
-	if (y < scroll->getContentSize().height)
-		y = scroll->getContentSize().height - 25;
-	scroll->setInnerContainerSize(Size(sx, y + 25));
+		int y = listUser.size() * 60;
+		if (y < scroll->getContentSize().height)
+			y = scroll->getContentSize().height - 25;
+		scroll->setInnerContainerSize(Size(sx, y + 25));
 
-	scroll->removeAllChildren();
-	bool isRealMoney = Utils::getSingleton().moneyType == 1;
-	for (UserData u : listUser) {
-		Label* lb1 = Label::create();
-		lb1->setString(u.DisplayName.length() > 0 ? u.DisplayName : u.Name);
-		lb1->setSystemFontSize(25);
-		lb1->setPosition(0, y);
-		lb1->setAnchorPoint(Vec2(0, .5f));
-		lb1->setWidth(sx - 350);
-		lb1->setHeight(30);
-		scroll->addChild(lb1);
+		scroll->removeAllChildren();
+		bool isRealMoney = Utils::getSingleton().moneyType == 1;
+		for (UserData u : listUser) {
+			Label* lb1 = Label::create();
+			lb1->setString(u.DisplayName.length() > 0 ? u.DisplayName : u.Name);
+			lb1->setSystemFontSize(25);
+			lb1->setPosition(0, y);
+			lb1->setAnchorPoint(Vec2(0, .5f));
+			lb1->setWidth(sx - 350);
+			lb1->setHeight(30);
+			scroll->addChild(lb1);
 
-		Sprite* sp = Sprite::create(isRealMoney ? "main/icon_gold.png" : "main/icon_silver.png");
-		sp->setPosition(sx - 320, y);
-		sp->setScale(.6f);
-		scroll->addChild(sp);
+			Sprite* sp = Sprite::create(isRealMoney ? "main/icon_gold.png" : "main/icon_silver.png");
+			sp->setPosition(sx - 320, y);
+			sp->setScale(.6f);
+			scroll->addChild(sp);
 
-		Label* lb2 = Label::create();
-		lb2->setString(Utils::getSingleton().formatMoneyWithComma(isRealMoney ? u.MoneyReal : u.MoneyFree));
-		lb2->setSystemFontSize(25);
-		lb2->setPosition(sx - 300, y);
-		lb2->setAnchorPoint(Vec2(0, .5f));
-		scroll->addChild(lb2);
+			Label* lb2 = Label::create();
+			lb2->setString(Utils::getSingleton().formatMoneyWithComma(isRealMoney ? u.MoneyReal : u.MoneyFree));
+			lb2->setSystemFontSize(25);
+			lb2->setPosition(sx - 300, y);
+			lb2->setAnchorPoint(Vec2(0, .5f));
+			scroll->addChild(lb2);
 
-		ui::Button* btn = ui::Button::create("board/btn_moi.png", "board/btn_moi_clicked.png");
-		btn->setPosition(Vec2(sx - 60, y));
-		btn->setScale(.8f);
-		addTouchEventListener(btn, [=]() {
-			btn->setVisible(false);
-			SFSRequest::getSingleton().RequestGameInvitePlayer(u.SfsUserId);
-		});
-		scroll->addChild(btn);
+			ui::Button* btn = ui::Button::create("board/btn_moi.png", "board/btn_moi_clicked.png");
+			btn->setPosition(Vec2(sx - 60, y));
+			btn->setScale(.8f);
+			addTouchEventListener(btn, [=]() {
+				btn->setVisible(false);
+				SFSRequest::getSingleton().RequestGameInvitePlayer(u.SfsUserId);
+			});
+			scroll->addChild(btn);
 
-		y -= 60;
+			y -= 60;
+		}
+	} else {
+
 	}
 }
 

@@ -666,6 +666,7 @@ void SFSResponse::onLobbyUserResponse(boost::shared_ptr<ISFSObject> isfsObject)
 		byteArray->ReadInt(user.Total);
 		byteArray->ReadInt(user.Win);
 		byteArray->ReadInt(user.SfsUserId);
+		byteArray->ReadUTF(user.DisplayName);
 
 		listUser.push_back(user);
 		//CCLOG("%s %.0f %.0f %d %d %d %d %d", user.Name.c_str(), user.MoneyFree, user.MoneyReal, user.UserID, user.Exp, user.Level, user.Total, user.Win);
@@ -686,6 +687,7 @@ void SFSResponse::onLobbyInviteResponse(boost::shared_ptr<ISFSObject> isfsObject
 	byteArray->ReadUTF(data.Msg);
 	byteArray->ReadUTF(data.RoomName);
 	byteArray->ReadUTF(data.Password);
+	byteArray->ReadUTF(data.InviterName);
 	////CCLOG("%s %d %.0f %d %s %s %s", data.InviterName.c_str(), data.InviterId, data.Money, data.RoomTime, data.Msg.c_str(), data.RoomName.c_str(), data.Password.c_str());
 	if (EventHandler::getSingleton().onLobbyInviteDataSFSResponse != NULL) {
 		EventHandler::getSingleton().onLobbyInviteDataSFSResponse(data);
@@ -759,11 +761,11 @@ void SFSResponse::onGamePlayingTableResponse(boost::shared_ptr<ISFSObject> isfsO
 
 void SFSResponse::onPlayingCardFromJson(std::string json, std::vector<std::vector<char>> &vec) 
 {
-	char numb = 0;
+	char numb = -100;
 	vector<char> vnumb;
 	for (int i = 0; i < json.length(); i++) {
 		if (json[i] >= '0' && json[i] <= '9') {
-			if (numb == 0) {
+			if (numb == -100) {
 				numb = json[i] - 48;
 				if (i > 0 && json[i - 1] == '-') {
 					numb = -numb;
@@ -775,14 +777,14 @@ void SFSResponse::onPlayingCardFromJson(std::string json, std::vector<std::vecto
 					numb = (numb * 10) - json[i] + 48;
 				}
 			}
-		} else if (numb != 0) {
+		} else if (numb != -100) {
 			vnumb.push_back(numb);
 			if (json[i] == ']') {
 				vector<char> newVec = vector<char>(vnumb);
 				vec.push_back(newVec);
 				vnumb.clear();
 			}
-			numb = 0;
+			numb = -100;
 		}
 	}
 }
