@@ -631,6 +631,7 @@ void GameScene::onInit()
 
 void GameScene::registerEventListenner()
 {
+	EventHandler::getSingleton().onConnected = std::bind(&GameScene::onConnected, this);
 	EventHandler::getSingleton().onConnectionLost = std::bind(&GameScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onUserDataSFSResponse = std::bind(&GameScene::onUserDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onUserExitRoom = std::bind(&GameScene::onUserExitRoom, this, std::placeholders::_1);
@@ -665,6 +666,7 @@ void GameScene::registerEventListenner()
 void GameScene::unregisterEventListenner()
 {
 	BaseScene::unregisterEventListenner();
+	EventHandler::getSingleton().onConnected = NULL;
 	EventHandler::getSingleton().onConnectionLost = NULL;
 	EventHandler::getSingleton().onUserDataSFSResponse = NULL;
 	EventHandler::getSingleton().onUserExitRoom = NULL;
@@ -1332,11 +1334,22 @@ int GameScene::getCardName(unsigned char cardId)
 	return (cardId / 3 + 1) * 10 + cardId % 3 + 1;
 }
 
+void GameScene::onConnected()
+{
+	Utils::getSingleton().reloginZone();
+}
+
 void GameScene::onConnectionLost(std::string reason)
 {
 	showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
-		SFSRequest::getSingleton().Disconnect();
-		Utils::getSingleton().goToLoginScene();
+		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0) {
+			isReconnecting = true;
+			Utils::getSingleton().reconnect();
+			showWaiting();
+		} else {
+			SFSRequest::getSingleton().Disconnect();
+			Utils::getSingleton().goToLoginScene();
+		}
 	}, false);
 }
 
@@ -1348,10 +1361,15 @@ void GameScene::onUserDataResponse(UserData data)
 void GameScene::onUserExitRoom(long sfsUId)
 {
 	if (sfsUId == sfsIdMe) {
-		showPopupNotice(Utils::getSingleton().getStringForKey("bi_day_khoi_ban"), [=]() {
+		if (isReconnecting) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
-		}, false);
+		} else {
+			showPopupNotice(Utils::getSingleton().getStringForKey("bi_day_khoi_ban"), [=]() {
+				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
+				Utils::getSingleton().goToLobbyScene();
+			}, false);
+		}
 		return;
 	}
 	int index = userIndexs[sfsUId];
@@ -1927,8 +1945,12 @@ void GameScene::onUserBashBack(BashBackData data)
 
 void GameScene::onUserHold(HoldData data)
 {
-	int zorder = 0;
 	int index = userIndexs[data.UId];
+	if (runningSpCard == NULL) {
+		//TODO
+		return;
+	}
+	int zorder = 0;
 	int index2 = index * 2 + 1;
 	int index3 = runningSpCard->getTag() % 100;
 	float scale = 1.0f;
@@ -2098,6 +2120,14 @@ void GameScene::onUserPick(PickData data)
 
 void GameScene::onUserPenet(PenetData data)
 {
+	if (runningSpCard == NULL) {
+		for (Sprite* sp : spCards) {
+			if (sp->isVisible() && sp->getTag() >= constant::TAG_CARD_TABLE && atoi(sp->getName().c_str()) == data.CardId) {
+				runningSpCard = sp;
+				break;
+			}
+		}
+	}
 	vector<int> zorders;
 	int index = userIndexs[data.UId];
 	int index2 = index * 2 + 1;
@@ -2594,6 +2624,7 @@ void GameScene::onGameSpectatorDataResponse(std::vector<PlayerData> spectators)
 
 void GameScene::onGameMyReconnectDataResponse(GameReconnectData data)
 {
+	if (isReconnecting) return;
 	this->myCardHand = data.CardHand;
 	if (data.PlayerState == 0) {
 		lbCardNoc->getParent()->setVisible(false);

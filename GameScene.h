@@ -21,6 +21,7 @@ public:
 	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
 	virtual bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* _event);
 
+	void onConnected();
 	void onConnectionLost(std::string reason);
 	void onUserDataResponse(UserData data);
 	void onUserExitRoom(long sfsUId);
@@ -161,6 +162,7 @@ private:
 	bool isBatBao;
 	bool hasClickInvite = false;
 	bool hasRegisterOut = false;
+	bool isReconnecting = false;
 	GameState state;
 	StartGameData startGameData;
 	CardHandData myCardHand;
