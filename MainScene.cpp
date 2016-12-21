@@ -270,6 +270,17 @@ void MainScene::onLoginZoneError(short int code, std::string msg)
 
 void MainScene::onErrorResponse(unsigned char code, std::string msg)
 {
+	if (code == 0) {
+		showPopupNotice(msg, [=]() {
+			string str = Utils::getSingleton().gameConfig.smsKH;
+			int index = str.find_last_of(' ');
+			string number = str.substr(index + 1, str.length() - index);
+			string content = str.substr(0, index);
+			content = Utils::getSingleton().replaceString(content, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
+			Utils::getSingleton().openSMS(number, content);
+		}, false);
+		return;
+	}
 	if (code == 38) {
 		showPopupNotice(msg, [=]() {
 			SFSRequest::getSingleton().Disconnect();
