@@ -1945,12 +1945,15 @@ void GameScene::onUserBashBack(BashBackData data)
 
 void GameScene::onUserHold(HoldData data)
 {
-	int index = userIndexs[data.UId];
 	if (runningSpCard == NULL) {
-		//TODO
-		return;
+		runningSpCard = getCardSprite(data.CardId);
+		runningSpCard->setRotation(0);
+		runningSpCard->setScale(cardScaleTable);
+		runningSpCard->setAnchorPoint(Vec2(.5f, .5f));
+		runningSpCard->setPosition(lbCardNoc->getParent()->getPosition());
 	}
 	int zorder = 0;
+	int index = userIndexs[data.UId];
 	int index2 = index * 2 + 1;
 	int index3 = runningSpCard->getTag() % 100;
 	float scale = 1.0f;
@@ -2127,6 +2130,13 @@ void GameScene::onUserPenet(PenetData data)
 				break;
 			}
 		}
+	}
+	if (runningSpCard == NULL) {
+		runningSpCard = getCardSprite(data.CardId);
+		runningSpCard->setRotation(0);
+		runningSpCard->setScale(cardScaleTable);
+		runningSpCard->setAnchorPoint(Vec2(.5f, .5f));
+		runningSpCard->setPosition(lbCardNoc->getParent()->getPosition());
 	}
 	vector<int> zorders;
 	int index = userIndexs[data.UId];
