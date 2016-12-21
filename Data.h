@@ -261,6 +261,7 @@ struct GameConfig
 	std::string smsVNPVMS;
 	std::string smsKH;
 	std::string smsMK;
+	std::string linkFb;
 };
 
 struct RankData

@@ -414,8 +414,8 @@ void BaseScene::initHeaderWithInfos()
 	vecPos.push_back(Vec2(460, 650));
 	vecPos.push_back(Vec2(195, 650));
 	vecPos.push_back(Vec2(390, 650));
-	vecPos.push_back(Vec2(665, 650));
-	vecPos.push_back(Vec2(771, 650));
+	vecPos.push_back(Vec2(695, 650));
+	vecPos.push_back(Vec2(791, 650));
 	vecPos.push_back(Vec2(904, 650));
 	vecPos.push_back(Vec2(220, 650));
 	vecPos.push_back(Vec2(416, 650));
@@ -423,6 +423,7 @@ void BaseScene::initHeaderWithInfos()
 	vecPos.push_back(Vec2(953, 647));
 	vecPos.push_back(Vec2(953, 624));
 	vecPos.push_back(Vec2(560, 590));
+	vecPos.push_back(Vec2(600, 650));
 
 	ui::Button* btnBack = ui::Button::create("main/back.png");
 	btnBack->setPosition(vecPos[0]);
@@ -467,6 +468,14 @@ void BaseScene::initHeaderWithInfos()
 	Sprite* iconSilver = Sprite::create("main/icon_silver.png");
 	iconSilver->setPosition(30, 0);
 	moneyNode->addChild(iconSilver, 2);
+
+	ui::Button* btnFacebook = ui::Button::create("main/facebook.png");
+	btnFacebook->setPosition(vecPos[14]);
+	addTouchEventListener(btnFacebook, [=]() {
+		Application::sharedApplication()->openURL(Utils::getSingleton().gameConfig.linkFb);
+	});
+	mLayer->addChild(btnFacebook, constant::MAIN_ZORDER_HEADER);
+	Utils::getSingleton().autoScaleNode(btnFacebook);
 
 	ui::Button* btnRank = ui::Button::create("main/rank.png");
 	btnRank->setPosition(vecPos[5]);

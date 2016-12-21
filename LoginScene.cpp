@@ -140,7 +140,7 @@ void LoginScene::onInit()
 	labelPhone->setAnchorPoint(Vec2(0, 0));
 	mLayer->addChild(labelPhone);
 
-	Label* labelVersion = Label::create("ver 1.0.0", "fonts/arial.ttf", 18);
+	Label* labelVersion = Label::create(string("ver ") + Application::sharedApplication()->getVersion(), "fonts/arial.ttf", 18);
 	labelVersion->setPosition(1115, 3);
 	labelVersion->setAnchorPoint(Vec2(1, 0));
 	mLayer->addChild(labelVersion);
@@ -278,6 +278,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		config.smsVNPVMS = d["smsVNPVMS"].GetString();
 		config.smsKH = d["smsKH"].GetString();
 		config.smsMK = d["smsMK"].GetString();
+		config.linkFb = d["fb"].GetString();
 
 		Utils::getSingleton().gameConfig = config;
 		labelPhone->setString(config.phone);
