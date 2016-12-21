@@ -422,7 +422,7 @@ void GameScene::onInit()
 	bgDiaNoc->setVisible(false);
 	Utils::getSingleton().autoScaleNode(bgDiaNoc);*/
 
-	ui::Button* bgDiaNoc = ui::Button::create("board/bg_dianoc.png");
+	ui::Button* bgDiaNoc = ui::Button::create("board/bg_dianoc.png", "board/bg_dianoc.png");
 	bgDiaNoc->setPosition(Vec2(564, 422));
 	mLayer->addChild(bgDiaNoc);
 	bgDiaNoc->setVisible(false);
