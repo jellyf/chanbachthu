@@ -266,6 +266,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	if (tag == 1) {
 		GameConfig config;
 		config.paymentEnabled = d["payment"].GetBool();
+		config.paymentEnabledIOS = d["paymentIOS"].GetBool();
 		config.zone = d["name"].GetString();
 		config.host = d["host"].GetString();
 		config.port = d["port"].GetInt();
@@ -279,6 +280,13 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		config.smsKH = d["smsKH"].GetString();
 		config.smsMK = d["smsMK"].GetString();
 		config.linkFb = d["fb"].GetString();
+
+		string verstr = Application::sharedApplication()->getVersion();
+		int i = verstr.find_last_of('.') + 1;
+		verstr = verstr.substr(i, verstr.length() - i);
+		int nver = atoi(verstr.c_str());
+		config.paymentEnabled = config.version != nver;
+		config.paymentEnabledIOS = config.versionIOS != nver;
 
 		Utils::getSingleton().gameConfig = config;
 		labelPhone->setString(config.phone);

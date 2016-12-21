@@ -249,6 +249,7 @@ struct PlayingTableData
 struct GameConfig
 {
 	bool paymentEnabled;
+	bool paymentEnabledIOS;
 	int port;
 	int websocket;
 	int version;
