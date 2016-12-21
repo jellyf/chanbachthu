@@ -72,6 +72,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	//auto scene = LobbyScene::create();
 	utils->currentScene = scene;
     director->runWithScene(scene);
+    
+    //CCLOG("getVisibleSize: %f %f", director->getVisibleSize().width, director->getVisibleSize().height);
+    //CCLOG("getWinSize: %f %f", director->getWinSize().width, director->getWinSize().height);
+    //CCLOG("getWinSizeInPixels: %f %f", director->getWinSizeInPixels().width, director->getWinSizeInPixels().height);
+    //CCLOG("getVisibleSize: %f %f", glview->getVisibleSize().width, glview->getVisibleSize().height);
+    //CCLOG("getViewPortRect: %f %f", glview->getViewPortRect().size.width, glview->getViewPortRect().size.height);
+    //CCLOG("getVisibleRect: %f %f", glview->getVisibleRect().size.width, glview->getVisibleRect().size.height);
+    //CCLOG("getFrameSize: %f %f", glview->getFrameSize().width, glview->getFrameSize().height);
 
     return true;
 }
