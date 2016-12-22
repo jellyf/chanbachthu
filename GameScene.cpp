@@ -1377,6 +1377,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 		vecUsers[index]->setName("");
 		vecUsers[index]->setVisible(false);
 		spInvites[index]->setVisible(true);
+		spSanSangs[index]->setVisible(false);
 	}
 }
 
@@ -1442,7 +1443,6 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		spInvites[i]->setVisible(true);
 		vecUsers[i]->setVisible(false);
 		spBatBaos[i]->setVisible(false);
-		spSanSangs[i]->setVisible(false);
 	}
 	int num = 0;
 	for (int i = 0; i < 4; i++) {
@@ -1461,6 +1461,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 				vecUsers[index]->setPlayerName(player.Info.DisplayName);
 				vecUsers[index]->setPlayerMoney(player.PMoney);
 				vecUsers[index]->setName(player.Info.Name);
+				spSanSangs[index]->setVisible(player.Ready);
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
 					spChuPhong->setPosition(vecUserPos[index] + Vec2(50, 0));
@@ -1505,7 +1506,6 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			lbCrestTime->resumeSchedulerAndActions();
 		}
 	} else {
-		spSanSangs[0]->setVisible(false);
 		btnReady->setVisible(false);
 		lbCrestTime->setVisible(false);
 		lbCrestTime->pauseSchedulerAndActions();
