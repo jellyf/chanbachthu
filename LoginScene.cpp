@@ -89,21 +89,11 @@ void LoginScene::onInit()
 	btnLogin->setPosition(Vec2(-110, -115));
 	addTouchEventListener(btnLogin, [=]() {
 		if (Utils::getSingleton().gameConfig.phone.length() == 0) {
+            waitingLogin = 1;
 			requestGameConfig();
 			return;
 		}
-		string username = tfUsername->getText();// Utils::getSingleton().trim(tfUsername->getText());
-		if (username.length() == 0) {
-			showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_tai_khoan"), [=]() {});
-			return;
-		}
-		string password = tfPassword->getText();// Utils::getSingleton().trim(tfPassword->getText());
-		if (password.length() == 0) {
-			showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_mat_khau"), [=]() {});
-			return;
-		}
-		showWaiting();
-		SFSRequest::getSingleton().Connect();
+        loginNormal();
 	});
 	loginNode->addChild(btnLogin);
 
@@ -118,8 +108,12 @@ void LoginScene::onInit()
 	ui::Button* btnFB = ui::Button::create("login/btn_fb.png", "login/btn_fb_clicked.png");
 	btnFB->setPosition(Vec2(0, -195));
 	addTouchEventListener(btnFB, [=]() {
-		showWaiting(300);
-		Utils::getSingleton().loginFacebook();
+        if (Utils::getSingleton().gameConfig.phone.length() == 0) {
+            waitingLogin = 2;
+            requestGameConfig();
+            return;
+        }
+        loginFacebook();
 	});
 	loginNode->addChild(btnFB);
 
@@ -150,6 +144,7 @@ void LoginScene::onInit()
 	tfUsername->setText(lastUsername.c_str());
 	tfPassword->setText(lastPassword.c_str());
 
+    SFSRequest::getSingleton().ForceIPv6(false);
 	if (Utils::getSingleton().gameConfig.phone.length() == 0) {
 		requestGameConfig();
 	}
@@ -210,8 +205,16 @@ void LoginScene::onLoginZone()
 
 void LoginScene::onConnectionFailed()
 {
-	hideWaiting();
-	showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"), [=]() {});
+    if(isIPv4){
+        isIPv4 = false;
+        SFSRequest::getSingleton().ForceIPv6(true);
+        SFSRequest::getSingleton().Connect();
+    }else{
+        isIPv4 = true;
+        SFSRequest::getSingleton().ForceIPv6(false);
+        hideWaiting();
+        showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"), [=]() {});
+    }
 }
 
 void LoginScene::onConfigZoneReceived()
@@ -292,6 +295,15 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		labelPhone->setString(config.phone);
 		//string location = Utils::getSingleton().getUserCountry();
 		//Utils::getSingleton().gameConfig.paymentEnabled = config.paymentEnabled && location.compare("vn") == 0;
+        
+        if(waitingLogin > 0){
+            if(waitingLogin == 1){
+                loginNormal();
+            }else if(waitingLogin == 2){
+                loginFacebook();
+            }
+            waitingLogin = 0;
+        }
 	}
 	hideWaiting();
 }
@@ -310,6 +322,28 @@ void LoginScene::onHttpResponseFailed()
 void LoginScene::onKeyBack()
 {
 	Director::sharedDirector()->end();
+}
+
+void LoginScene::loginNormal()
+{
+    string username = tfUsername->getText();// Utils::getSingleton().trim(tfUsername->getText());
+    if (username.length() == 0) {
+        showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_tai_khoan"), [=]() {});
+        return;
+    }
+    string password = tfPassword->getText();// Utils::getSingleton().trim(tfPassword->getText());
+    if (password.length() == 0) {
+        showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_mat_khau"), [=]() {});
+        return;
+    }
+    showWaiting();
+    SFSRequest::getSingleton().Connect();
+}
+
+void LoginScene::loginFacebook()
+{
+    showWaiting();
+    Utils::getSingleton().loginFacebook();
 }
 
 void LoginScene::initRegisterNode()

@@ -59,8 +59,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
 	SFSConnector* connector = new SFSConnector();
-	connector->InitializeSmartFox();
-
 	SFSRequest* request = new SFSRequest();
 	SFSResponse* response = new SFSResponse();
 	EventHandler* handler = new EventHandler();

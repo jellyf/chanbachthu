@@ -22,11 +22,15 @@ public:
 protected:
 	virtual void onKeyBack();
 private:
+    void loginNormal();
+    void loginFacebook();
 	void initRegisterNode();
 	void requestGameConfig();
-
+    
+    int waitingLogin = 0;
 	int currentConfigLink = 0;
 	std::string fbToken = "";
+    bool isIPv4 = true;
 
 	cocos2d::Node* loginNode;
 	cocos2d::Node* registerNode;

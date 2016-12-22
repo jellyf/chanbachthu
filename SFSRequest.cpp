@@ -75,6 +75,11 @@ void SFSRequest::Ping()
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::REQUEST_PING, parameters);
 }
 
+void SFSRequest::ForceIPv6(bool value)
+{
+    SFSConnector::getSingleton().ForceIPv6(value);
+}
+
 void SFSRequest::RequestLeaveRoom()
 {
 	SFSConnector::getSingleton().RequestLeaveRoom();

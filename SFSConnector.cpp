@@ -41,6 +41,7 @@ void SFSConnector::InitializeSmartFox()
 	// Initialize Smart Fox
 	mSmartFox = boost::shared_ptr<Sfs2X::SmartFox>(new Sfs2X::SmartFox(true));
 	mSmartFox->ThreadSafeMode(true);
+    mSmartFox->ForceIPv6(useIPv6);
 
 	// Add event listeners
 	mSmartFox->AddEventListener(SFSEvent::CONNECTION, boost::shared_ptr<EventListenerDelegate>(new EventListenerDelegate(SFSConnector::OnSmartFoxConnection, (unsigned long long)this)));
@@ -557,14 +558,8 @@ void SFSConnector::OnPingPong(unsigned long long ptrContext, boost::shared_ptr<S
 
 void SFSConnector::Connect(std::string host, int port)
 {
+    CCLOG("Connect to SmartFox: %s %d", host.c_str(), port);
 	SFSConnector::getSingleton().InitializeSmartFox();
-	/*if (mSmartFox->IsConnected()) {
-		if (EventHandler::getSingleton().onLoginZone != NULL) {
-			EventHandler::getSingleton().onLoginZone();
-		}
-		return;
-	}*/
-	CCLOG("Connect to SmartFox: %s %d", host.c_str(), port);
 	mSmartFox->Connect(host.c_str(), port);
 }
 
@@ -602,6 +597,11 @@ void SFSConnector::RequestLeaveRoom()
 void SFSConnector::EnableLagMonitor()
 {
 	//mSmartFox->EnableLagMonitor(true, 30);
+}
+
+void SFSConnector::ForceIPv6(bool value)
+{
+    this->useIPv6 = value;
 }
 
 void SFSConnector::SendPublicMessage(std::string msg, boost::shared_ptr<ISFSObject> params, boost::shared_ptr<Room> room)

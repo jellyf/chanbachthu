@@ -26,6 +26,7 @@ public:
 	void SendPublicMessage(std::string message);
 	void Ping(long long time);
 	void Ping();
+    void ForceIPv6(bool value);
 
 	void RequestRegister(std::string username, std::string password, std::string email);
 	void RequestLogin(std::string username, std::string password);
