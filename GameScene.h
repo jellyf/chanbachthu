@@ -98,6 +98,7 @@ private:
 	std::vector<cocos2d::Sprite*> spSanSangs;
 	std::vector<cocos2d::Sprite*> spBatBaos;
 	std::vector<cocos2d::Sprite*> spInvites;
+	std::vector<cocos2d::Sprite*> runningCards;
 	std::vector<cocos2d::ui::Button*> vecCrests;
 	std::vector<char> tableCardNumb;
 	std::vector<char> maxTableCardNumb;

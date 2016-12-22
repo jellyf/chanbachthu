@@ -1945,15 +1945,19 @@ void GameScene::onUserBashBack(BashBackData data)
 
 void GameScene::onUserHold(HoldData data)
 {
+	int index = userIndexs[data.UId];
 	if (runningSpCard == NULL) {
-		runningSpCard = getCardSprite(data.CardId);
-		runningSpCard->setRotation(0);
-		runningSpCard->setScale(cardScaleTable);
-		runningSpCard->setAnchorPoint(Vec2(.5f, .5f));
-		runningSpCard->setPosition(lbCardNoc->getParent()->getPosition());
+		if (runningCards[index] != NULL && data.CardIdHold == atoi(runningCards[index]->getName().c_str())) {
+			runningSpCard = runningCards[index];
+		}else if(runningCards.size() > 0){
+			int tmpIndex = (index + 3) % 4;
+			if (!vecUsers[tmpIndex]->isVisible() || vecUsers[tmpIndex]->getAlpha() < 255) {
+				tmpIndex = (tmpIndex + 3) % 4;
+			}
+			runningSpCard = runningCards[tmpIndex];
+		}
 	}
 	int zorder = 0;
-	int index = userIndexs[data.UId];
 	int index2 = index * 2 + 1;
 	int index3 = runningSpCard->getTag() % 100;
 	float scale = 1.0f;
@@ -2124,8 +2128,8 @@ void GameScene::onUserPick(PickData data)
 void GameScene::onUserPenet(PenetData data)
 {
 	if (runningSpCard == NULL) {
-		for (Sprite* sp : spCards) {
-			if (sp->isVisible() && sp->getTag() >= constant::TAG_CARD_TABLE && atoi(sp->getName().c_str()) == data.CardId) {
+		for (Sprite* sp : runningCards) {
+			if (sp != NULL && atoi(sp->getName().c_str()) == data.CardId) {
 				runningSpCard = sp;
 				break;
 			}
@@ -2518,6 +2522,9 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 	} else {
 		tableCardPos[0] = tableCardPos[9];
 	}
+	for (int i = 0; i < 4; i++) {
+		runningCards.push_back(NULL);
+	}
 	int num = 0;
 	for (int i = 0; i < 4; i++) {
 		int index = -1;
@@ -2545,18 +2552,21 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 				if (player.SingleCards.size() > maxTableCardNumb[index2]) {
 					scale = ((float)maxTableCardNumb[index2]) / player.SingleCards.size();
 				}
-				for (char c : player.SingleCards) {
-					Sprite* spCard = getCardSprite(c);
+				for (int j = 0; j < player.SingleCards.size(); j++) {
+					Sprite* spCard = getCardSprite(player.SingleCards[j]);
 					spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2] + 1);
 					spCard->setTag(constant::TAG_CARD_TABLE + index2);
-					spCard->setName(to_string((int)c));
+					spCard->setName(to_string((int)std::abs(player.SingleCards[j])));
 					spCard->setAnchorPoint(Vec2(.5f, .5f));
 					spCard->setPosition(tableCardPos[index2] + tableCardNumb[index2] * tableCardDistance[index2] * scale);
-					spCard->setColor(c > 0 ? Color3B::WHITE : Color3B(200, 200, 255));
+					spCard->setColor(player.SingleCards[j] > 0 ? Color3B::WHITE : Color3B(200, 200, 255));
 					spCard->setRotation(0);
 					spCard->setScale(cardScaleTable);
 
 					tableCardNumb[index2] ++;
+					if (j == player.SingleCards.size() - 1) {
+						runningCards[index] = spCard;
+					}
 				}
 
 				index2 = index * 2 + 1;
@@ -2575,7 +2585,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 						Sprite* spCard = getCardSprite(v[i]);
 						spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2] * 4 + i + 1);
 						spCard->setTag(constant::TAG_CARD_TABLE + index2);
-						spCard->setName(to_string((int)v[i]));
+						spCard->setName(to_string((int)std::abs(v[i])));
 						spCard->setAnchorPoint(Vec2(.5f, .5f));
 						spCard->setPosition(pos - (v.size() == 2 ? Vec2(0, 40) : Vec2(0, 15)) * i);
 						spCard->setColor(v[i] > 0 ? Color3B::WHITE : Color3B(200, 200, 255));
