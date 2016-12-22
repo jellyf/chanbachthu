@@ -55,6 +55,8 @@ void BaseScene::onEnter()
 	mLayer = Layer::create();
 	addChild(mLayer, 10);
 	auto visibleSize = Director::sharedDirector()->getVisibleSize();
+	visibleSize.width = std::ceil(visibleSize.width);
+	visibleSize.height = std::ceil(visibleSize.height);
 	
 	scaleScene = Vec2(1, 1);
 	if (visibleSize.width < 1120) {
