@@ -396,6 +396,7 @@ void GameScene::onInit()
 		noaction = 0;
 	});
 	mLayer->addChild(btnWin, constant::GAME_ZORDER_BUTTON);
+	Utils::getSingleton().autoScaleNode(btnWin);
 
 	btnDropWin = ui::Button::create("board/btn_bou.png", "board/btn_bou_clicked.png");
 	btnDropWin->setPosition(Vec2(220, 35));
@@ -1484,6 +1485,9 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 					spChuPhong->setVisible(true);
 					spChuPhong->setPosition(vecUserPos[index] + Vec2(50, 0));
 				}
+				if (player.Info.SfsUserId == sfsIdMe) {
+					btnReady->setVisible(!player.Ready);
+				}
 			}
 		}
 		if (index == -1) {
@@ -1516,7 +1520,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			lbCrestTime->setVisible(false);
 			btnReady->setVisible(false);
 		} else {
-			btnReady->setVisible(true);
+			//btnReady->setVisible(true);
 			lbCrestTime->setVisible(true);
 			lbCrestTime->setScale(1.5f);
 			lbCrestTime->setColor(Color3B::RED);
@@ -2403,11 +2407,12 @@ void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 	btnPenet->stopAllActions();
 	progressTimer->stopAllActions();
 
+	Vec2 pos = lbCardNoc->getParent()->getPosition() + Vec2(0, 20);
 	Sprite* sp = getCardSprite(stiltCards[0]);
-	sp->setPosition(lbCardNoc->getParent()->getPosition() + Vec2(0, 20));
 	sp->setScale(.8f);
 	sp->setRotation(0);
 	sp->setAnchorPoint(Vec2(.5f, .5f));
+	sp->setPosition(pos.x / scaleScene.y, pos.y / scaleScene.x);
 
 	DelayTime* delay = DelayTime::create(3);
 	CallFunc* func = CallFunc::create([=]() {
