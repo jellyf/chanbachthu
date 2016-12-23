@@ -739,7 +739,7 @@ void SFSResponse::onGamePlayingTableResponse(boost::shared_ptr<ISFSObject> isfsO
 		byteArray->ReadByte(player.Info.Device);
 		byteArray->ReadUTF(str1);
 		byteArray->ReadUTF(str2);
-		CCLOG("%s ___ %s", str1.c_str(), str2.c_str());
+		//CCLOG("%s ___ %s", str1.c_str(), str2.c_str());
 		if (str1.length() > 2) {
 			SFSResponse::onPlayingCardFromJson(str1, player.PairCards);
 		}
@@ -751,8 +751,8 @@ void SFSResponse::onGamePlayingTableResponse(boost::shared_ptr<ISFSObject> isfsO
 		}
 
 		data.Players.push_back(player);
-		CCLOG("%s %d %d %d %d %s %.0f %s %d ___ %s ___ %s", player.Info.Name.c_str(), player.Index, player.Info.SfsUserId, player.Info.UserID,
-			player.UType, player.Ip.c_str(), player.PMoney, player.Info.GroupAvatar.c_str(), player.Info.Device, str1.c_str(), str2.c_str());
+		//CCLOG("%s %d %d %d %d %s %.0f %s %d ___ %s ___ %s", player.Info.Name.c_str(), player.Index, player.Info.SfsUserId, player.Info.UserID,
+		//	player.UType, player.Ip.c_str(), player.PMoney, player.Info.GroupAvatar.c_str(), player.Info.Device, str1.c_str(), str2.c_str());
 	}
 	if (EventHandler::getSingleton().onGamePlayingDataSFSResponse != NULL) {
 		EventHandler::getSingleton().onGamePlayingDataSFSResponse(data);
