@@ -161,6 +161,15 @@ bool Utils::isDisplayNameValid(std::string displayname)
 	return true;
 }
 
+bool Utils::isPaymentEnabled()
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	return Utils::getSingleton().gameConfig.paymentEnabledIOS;
+#else
+	return Utils::getSingleton().gameConfig.paymentEnabled;
+#endif
+}
+
 void Utils::split(const std::string & s, char delim, std::vector<std::string>& elems)
 {
 	std::stringstream ss;

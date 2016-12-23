@@ -11,8 +11,7 @@ using namespace std;
 void MainScene::onInit()
 {
 	BaseScene::onInit();
-
-	bool paymentEnabled = Utils::getSingleton().gameConfig.paymentEnabled;
+	bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
 	currentMoneyType = Utils::getSingleton().moneyType;
 
 	std::vector<Vec2> vecPos;
@@ -592,7 +591,7 @@ void MainScene::onExchangeItemResponse(std::string msg)
 
 void MainScene::onNewMailResponse(unsigned char count)
 {
-	if (count > 0 && Utils::getSingleton().gameConfig.paymentEnabled) {
+	if (count > 0 && Utils::getSingleton().isPaymentEnabled()) {
 		lbNewMail->setString(to_string((int)count));
 		lbNewMail->getParent()->setVisible(true);
 	} else {
