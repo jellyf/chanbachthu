@@ -120,6 +120,24 @@ void GameScene::onInit()
 	bg->setPosition(560, 350);
 	mLayer->addChild(bg);
 
+	Sprite* centerBg = Sprite::create("game/center" + zone + ".png");
+	centerBg->setPosition(560, 350);
+	mLayer->addChild(centerBg);
+	Utils::getSingleton().autoScaleNode(centerBg);
+
+	if (zone.compare("VuongPhu") == 0) {
+		Sprite* dragon1 = Sprite::create("game/dragon.png");
+		dragon1->setPosition(330, 350);
+		mLayer->addChild(dragon1);
+		Utils::getSingleton().autoScaleNode(dragon1);
+
+		Sprite* dragon2 = Sprite::create("game/dragon.png");
+		dragon2->setPosition(790, 350);
+		dragon2->setFlippedX(true);
+		mLayer->addChild(dragon2);
+		Utils::getSingleton().autoScaleNode(dragon2);
+	}
+
 	playLayer = Layer::create();
 	mLayer->addChild(playLayer, 10);
 	Utils::getSingleton().autoScaleNode(playLayer);
