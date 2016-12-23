@@ -193,6 +193,12 @@ void LobbyScene::onLoginZoneError(short int code, std::string msg)
 
 void LobbyScene::onErrorSFSResponse(unsigned char code, std::string msg)
 {
+	if (code != 48) hideWaiting();
+	if (isChangeMoney && code == 0) {
+		setMoneyType(1 - currentMoneyType);
+		onChangeMoneyType(1 - currentMoneyType);
+		return;
+	}
 	if (code == 38) {
 		showPopupNotice(msg, [=]() {
 			SFSRequest::getSingleton().Disconnect();
@@ -200,7 +206,6 @@ void LobbyScene::onErrorSFSResponse(unsigned char code, std::string msg)
 		}, false);
 		return;
 	}
-	if(code != 48) hideWaiting();
 	if (msg.length() == 0) return;
 	showPopupNotice(msg, [=]() {});
 }
@@ -235,6 +240,7 @@ void LobbyScene::onInviteDataResponse(InviteData data)
 void LobbyScene::onTableDataResponse(LobbyListTable data)
 {
 	hideWaiting();
+	isChangeMoney = false;
 	int height = (data.Size / 4 + (data.Size % 4 == 0 ? 0 : 1)) * 170;
 	if (height < scrollListTable->getContentSize().height)
 		height = scrollListTable->getContentSize().height;
