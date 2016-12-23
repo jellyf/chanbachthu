@@ -11,8 +11,12 @@ public:
 
 	static Utils& getSingleton(void);
 	static Utils* getSingletonPtr(void);
-
-	std::string formatMoneyWithComma(double money);
+    
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
+    std::string formatMoneyWithComma(long money);
+#endif
+    
+    std::string formatMoneyWithComma(double money);
 	std::string getStringForKey(std::string key);
 	std::string replaceString(std::string str, std::string strSearch, std::string strReplace);
 	std::string trim(std::string str);

@@ -38,6 +38,31 @@ Utils::~Utils()
 {
 }
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
+string Utils::formatMoneyWithComma(long lmoney) {
+    int money = lmoney;
+    if(money == 0) return "0";
+
+    bool isNegative = money < 0;
+    if(money < 0) money = -money;
+    string ret = "";
+    while(money >= 1){
+        ret = (char)(money % 10 + 48) + ret;
+        money /= 10;
+    }
+    if(isNegative) ret = '-' + ret;
+    
+    unsigned int i = 3;
+    while (i < ret.length())
+    {
+        if (ret[ret.length() - i - 1] == '-') break;
+        ret.insert(ret.length() - i, ".");
+        i = i + 3 + 1;
+    }
+    return ret;
+}
+#endif
+
 string Utils::formatMoneyWithComma(double money) {
 	stringstream ss;
 	//ss.imbue(locale("de-VI"));
@@ -45,7 +70,7 @@ string Utils::formatMoneyWithComma(double money) {
 	string ret = ss.str();
 	int index = ret.find_last_of('.');
 	ret = ret.substr(0, index);
-
+    
 	unsigned int i = 3;
 	while (i < ret.length())
 	{
