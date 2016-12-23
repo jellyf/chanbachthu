@@ -452,6 +452,6 @@ void LoginScene::initRegisterNode()
 void LoginScene::requestGameConfig()
 {
 	showWaiting();
-	//SFSRequest::getSingleton().RequestHttpGet(this, "http://125.212.207.71/config/configChan.txt", 1);
+	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
 	SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchan.txt", 1);
 }
