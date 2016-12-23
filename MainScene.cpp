@@ -269,7 +269,8 @@ void MainScene::onLoginZoneError(short int code, std::string msg)
 
 void MainScene::onErrorResponse(unsigned char code, std::string msg)
 {
-	if (code == 0) {
+	hideWaiting();
+	if (code == 0 && popupShop->isVisible()) {
 		showPopupNotice(msg, [=]() {
 			string str = Utils::getSingleton().gameConfig.smsKH;
 			int index = str.find_last_of(' ');
@@ -292,7 +293,6 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 		setDisplayName(tmpDisplayName);
 		return;
 	}
-	hideWaiting();
 	if (msg.length() == 0) return;
 	showPopupNotice(msg, [=]() {});
 }
