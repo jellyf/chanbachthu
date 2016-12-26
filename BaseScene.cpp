@@ -79,7 +79,7 @@ void BaseScene::onEnter()
 	nodeWaiting->setPosition(560, 350);
 	nodeWaiting->setVisible(false);
 	mLayer->addChild(nodeWaiting, constant::ZORDER_POPUP);
-	Utils::getSingleton().autoScaleNode(nodeWaiting);
+	autoScaleNode(nodeWaiting);
 
 	spWaiting = Sprite::create("loadingicon.png");
 	nodeWaiting->addChild(spWaiting);
@@ -228,19 +228,23 @@ void BaseScene::setDisplayName(std::string name)
 
 void BaseScene::runEffectHidePopup(cocos2d::Node * popup)
 {
-	ScaleTo* scale = ScaleTo::create(.1f, .3f);
+	ScaleTo* scaleTo = ScaleTo::create(.1f, .3f);
 	CallFunc* func = CallFunc::create([=]() {
 		popup->setVisible(false);
 	});
-	popup->runAction(Sequence::create(scale, func, nullptr));
+	popup->stopAllActions();
+	popup->runAction(Sequence::create(scaleTo, func, nullptr));
 }
 
 void BaseScene::runEffectShowPopup(cocos2d::Node * popup)
 {
-	ScaleTo* scale1 = ScaleTo::create(.2f, 1.1f);
-	ScaleTo* scale2 = ScaleTo::create(.1f, 1);
+	Vec2 scale1 = getScaleSmoothly(1.1f);
+	Vec2 scale2 = getScaleSmoothly(1);
+	ScaleTo* scaleTo1 = ScaleTo::create(.2f, scale1.x, scale1.y);
+	ScaleTo* scaleTo2 = ScaleTo::create(.1f, scale2.x, scale2.y);
 	popup->setScale(.3f);
-	popup->runAction(Sequence::createWithTwoActions(scale1, scale2));
+	popup->stopAllActions();
+	popup->runAction(Sequence::createWithTwoActions(scaleTo1, scaleTo2));
 }
 
 void BaseScene::runEventView(std::vector<EventData> list, int currentPosX)
@@ -453,12 +457,12 @@ void BaseScene::initHeaderWithInfos()
 		onBackScene();
 	});
 	mLayer->addChild(btnBack, constant::MAIN_ZORDER_HEADER);
-	Utils::getSingleton().autoScaleNode(btnBack);
+	autoScaleNode(btnBack);
 
 	Node* moneyNode = Node::create();
 	moneyNode->setPosition(vecPos[1]);
 	mLayer->addChild(moneyNode, constant::MAIN_ZORDER_HEADER);
-	Utils::getSingleton().autoScaleNode(moneyNode);
+	autoScaleNode(moneyNode);
 
 	moneyBg = ui::Button::create("main/money_bg.png");
 	moneyBg->setTag((int)isRealMoney);
@@ -497,7 +501,7 @@ void BaseScene::initHeaderWithInfos()
 		Application::sharedApplication()->openURL(Utils::getSingleton().gameConfig.linkFb);
 	});
 	mLayer->addChild(btnFacebook, constant::MAIN_ZORDER_HEADER);
-	Utils::getSingleton().autoScaleNode(btnFacebook);
+	autoScaleNode(btnFacebook);
 
 	ui::Button* btnRank = ui::Button::create("main/rank.png");
 	btnRank->setPosition(vecPos[5]);
@@ -509,7 +513,7 @@ void BaseScene::initHeaderWithInfos()
 		}
 	});
 	mLayer->addChild(btnRank, constant::MAIN_ZORDER_HEADER);
-	Utils::getSingleton().autoScaleNode(btnRank);
+	autoScaleNode(btnRank);
 
 	ui::Button* btnSettings = ui::Button::create("main/settings.png");
 	btnSettings->setPosition(vecPos[6]);
@@ -517,7 +521,7 @@ void BaseScene::initHeaderWithInfos()
 		showPopup(popupMainSettings);
 	});
 	mLayer->addChild(btnSettings, constant::MAIN_ZORDER_HEADER);
-	Utils::getSingleton().autoScaleNode(btnSettings);
+	autoScaleNode(btnSettings);
 
 	ui::Button* btnAvar = ui::Button::create("main/avatar.png");
 	btnAvar->setPosition(vecPos[7]);
@@ -525,7 +529,7 @@ void BaseScene::initHeaderWithInfos()
 		showPopupUserInfo(Utils::getSingleton().userDataMe);
 	});
 	mLayer->addChild(btnAvar, constant::MAIN_ZORDER_HEADER);
-	Utils::getSingleton().autoScaleNode(btnAvar);
+	autoScaleNode(btnAvar);
 
 	lbGold = Label::create("0", "fonts/arialbd.ttf", 25);
 	lbGold->setAnchorPoint(Vec2(0, .5f));
@@ -724,7 +728,7 @@ Node* BaseScene::createPopupNotice()
 	popupNotice->setPosition(560, 350);
 	popupNotice->setVisible(false);
 	mLayer->addChild(popupNotice, constant::ZORDER_POPUP_NOTICE);
-	Utils::getSingleton().autoScaleNode(popupNotice);
+	autoScaleNode(popupNotice);
 
 	Sprite* bg = Sprite::create("popup/bg.png");
 	popupNotice->addChild(bg);
@@ -760,6 +764,11 @@ Node* BaseScene::createPopupNotice()
 	return popupNotice;
 }
 
+cocos2d::Vec2 BaseScene::getScaleSmoothly(float scale)
+{
+	return cocos2d::Vec2(scale * scaleScene.y, scale * scaleScene.x);
+}
+
 void BaseScene::initPopupRank()
 {
 	popupRank = Node::create();
@@ -767,7 +776,7 @@ void BaseScene::initPopupRank()
 	popupRank->setVisible(false);
 	popupRank->setTag(0);
 	mLayer->addChild(popupRank, constant::ZORDER_POPUP);
-	Utils::getSingleton().autoScaleNode(popupRank);
+	autoScaleNode(popupRank);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);
@@ -827,7 +836,7 @@ void BaseScene::initPopupSettings()
 	popupMainSettings->setPosition(560, 350);
 	popupMainSettings->setVisible(false);
 	mLayer->addChild(popupMainSettings, constant::ZORDER_POPUP);
-	Utils::getSingleton().autoScaleNode(popupMainSettings);
+	autoScaleNode(popupMainSettings);
 
 	Sprite* bg = Sprite::create("popup/bg.png");
 	popupMainSettings->addChild(bg);
@@ -895,7 +904,7 @@ void BaseScene::initPopupUserInfo()
 	popupUserInfo->setPosition(560, 350);
 	popupUserInfo->setVisible(false);
 	mLayer->addChild(popupUserInfo, constant::ZORDER_POPUP);
-	Utils::getSingleton().autoScaleNode(popupUserInfo);
+	autoScaleNode(popupUserInfo);
 
 	Sprite* bg = Sprite::create("popup/bg.png");
 	popupUserInfo->addChild(bg);
@@ -1024,7 +1033,7 @@ void BaseScene::initPopupHistory()
 	popupHistory->setVisible(false);
 	popupHistory->setTag(0);
 	mLayer->addChild(popupHistory, constant::ZORDER_POPUP);
-	Utils::getSingleton().autoScaleNode(popupHistory);
+	autoScaleNode(popupHistory);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);
@@ -1372,5 +1381,14 @@ void BaseScene::setSplashZOrder(int zorder)
 			}
 			i--;
 		}
+	}
+}
+
+void BaseScene::autoScaleNode(cocos2d::Node * node)
+{
+	if (scaleScene.x < 1) {
+		node->setScaleY(node->getScaleY() * scaleScene.x);
+	} else if (scaleScene.y < 1) {
+		node->setScaleX(node->getScaleX() * scaleScene.y);
 	}
 }

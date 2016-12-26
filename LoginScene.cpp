@@ -30,12 +30,12 @@ void LoginScene::onInit()
 	Sprite* spTitle = Sprite::create("login/title.png");
 	spTitle->setPosition(560, 550);
 	mLayer->addChild(spTitle);
-	Utils::getSingleton().autoScaleNode(spTitle);
+	autoScaleNode(spTitle);
 
 	loginNode = Node::create();
 	loginNode->setPosition(560, 350);
 	mLayer->addChild(loginNode);
-	Utils::getSingleton().autoScaleNode(loginNode);
+	autoScaleNode(loginNode);
 
 	tfUsername = ui::EditBox::create(Size(440, 55), "login/box.png");
 	tfUsername->setPosition(Vec2(0, 80));
@@ -143,17 +143,19 @@ void LoginScene::onInit()
 		Utils::getSingleton().openTel(phone);
 	});
 	mLayer->addChild(btnPhone);
-	Utils::getSingleton().autoScaleNode(btnPhone);
+	autoScaleNode(btnPhone);
 
 	labelPhone = Label::create("01639070707", "fonts/arialbd.ttf",25);
 	labelPhone->setPosition(90, 3);
 	labelPhone->setAnchorPoint(Vec2(0, 0));
 	mLayer->addChild(labelPhone);
+	autoScaleNode(labelPhone);
 
 	Label* labelVersion = Label::create(string("ver ") + Application::sharedApplication()->getVersion(), "fonts/arial.ttf", 18);
 	labelVersion->setPosition(1115, 3);
 	labelVersion->setAnchorPoint(Vec2(1, 0));
 	mLayer->addChild(labelVersion);
+	autoScaleNode(labelVersion);
 
 	std::string lastUsername = UserDefault::getInstance()->getStringForKey(constant::KEY_USERNAME.c_str());
 	std::string lastPassword = UserDefault::getInstance()->getStringForKey(constant::KEY_PASSWORD.c_str());
@@ -368,7 +370,7 @@ void LoginScene::initRegisterNode()
 	registerNode->setPosition(560, 350);
 	registerNode->setVisible(false);
 	mLayer->addChild(registerNode);
-	Utils::getSingleton().autoScaleNode(registerNode);
+	autoScaleNode(registerNode);
 
 	tfResUname = ui::EditBox::create(Size(440, 55), "login/box.png");
 	tfResUname->setPosition(Vec2(0, 80));

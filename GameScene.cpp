@@ -123,29 +123,29 @@ void GameScene::onInit()
 	Sprite* centerBg = Sprite::create("game/center" + zone + ".png");
 	centerBg->setPosition(560, 350);
 	mLayer->addChild(centerBg);
-	Utils::getSingleton().autoScaleNode(centerBg);
+	autoScaleNode(centerBg);
 
 	if (zone.compare("VuongPhu") == 0) {
 		Sprite* dragon1 = Sprite::create("game/dragon.png");
 		dragon1->setPosition(330, 350);
 		mLayer->addChild(dragon1);
-		Utils::getSingleton().autoScaleNode(dragon1);
+		autoScaleNode(dragon1);
 
 		Sprite* dragon2 = Sprite::create("game/dragon.png");
 		dragon2->setPosition(790, 350);
 		dragon2->setFlippedX(true);
 		mLayer->addChild(dragon2);
-		Utils::getSingleton().autoScaleNode(dragon2);
+		autoScaleNode(dragon2);
 	}
 
 	playLayer = Layer::create();
 	mLayer->addChild(playLayer, 10);
-	Utils::getSingleton().autoScaleNode(playLayer);
+	autoScaleNode(playLayer);
 	playLayer->setPosition(1120 * (scaleScene.y - 1) / 2, 700 * (scaleScene.x - 1) / 2);
 
 	endLayer = Layer::create();
 	mLayer->addChild(endLayer, constant::GAME_ZORDER_SPLASH + 1);
-	Utils::getSingleton().autoScaleNode(endLayer);
+	autoScaleNode(endLayer);
 	//endLayer->setPosition(1120 * (scaleScene.y - 1) / 2, 700 * (scaleScene.x - 1) / 2);
 	endLayer->setPositionY(700 * (scaleScene.x - 1) / 4);
 
@@ -162,7 +162,7 @@ void GameScene::onInit()
 		}
 	});
 	mLayer->addChild(btnBack, constant::GAME_ZORDER_BUTTON);
-	Utils::getSingleton().autoScaleNode(btnBack);
+	autoScaleNode(btnBack);
 
 	ui::Button* btnSettings = ui::Button::create("board/btn_settings.png", "board/btn_settings_clicked.png");
 	btnSettings->setPosition(Vec2(1070, 650));
@@ -206,7 +206,7 @@ void GameScene::onInit()
 		runAction(Sequence::create(delay, func, nullptr));*/
 	});
 	mLayer->addChild(btnSettings, constant::GAME_ZORDER_BUTTON);
-	Utils::getSingleton().autoScaleNode(btnSettings);
+	autoScaleNode(btnSettings);
 
 	ui::Button* btnChat = ui::Button::create("board/btn_chat.png", "board/btn_chat_clicked.png");
 	btnChat->setPosition(Vec2(975, 650));
@@ -215,12 +215,12 @@ void GameScene::onInit()
 		showPopup(tableChat);
 	});
 	mLayer->addChild(btnChat, constant::GAME_ZORDER_BUTTON);
-	Utils::getSingleton().autoScaleNode(btnChat);
+	autoScaleNode(btnChat);
 
 	iconGa = Sprite::create("board/btn_ga_on.png");
 	iconGa->setPosition(880, 650);
 	mLayer->addChild(iconGa, constant::GAME_ZORDER_BUTTON);
-	Utils::getSingleton().autoScaleNode(iconGa);
+	autoScaleNode(iconGa);
 
 	lbMoneyGa = Label::create("", "fonts/arial.ttf", 20);
 	lbMoneyGa->setPosition(880, 610);
@@ -399,7 +399,7 @@ void GameScene::onInit()
 		noaction = 0;
 	});
 	mLayer->addChild(btnWin, constant::GAME_ZORDER_BUTTON);
-	Utils::getSingleton().autoScaleNode(btnWin);
+	autoScaleNode(btnWin);
 
 	btnDropWin = ui::Button::create("board/btn_bou.png", "board/btn_bou_clicked.png");
 	btnDropWin->setPosition(Vec2(220, 35));
@@ -442,13 +442,13 @@ void GameScene::onInit()
 	bgDiaNoc->setPosition(564, 422);
 	mLayer->addChild(bgDiaNoc);
 	bgDiaNoc->setVisible(false);
-	Utils::getSingleton().autoScaleNode(bgDiaNoc);*/
+	autoScaleNode(bgDiaNoc);*/
 
 	ui::Button* bgDiaNoc = ui::Button::create("board/bg_dianoc.png", "board/bg_dianoc.png");
 	bgDiaNoc->setPosition(Vec2(564, 422));
 	mLayer->addChild(bgDiaNoc);
 	bgDiaNoc->setVisible(false);
-	Utils::getSingleton().autoScaleNode(bgDiaNoc);
+	autoScaleNode(bgDiaNoc);
 	addTouchEventListener(bgDiaNoc, [=]() {
 		if (btnPick->isVisible()) {
 			SFSRequest::getSingleton().RequestGamePick();
@@ -499,7 +499,7 @@ void GameScene::onInit()
 		spInvite->setPosition(vecUserPos[i]);
 		mLayer->addChild(spInvite);
 		spInvites.push_back(spInvite);
-		Utils::getSingleton().autoScaleNode(spInvite);
+		autoScaleNode(spInvite);
 
 		UserNode* user = UserNode::create();
 		user->setPosition(Vec2(vecUserPos[i].x / scaleScene.y, vecUserPos[i].y / scaleScene.x));
@@ -512,14 +512,14 @@ void GameScene::onInit()
 		spSS->setVisible(false);
 		mLayer->addChild(spSS, constant::GAME_ZORDER_USER + 9);
 		spSanSangs.push_back(spSS);
-		Utils::getSingleton().autoScaleNode(spSS);
+		autoScaleNode(spSS);
 
 		Sprite* spBB = Sprite::create("board/txt_bat_bao.png");
 		spBB->setPosition(vecUserPos[i]);
 		spBB->setVisible(false);
 		mLayer->addChild(spBB, constant::GAME_ZORDER_USER + 9);
 		spBatBaos.push_back(spBB);
-		Utils::getSingleton().autoScaleNode(spBB);
+		autoScaleNode(spBB);
 
 		Label* lb1 = Label::createWithTTF("100,000", "fonts/UTM AZUKI.ttf", 45);
 		lb1->setPosition(vecUserPos[i]);
@@ -535,12 +535,12 @@ void GameScene::onInit()
 	progressTimer->setVisible(false);
 	progressTimer->setColor(Color3B::GREEN);
 	mLayer->addChild(progressTimer, constant::GAME_ZORDER_USER + 9);
-	Utils::getSingleton().autoScaleNode(progressTimer);
+	autoScaleNode(progressTimer);
 
 	spChuPhong = Sprite::create("board/chuphong.png");
 	spChuPhong->setVisible(false);
 	mLayer->addChild(spChuPhong, constant::GAME_ZORDER_USER + 10);
-	Utils::getSingleton().autoScaleNode(spChuPhong);
+	autoScaleNode(spChuPhong);
 
 	spChonCai = Sprite::create("board/txt_choncai.png");
 	spChonCai->setVisible(false);
@@ -578,18 +578,20 @@ void GameScene::onInit()
 	initPopupUserInfo();
 	//initEventView(Vec2(0, 680), Size(Director::sharedDirector()->getVisibleSize().width, 40));
 
+	Node* nodeError = Node::create();
+	nodeError->setPosition(560, 350);
+	nodeError->setVisible(false);
+	mLayer->addChild(nodeError, constant::ZORDER_POPUP + 10);
+	autoScaleNode(nodeError);
+
 	Sprite* bgError = Sprite::create("popup/bg.png");
-	bgError->setPosition(560, 350);
-	bgError->setVisible(false);
-	mLayer->addChild(bgError, constant::ZORDER_POPUP + 10);
-	Utils::getSingleton().autoScaleNode(bgError);
+	nodeError->addChild(bgError);
 
 	lbError = Label::createWithTTF("", "fonts/arialbd.ttf", 30);
-	lbError->setPosition(bgError->getContentSize().width / 2, 300);
 	lbError->setAlignment(TextHAlignment::CENTER);
 	lbError->setColor(Color3B::YELLOW);
 	lbError->setWidth(600);
-	bgError->addChild(lbError);
+	nodeError->addChild(lbError);
 
 	gameSplash = ui::Scale9Sprite::create("white.png");
 	gameSplash->setContentSize(Size(1500, 1000));
@@ -1297,7 +1299,7 @@ void GameScene::showError(std::string msg)
 	CallFunc* func = CallFunc::create([=]() {
 		hidePopup(lbError->getParent());
 	});
-	lbError->getParent()->stopAllActions();
+	//lbError->getParent()->stopAllActions();
 	lbError->getParent()->runAction(Sequence::create(delay, func, nullptr));
 }
 
@@ -2731,7 +2733,7 @@ void GameScene::initChatTable()
 	mLayer->addChild(tableChat, constant::ZORDER_POPUP);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("white.png");
-	bg->setContentSize(Size(1120, 400));
+	bg->setContentSize(Size(1500, 400));
 	bg->setColor(Color3B::BLACK);
 	//bg->setOpacity(150);
 	tableChat->addChild(bg);
@@ -2811,7 +2813,7 @@ void GameScene::initCrestTable()
 	tableCrest->setPosition(560, 490);
 	tableCrest->setVisible(false);
 	mLayer->addChild(tableCrest, constant::GAME_ZORDER_SPLASH + 1);
-	Utils::getSingleton().autoScaleNode(tableCrest);
+	autoScaleNode(tableCrest);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setContentSize(Size(1130, 430));
@@ -2961,7 +2963,7 @@ void GameScene::initEndMatchTable()
 	tableEndMatch->setPosition(560, 500);
 	tableEndMatch->setVisible(false);
 	mLayer->addChild(tableEndMatch, constant::GAME_ZORDER_SPLASH + 1);
-	Utils::getSingleton().autoScaleNode(tableEndMatch);
+	autoScaleNode(tableEndMatch);
 
 	Sprite* bg = Sprite::create("popup/bg.png");
 	bg->setScaleY(.85f);
@@ -3012,7 +3014,7 @@ void GameScene::initInviteTable()
 	tableInvite->setPosition(560, 350);
 	tableInvite->setVisible(false);
 	mLayer->addChild(tableInvite, constant::ZORDER_POPUP + 1);
-	Utils::getSingleton().autoScaleNode(tableInvite);
+	autoScaleNode(tableInvite);
 
 	Sprite* bg = Sprite::create("popup/bg.png");
 	bg->setScale(1.1f, 1.5f);
@@ -3055,7 +3057,7 @@ void GameScene::initSettingsPopup()
 	popupSettings->setPosition(560, 350);
 	popupSettings->setVisible(false);
 	mLayer->addChild(popupSettings, constant::ZORDER_POPUP);
-	Utils::getSingleton().autoScaleNode(popupSettings);
+	autoScaleNode(popupSettings);
 
 	Sprite* bg = Sprite::create("popup/bg.png");
 	popupSettings->addChild(bg);
@@ -3145,7 +3147,7 @@ void GameScene::initTableInfo()
 	tableInfo = Node::create();
 	tableInfo->setPosition(195, 650);
 	mLayer->addChild(tableInfo, constant::GAME_ZORDER_BUTTON);
-	Utils::getSingleton().autoScaleNode(tableInfo);
+	autoScaleNode(tableInfo);
 
 	Sprite* bg = Sprite::create("board/bg_table_info.png");
 	bg->setScaleX(.85f);

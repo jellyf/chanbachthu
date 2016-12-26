@@ -205,23 +205,6 @@ void Utils::split(const std::string & s, char delim, std::vector<std::string>& e
 	}
 }
 
-void Utils::autoScaleNode(Node * pSender)
-{
-	auto vizibleSize = Director::getInstance()->getOpenGLView()->getFrameSize();
-	auto designResolutionSize = cocos2d::Size(1280, 800);
-	float x0 = designResolutionSize.width / designResolutionSize.height;
-	float x1 = vizibleSize.width / vizibleSize.height;
-	if (x1 > x0)
-	{
-		float scaleX = x0 / x1;
-		pSender->setScaleX(scaleX*pSender->getScaleX());
-	} else
-	{
-		float scaleY = x1 / x0;
-		pSender->setScaleY(scaleY*pSender->getScaleY());
-	}
-}
-
 void Utils::replaceScene(cocos2d::Scene* newScene) {
 	if (currentScene != nullptr) {
 		currentScene->unscheduleUpdate();

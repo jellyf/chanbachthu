@@ -27,7 +27,6 @@ public:
 	bool isDisplayNameValid(std::string displayname);
 	bool isPaymentEnabled();
 	void split(const std::string &s, char delim, std::vector<std::string> &elems);
-	void autoScaleNode(cocos2d::Node* node);
 	void replaceScene(cocos2d::Scene* scene);
 	void goToLoginScene();
 	void goToMainScene();

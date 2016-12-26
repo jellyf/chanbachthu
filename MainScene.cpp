@@ -38,7 +38,7 @@ void MainScene::onInit()
 		showPopup(popupGuide);
 	});
 	mLayer->addChild(btnGuide);
-	Utils::getSingleton().autoScaleNode(btnGuide);
+	autoScaleNode(btnGuide);
 
 	ui::Button* btnCharge = ui::Button::create("main/icon_charge.png");
 	btnCharge->setPosition(vecPos[1]);
@@ -47,7 +47,7 @@ void MainScene::onInit()
 		showPopup(popupCharge);
 	});
 	mLayer->addChild(btnCharge);
-	Utils::getSingleton().autoScaleNode(btnCharge);
+	autoScaleNode(btnCharge);
 
 	ui::Button* btnShop = ui::Button::create("main/icon_shop.png");
 	btnShop->setPosition(vecPos[2]);
@@ -59,7 +59,7 @@ void MainScene::onInit()
 		}
 	});
 	mLayer->addChild(btnShop);
-	Utils::getSingleton().autoScaleNode(btnShop);
+	autoScaleNode(btnShop);
 
 	ui::Button* btnNews = ui::Button::create("main/icon_news.png");
 	btnNews->setPosition(vecPos[3]);
@@ -71,7 +71,7 @@ void MainScene::onInit()
 		showWebView(url);*/
 	});
 	mLayer->addChild(btnNews);
-	Utils::getSingleton().autoScaleNode(btnNews);
+	autoScaleNode(btnNews);
 
 	ui::Button* btnMail = ui::Button::create("main/icon_mail.png");
 	btnMail->setPosition(vecPos[4]);
@@ -80,7 +80,7 @@ void MainScene::onInit()
 		showPopupMail();
 	});
 	mLayer->addChild(btnMail);
-	Utils::getSingleton().autoScaleNode(btnMail);
+	autoScaleNode(btnMail);
 
 	Sprite* circleNewMail = Sprite::create("main/circle_red.png");
 	circleNewMail->setPosition(btnMail->getPosition() + Vec2(30, 25));
@@ -780,7 +780,7 @@ void MainScene::initPopupCharge()
 	popupCharge->setVisible(false);
 	popupCharge->setTag(0);
 	mLayer->addChild(popupCharge, constant::ZORDER_POPUP);
-	Utils::getSingleton().autoScaleNode(popupCharge);
+	autoScaleNode(popupCharge);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);
@@ -1204,7 +1204,7 @@ void MainScene::initPopupGuide()
 	popupGuide->setVisible(false);
 	popupGuide->setTag(0);
 	mLayer->addChild(popupGuide, constant::ZORDER_POPUP);
-	Utils::getSingleton().autoScaleNode(popupGuide);
+	autoScaleNode(popupGuide);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);
@@ -1295,7 +1295,7 @@ void MainScene::initPopupMail()
 	popupMail->setPosition(560, 350);
 	popupMail->setVisible(false);
 	mLayer->addChild(popupMail, constant::ZORDER_POPUP);
-	Utils::getSingleton().autoScaleNode(popupMail);
+	autoScaleNode(popupMail);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);
@@ -1386,7 +1386,7 @@ void MainScene::initPopupNews()
 	popupNews->setVisible(false);
 	popupNews->setTag(1);
 	mLayer->addChild(popupNews, constant::ZORDER_POPUP);
-	Utils::getSingleton().autoScaleNode(popupNews);
+	autoScaleNode(popupNews);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);
@@ -1454,7 +1454,7 @@ void MainScene::initPopupShop()
 	popupShop->setVisible(false);
 	popupShop->setTag(0);
 	mLayer->addChild(popupShop, constant::ZORDER_POPUP);
-	Utils::getSingleton().autoScaleNode(popupShop);
+	autoScaleNode(popupShop);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);
@@ -1596,7 +1596,7 @@ void MainScene::initWebView()
 		nodeWebview->removeChildByName("webview");
 	}, .6f);
 	nodeWebview->addChild(btnClose);
-	Utils::getSingleton().autoScaleNode(btnClose);
+	autoScaleNode(btnClose);
 }
 
 void MainScene::initPopupDisplayName()
@@ -1605,7 +1605,7 @@ void MainScene::initPopupDisplayName()
 	popupDisplayName->setPosition(560, 350);
 	popupDisplayName->setVisible(false);
 	mLayer->addChild(popupDisplayName, constant::ZORDER_POPUP);
-	Utils::getSingleton().autoScaleNode(popupDisplayName);
+	autoScaleNode(popupDisplayName);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);

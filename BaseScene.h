@@ -55,8 +55,10 @@ protected:
 	void runEventView(std::vector<EventData> list, int currentPosX = 1500);
 	void addBtnChoosePage(int x, int y, cocos2d::Node* node, std::function<void(int)> funcPage);
 	void setSplashZOrder(int zorder);
+	void autoScaleNode(cocos2d::Node* node);
 
 	cocos2d::Node* createPopupNotice();
+	cocos2d::Vec2 getScaleSmoothly(float scale);
 
 	bool hasHeader = false;
 	bool isWaiting = false;
