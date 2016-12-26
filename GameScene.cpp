@@ -144,7 +144,7 @@ void GameScene::onInit()
 	playLayer->setPosition(1120 * (scaleScene.y - 1) / 2, 700 * (scaleScene.x - 1) / 2);
 
 	endLayer = Layer::create();
-	mLayer->addChild(endLayer, constant::ZORDER_POPUP + 10);
+	mLayer->addChild(endLayer, constant::GAME_ZORDER_SPLASH + 1);
 	Utils::getSingleton().autoScaleNode(endLayer);
 	//endLayer->setPosition(1120 * (scaleScene.y - 1) / 2, 700 * (scaleScene.x - 1) / 2);
 	endLayer->setPositionY(700 * (scaleScene.x - 1) / 4);
@@ -152,6 +152,7 @@ void GameScene::onInit()
 	ui::Button* btnBack = ui::Button::create("board/btn_back.png", "board/btn_back_clicked.png");
 	btnBack->setPosition(Vec2(50, 650));
 	addTouchEventListener(btnBack, [=]() {
+		if (gameSplash->isVisible()) return;
 		if (state == NONE || state == READY || myServerSlot < 0) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
@@ -166,6 +167,7 @@ void GameScene::onInit()
 	ui::Button* btnSettings = ui::Button::create("board/btn_settings.png", "board/btn_settings_clicked.png");
 	btnSettings->setPosition(Vec2(1070, 650));
 	addTouchEventListener(btnSettings, [=]() {
+		if (gameSplash->isVisible()) return;
 		showSettings();
 
 		/*nodeStilt->setRotation(0);
@@ -209,6 +211,7 @@ void GameScene::onInit()
 	ui::Button* btnChat = ui::Button::create("board/btn_chat.png", "board/btn_chat_clicked.png");
 	btnChat->setPosition(Vec2(975, 650));
 	addTouchEventListener(btnChat, [=]() {
+		if (gameSplash->isVisible()) return;
 		showPopup(tableChat);
 	});
 	mLayer->addChild(btnChat, constant::GAME_ZORDER_BUTTON);
@@ -412,7 +415,7 @@ void GameScene::onInit()
 	addTouchEventListener(btnXemNoc, [=]() {
 		showStiltCards();
 	});
-	mLayer->addChild(btnXemNoc, constant::ZORDER_POPUP + 10);
+	mLayer->addChild(btnXemNoc, constant::GAME_ZORDER_SPLASH + 1);
 
 	btnDongNoc = ui::Button::create("board/btn_dong_noc.png", "board/btn_dong_noc_clicked.png");
 	btnDongNoc->setPosition(Vec2(560, 280));
@@ -420,7 +423,7 @@ void GameScene::onInit()
 	addTouchEventListener(btnDongNoc, [=]() {
 		showWinnerCards();
 	});
-	mLayer->addChild(btnDongNoc, constant::ZORDER_POPUP + 10);
+	mLayer->addChild(btnDongNoc, constant::GAME_ZORDER_SPLASH + 1);
 
 	Label* lbBtnReady = Label::createWithTTF(Utils::getSingleton().getStringForKey("ready"), "fonts/UTM AZUKI.ttf", 30);
 	lbBtnReady->setPosition(btnReady->getContentSize().width/2, btnReady->getContentSize().height/2);
@@ -521,7 +524,7 @@ void GameScene::onInit()
 		Label* lb1 = Label::createWithTTF("100,000", "fonts/UTM AZUKI.ttf", 45);
 		lb1->setPosition(vecUserPos[i]);
 		lb1->setOpacity(0);
-		mLayer->addChild(lb1, constant::ZORDER_POPUP + 5);
+		mLayer->addChild(lb1, constant::GAME_ZORDER_USER + 10);
 		lbWinMoneys.push_back(lb1);
 	}
 
@@ -545,7 +548,7 @@ void GameScene::onInit()
 
 	lbCrestTime = Label::create("", "fonts/arialbd.ttf", 50);
 	lbCrestTime->setPosition(750, 280);
-	mLayer->addChild(lbCrestTime, constant::ZORDER_POPUP);
+	mLayer->addChild(lbCrestTime, constant::GAME_ZORDER_SPLASH + 1);
 
 	DelayTime* delay = DelayTime::create(1);
 	CallFunc* func = CallFunc::create([=]() {
@@ -587,6 +590,14 @@ void GameScene::onInit()
 	lbError->setColor(Color3B::YELLOW);
 	lbError->setWidth(600);
 	bgError->addChild(lbError);
+
+	gameSplash = ui::Scale9Sprite::create("white.png");
+	gameSplash->setContentSize(Size(1500, 1000));
+	gameSplash->setPosition(560, 350);
+	gameSplash->setColor(Color3B::BLACK);
+	gameSplash->setOpacity(150);
+	gameSplash->setVisible(false);
+	mLayer->addChild(gameSplash, constant::GAME_ZORDER_SPLASH);
 
 	/*sfsIdMe = 1;
 	state = PLAY;
@@ -638,9 +649,9 @@ void GameScene::onInit()
 	for (int i = 0; i < 4; i++) {
 		endMatchData.ListCardU.push_back(20);
 	}
-	showWinnerCards();*/
+	showWinnerCards();
 
-	/*for (int i = 0; i < 13; i++) {
+	for (int i = 0; i < 13; i++) {
 		endMatchData.ListStiltCard.push_back(8);
 	}
 	showStiltCards();*/
@@ -723,7 +734,7 @@ void GameScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
 
 bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 {
-	if (!BaseScene::onTouchBegan(touch, _event) && !splash->isVisible()) {
+	if (!BaseScene::onTouchBegan(touch, _event) && !splash->isVisible() && !gameSplash->isVisible()) {
 		Point pos = touch->getLocation();
 		pos = mLayer->convertToNodeSpace(pos);
 
@@ -1427,9 +1438,8 @@ void GameScene::onPublicMessage(long uid, std::string msg)
 void GameScene::onRoomDataResponse(RoomData roomData)
 {
 	if (noaction >= 3 || hasRegisterOut) {
-		hideSplash();
-		//tableEndMatch->setVisible(false);
-		hidePopup(tableEndMatch);
+		gameSplash->setVisible(false);
+		tableEndMatch->setVisible(false);
 		if (hasRegisterOut) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
@@ -1543,12 +1553,10 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	lbCardNoc->setString("23");
 	btnXemNoc->setVisible(false);
 	btnDongNoc->setVisible(false);
-	//tableCrest->setVisible(false);
-	//tableEndMatch->setVisible(false);
+	tableCrest->setVisible(false);
+	tableEndMatch->setVisible(false);
 	lbCardNoc->getParent()->setVisible(false);
-	//hideSplash();
-	hidePopup(tableCrest);
-	hidePopup(tableEndMatch);
+	gameSplash->setVisible(false);
 	spHandCards.clear();
 	chosenCuocs.clear();
 	chosenCuocNumbs.clear();
@@ -2298,11 +2306,9 @@ void GameScene::onUserWin(long uId, unsigned char sound)
 
 void GameScene::onCrestResponse(CrestResponseData data)
 {
-	hidePopup(tableCrest);
-	showPopup(tableEndMatch);
 	lbCrestTime->setVisible(false);
-	//tableCrest->setVisible(false);
-	//tableEndMatch->setVisible(true);
+	tableCrest->setVisible(false);
+	tableEndMatch->setVisible(true);
 	progressTimer->setVisible(false);
 	progressTimer->stopAllActions();
 	lbCrestTime->pauseSchedulerAndActions();
@@ -2355,8 +2361,7 @@ void GameScene::onEndMatch(EndMatchData data)
 {
 	if (state == NONE || state == READY) return;
 	this->endMatchData = data;
-	showSplash();
-	setSplashZOrder(constant::ZORDER_POPUP - 1);
+	gameSplash->setVisible(true);
 	lbCrestTime->setVisible(true);
 	lbCrestTime->setString("40");
 	lbCrestTime->setScale(1);
@@ -2376,8 +2381,7 @@ void GameScene::onEndMatch(EndMatchData data)
 	runTimeWaiting(data.WinId, timeTurn);
 	showWinnerCards();
 	if (data.WinId == sfsIdMe) {
-		//tableCrest->setVisible(true);
-		showPopup(tableCrest);
+		tableCrest->setVisible(true);
 	}
 	playSoundAction(data.SoundId);
 }
@@ -2418,12 +2422,11 @@ void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 	CallFunc* func = CallFunc::create([=]() {
 		lbCardNoc->getParent()->setVisible(false);
 		lbCardNoc->getParent()->getChildByName("spcardnoc")->setVisible(true);
-		showSplash();
+		gameSplash->setVisible(true);
 		for (Sprite* sp : spCards) {
 			sp->setVisible(false);
 		}
-		//tableEndMatch->setVisible(true);
-		showPopup(tableEndMatch);
+		tableEndMatch->setVisible(true);
 		lbWinner->setString("");
 		lbDiem->setString(Utils::getSingleton().getStringForKey("tie"));
 		lbCuocSai->setString("");
@@ -2798,7 +2801,7 @@ void GameScene::initCrestTable()
 	tableCrest = Node::create();
 	tableCrest->setPosition(560, 490);
 	tableCrest->setVisible(false);
-	mLayer->addChild(tableCrest, constant::ZORDER_POPUP + 10);
+	mLayer->addChild(tableCrest, constant::GAME_ZORDER_SPLASH + 1);
 	Utils::getSingleton().autoScaleNode(tableCrest);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
@@ -2932,14 +2935,10 @@ void GameScene::initCrestTable()
 			crestIds.push_back(chosenCuocs[i] + chosenCuocNumbs[i]);
 		}
 		lbChonCuoc->setString("");
-		//tableCrest->setVisible(false);
-		hidePopup(tableCrest);
+		tableCrest->setVisible(false);
 		lbCrestTime->setVisible(false);
 		lbCrestTime->pauseSchedulerAndActions();
 		SFSRequest::getSingleton().RequestGameWinCrest(crestIds);
-		/*for (Label* lb : vecCrests) {
-			lb->setColor(Color3B::WHITE);
-		}*/
 		for (ui::Button* btn : vecCrests) {
 			btn->setTitleColor(Color3B::WHITE);
 		}
@@ -2952,7 +2951,7 @@ void GameScene::initEndMatchTable()
 	tableEndMatch = Node::create();
 	tableEndMatch->setPosition(560, 500);
 	tableEndMatch->setVisible(false);
-	mLayer->addChild(tableEndMatch, constant::ZORDER_POPUP + 10);
+	mLayer->addChild(tableEndMatch, constant::GAME_ZORDER_SPLASH + 1);
 	Utils::getSingleton().autoScaleNode(tableEndMatch);
 
 	Sprite* bg = Sprite::create("popup/bg.png");

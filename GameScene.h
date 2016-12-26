@@ -119,6 +119,7 @@ private:
 	cocos2d::ui::Button* btnDropWin;
 	cocos2d::ui::Button* btnXemNoc;
 	cocos2d::ui::Button* btnDongNoc;
+	cocos2d::ui::Scale9Sprite* gameSplash;
 	cocos2d::Sprite* hostCard = NULL;
 	cocos2d::Sprite* runningSpCard;
 	cocos2d::Sprite* iconGa;
