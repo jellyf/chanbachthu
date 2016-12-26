@@ -34,7 +34,7 @@ protected:
 	void addTouchEventListener(cocos2d::ui::Button* btn, std::function<void()> func, float scale = 1.0f);
 	void hideSplash();
 	void hideWaiting();
-	void hidePopup(cocos2d::Node* popup);
+	void hidePopup(cocos2d::Node* popup, bool runEffect = true);
 	void initEventView(cocos2d::Vec2 pos, cocos2d::Size size);
 	void initPopupRank();
 	void initPopupSettings();
@@ -48,8 +48,10 @@ protected:
 	void showSplash();
 	void showToast(std::string msg, cocos2d::Vec2 pos, cocos2d::Color3B textColor = cocos2d::Color3B::WHITE, cocos2d::Color3B bgColor = cocos2d::Color3B(80, 80, 80), int bgOpacity = 200);
 	void showWaiting(int time = 30);
-	void showPopup(cocos2d::Node* popup);
+	void showPopup(cocos2d::Node* popup, bool runEffect = true);
 	void setDisplayName(std::string name);
+	void runEffectHidePopup(cocos2d::Node* popup);
+	void runEffectShowPopup(cocos2d::Node* popup);
 	void runEventView(std::vector<EventData> list, int currentPosX = 1500);
 	void addBtnChoosePage(int x, int y, cocos2d::Node* node, std::function<void(int)> funcPage);
 	void setSplashZOrder(int zorder);

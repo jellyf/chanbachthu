@@ -186,7 +186,7 @@ void BaseScene::showSplash()
 void BaseScene::showWaiting(int time)
 {
 	isWaiting = true;
-	showPopup(spWaiting->getParent());
+	showPopup(spWaiting->getParent(), false);
 	spWaiting->resumeSchedulerAndActions();
 	spWaiting->getParent()->stopAllActions();
 
@@ -203,9 +203,12 @@ void BaseScene::showWaiting(int time)
 	spWaiting->getParent()->runAction(Sequence::create(delay, func, nullptr));
 }
 
-void BaseScene::showPopup(cocos2d::Node * popup)
+void BaseScene::showPopup(cocos2d::Node * popup, bool runEffect)
 {
 	if (popup->isVisible()) return;
+	if (runEffect) {
+		runEffectShowPopup(popup);
+	}
 	popup->setVisible(true);
 	popups.push_back(popup);
 	if (popups.size() == 1) {
@@ -221,6 +224,23 @@ void BaseScene::showPopup(cocos2d::Node * popup)
 void BaseScene::setDisplayName(std::string name)
 {
 	lbName->setString(name);
+}
+
+void BaseScene::runEffectHidePopup(cocos2d::Node * popup)
+{
+	ScaleTo* scale = ScaleTo::create(.1f, .3f);
+	CallFunc* func = CallFunc::create([=]() {
+		popup->setVisible(false);
+	});
+	popup->runAction(Sequence::create(scale, func, nullptr));
+}
+
+void BaseScene::runEffectShowPopup(cocos2d::Node * popup)
+{
+	ScaleTo* scale1 = ScaleTo::create(.2f, 1.1f);
+	ScaleTo* scale2 = ScaleTo::create(.1f, 1);
+	popup->setScale(.3f);
+	popup->runAction(Sequence::createWithTwoActions(scale1, scale2));
 }
 
 void BaseScene::runEventView(std::vector<EventData> list, int currentPosX)
@@ -583,14 +603,18 @@ void BaseScene::hideSplash()
 void BaseScene::hideWaiting()
 {
 	isWaiting = false;
-	hidePopup(spWaiting->getParent());
+	hidePopup(spWaiting->getParent(), false);
 	spWaiting->pauseSchedulerAndActions();
 	spWaiting->getParent()->stopAllActions();
 }
 
-void BaseScene::hidePopup(cocos2d::Node * popup)
+void BaseScene::hidePopup(cocos2d::Node * popup, bool runEffect)
 {
-	popup->setVisible(false);
+	if (runEffect) {
+		runEffectHidePopup(popup);
+	} else {
+		popup->setVisible(false);
+	}
 	if (popups.size() == 0) return;
 	int i = popups.size() - 1;
 	while (i >= 0 && popups[i] != popup) {
