@@ -1637,6 +1637,23 @@ void GameScene::onChooseStilt(unsigned char stilt)
 {
 	//if (myServerSlot < 0) return;
 	if (!vecStilts[0]->isVisible() && !vecStilts[1]->isVisible()) return;
+	if (state == DEAL) {
+		this->stopAllActions();
+		Node* n1 = spDealCards[0]->getParent();
+		Node* n2 = spDealCards[1]->getParent();
+		for (Sprite* sp : spDealCards) {
+			sp->stopAllActions();
+			int i = atoi(sp->getName().c_str());
+			sp->setParent(nullptr);
+			sp->setRotation(rand() % 60 - 30);
+			sp->setPosition(rand() % 20 - 10, rand() % 20 - 10);
+			vecStilts[i]->addChild(sp);
+		}
+		n1->removeAllChildren();
+		n2->removeAllChildren();
+		state == CHOOSE_STILT;
+	}
+
 	chosenStilt = stilt - 1;
 	vecStilts[chosenStilt]->setVisible(false);
 	hostCard = Sprite::create("cards/100.png");
