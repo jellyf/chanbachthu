@@ -524,7 +524,7 @@ void GameScene::onInit()
 		Label* lb1 = Label::createWithTTF("100,000", "fonts/UTM AZUKI.ttf", 45);
 		lb1->setPosition(vecUserPos[i]);
 		lb1->setOpacity(0);
-		mLayer->addChild(lb1, constant::GAME_ZORDER_USER + 10);
+		mLayer->addChild(lb1, constant::GAME_ZORDER_USER + 11);
 		lbWinMoneys.push_back(lb1);
 	}
 
@@ -539,7 +539,7 @@ void GameScene::onInit()
 
 	spChuPhong = Sprite::create("board/chuphong.png");
 	spChuPhong->setVisible(false);
-	mLayer->addChild(spChuPhong, constant::GAME_ZORDER_BUTTON);
+	mLayer->addChild(spChuPhong, constant::GAME_ZORDER_USER + 10);
 	Utils::getSingleton().autoScaleNode(spChuPhong);
 
 	spChonCai = Sprite::create("board/txt_choncai.png");
@@ -655,6 +655,8 @@ void GameScene::onInit()
 		endMatchData.ListStiltCard.push_back(8);
 	}
 	showStiltCards();*/
+
+	//dealCards();
 
 	showWaiting();
 }
@@ -899,16 +901,17 @@ void GameScene::dealCards()
 {
 	state = DEAL;
 
-	/*if (soundDealId == -1) {
-		soundDealId = experimental::AudioEngine::play2d("sound/deal_card.mp3", true);
+	if (soundDealId == -1) {
+		soundDealId = experimental::AudioEngine::play2d("sound/deal_card.mp3", true, .1f);
 	} else {
+		experimental::AudioEngine::setCurrentTime(soundDealId, 0);
 		experimental::AudioEngine::resume(soundDealId);
 	}
-	DelayTime* delayStopSound = DelayTime::create(5);
+	DelayTime* delayStopSound = DelayTime::create(10);
 	CallFunc* funcStopSound = CallFunc::create([=]() {
 		experimental::AudioEngine::pause(soundDealId);
 	});
-	this->runAction(Sequence::create(delayStopSound, funcStopSound, nullptr));*/
+	this->runAction(Sequence::create(delayStopSound, funcStopSound, nullptr));
 
 	vector<Vec2> nodePos;
 	nodePos.push_back(Vec2(320, 350));
@@ -931,9 +934,9 @@ void GameScene::dealCards()
 				nodes[k]->addChild(sp);
 				spDealCards.push_back(sp);
 
-				DelayTime* delay = DelayTime::create(.1f * (i * dealPos.size() + j));
-				MoveBy* move = MoveBy::create(.3f, dealPos[j] + Vec2(rand() % 20 - 10, rand() % 20 - 10));
-				RotateBy* rotate = RotateBy::create(.3f, rand() % 60 - 30);
+				DelayTime* delay = DelayTime::create(.203f * (i * dealPos.size() + j));
+				MoveBy* move = MoveBy::create(.15f, dealPos[j] + Vec2(rand() % 20 - 10, rand() % 20 - 10));
+				RotateBy* rotate = RotateBy::create(.15f, rand() % 60 - 30);
 
 				sp->runAction(Sequence::create(delay, move, nullptr));
 				sp->runAction(Sequence::create(delay->clone(), rotate, nullptr));
@@ -942,12 +945,12 @@ void GameScene::dealCards()
 	}
 
 	for (Node* n : nodes) {
-		DelayTime* delay = DelayTime::create(6);
+		DelayTime* delay = DelayTime::create(11);
 		MoveTo* move = MoveTo::create(.5f, Vec2(560, 350));
 		n->runAction(Sequence::create(delay, move, nullptr));
 	}
 
-	DelayTime* delayStilt = DelayTime::create(7);
+	DelayTime* delayStilt = DelayTime::create(12);
 	CallFunc* func = CallFunc::create([=]() {
 		for (Sprite* sp : spDealCards) {
 			int i = atoi(sp->getName().c_str());
@@ -1391,7 +1394,12 @@ void GameScene::onUserDataResponse(UserData data)
 void GameScene::onUserExitRoom(long sfsUId)
 {
 	if (sfsUId == sfsIdMe) {
-		if (isReconnecting) {
+		if (isKickForNotReady) {
+			showPopupNotice(Utils::getSingleton().getStringForKey("bi_thoat_do_khong_san_sang"), [=]() {
+				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
+				Utils::getSingleton().goToLobbyScene();
+			}, false);
+		}else if (isReconnecting) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
 		} else {
@@ -1418,11 +1426,12 @@ void GameScene::onErrorResponse(unsigned char code, std::string msg)
 		return;
 	}
 	if (code == 19) {
-		unregisterEventListenner();
+		isKickForNotReady = true;
+		/*unregisterEventListenner();
 		showPopupNotice(Utils::getSingleton().getStringForKey("bi_thoat_do_khong_san_sang"), [=]() {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
-		}, false);
+		}, false);*/
 		return;
 	}
 	if(code != 29) showError(msg);
@@ -1755,7 +1764,7 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 	runAction(Sequence::create(delay1, func1, nullptr));
 
 	if (!startGameData.CanWin) {
-		DelayTime* delay4 = DelayTime::create(5);
+		DelayTime* delay4 = DelayTime::create(6);
 		CallFunc* func4 = CallFunc::create([=]() {
 			if (startGameData.CurrentTurn == sfsIdMe) {
 				btnBash->setVisible(true);

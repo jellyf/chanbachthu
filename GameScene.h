@@ -165,6 +165,7 @@ private:
 	bool hasClickInvite = false;
 	bool hasRegisterOut = false;
 	bool isReconnecting = false;
+	bool isKickForNotReady = false;
 	GameState state;
 	StartGameData startGameData;
 	CardHandData myCardHand;
