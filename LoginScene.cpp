@@ -85,6 +85,22 @@ void LoginScene::onInit()
 	lb2->setPosition(145, -50);
 	loginNode->addChild(lb2);
 
+	ui::Button* btnForgotPass = ui::Button::create("white.png", "white.png");
+	btnForgotPass->setContentSize(lb2->getContentSize() + Size(40, 20));
+	btnForgotPass->setPosition(lb2->getPosition());
+	btnForgotPass->setScale9Enabled(true);
+	btnForgotPass->setOpacity(0);
+	addTouchEventListener(btnForgotPass, [=]() {
+		showPopupNotice(Utils::getSingleton().getStringForKey("open_sms_retake_password"), [=]() {
+			string str = Utils::getSingleton().gameConfig.smsMK;
+			int i = str.find_last_of(' ');
+			string number = str.substr(i + 1, str.length() - i - 1);
+			string content = str.substr(0, i);
+			Utils::getSingleton().openSMS(number, content);
+		});
+	});
+	loginNode->addChild(btnForgotPass);
+
 	ui::Button* btnLogin = ui::Button::create("login/btn_login.png", "login/btn_login_clicked.png");
 	btnLogin->setPosition(Vec2(-110, -115));
 	addTouchEventListener(btnLogin, [=]() {
