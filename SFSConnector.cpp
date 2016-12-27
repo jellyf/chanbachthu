@@ -202,7 +202,7 @@ void SFSConnector::OnUserExitRoom(unsigned long long ptrContext, boost::shared_p
 	boost::shared_ptr<void> ptrEventParamValueRoom = (*ptrEventParams)["room"];
 	boost::shared_ptr<Room> ptrNotifiedRoom = ((boost::static_pointer_cast<Room>))(ptrEventParamValueRoom);
 
-	CCLOG("%s leaved room %s", ptrNotifiedUser->Name()->c_str(), ptrNotifiedRoom->Name()->c_str());
+	//CCLOG("%s leaved room %s", ptrNotifiedUser->Name()->c_str(), ptrNotifiedRoom->Name()->c_str());
 	if (EventHandler::getSingleton().onUserExitRoom != NULL) {
 		EventHandler::getSingleton().onUserExitRoom(ptrNotifiedUser->Id());
 	}
@@ -219,7 +219,7 @@ void SFSConnector::OnUserEnterRoom(unsigned long long ptrContext, boost::shared_
 	boost::shared_ptr<void> ptrEventParamValueRoom = (*ptrEventParams)["room"];
 	boost::shared_ptr<Room> ptrNotifiedRoom = ((boost::static_pointer_cast<Room>))(ptrEventParamValueRoom);
 
-	CCLOG("%s enter room %s", ptrNotifiedUser->Name()->c_str(), ptrNotifiedRoom->Name()->c_str());
+	//CCLOG("%s enter room %s", ptrNotifiedUser->Name()->c_str(), ptrNotifiedRoom->Name()->c_str());
 }
 
 void SFSConnector::OnExtensionResponse(unsigned long long ptrContext, boost::shared_ptr<BaseEvent> ptrEvent)
