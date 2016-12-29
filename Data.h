@@ -250,6 +250,7 @@ struct GameConfig
 {
 	bool paymentEnabled;
 	bool paymentEnabledIOS;
+	bool canUpdate;
 	int port;
 	int websocket;
 	int version;
@@ -263,6 +264,8 @@ struct GameConfig
 	std::string smsKH;
 	std::string smsMK;
 	std::string linkFb;
+	std::string linkAndroid;
+	std::string linkIOS;
 };
 
 struct RankData

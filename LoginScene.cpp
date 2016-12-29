@@ -301,6 +301,9 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		config.smsKH = d["smsKH"].GetString();
 		config.smsMK = d["smsMK"].GetString();
 		config.linkFb = d["fb"].GetString();
+		config.linkAndroid = d["a"].GetString();
+		config.linkIOS = d["i"].GetString();
+		config.canUpdate = d["updatenow"].GetBool();
 
 		string verstr = Application::sharedApplication()->getVersion();
 		int i = verstr.find_last_of('.') + 1;
@@ -314,7 +317,15 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		//string location = Utils::getSingleton().getUserCountry();
 		//Utils::getSingleton().gameConfig.paymentEnabled = config.paymentEnabled && location.compare("vn") == 0;
         
-        if(waitingLogin > 0){
+		if (config.canUpdate) {
+			showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+				Application::sharedApplication()->openURL(config.linkIOS);
+#else
+				Application::sharedApplication()->openURL(config.linkAndroid);
+#endif
+			});
+		} else if(waitingLogin > 0){
             if(waitingLogin == 1){
                 loginNormal();
             }else if(waitingLogin == 2){
