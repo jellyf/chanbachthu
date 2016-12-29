@@ -316,16 +316,21 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		labelPhone->setString(config.phone);
 		//string location = Utils::getSingleton().getUserCountry();
 		//Utils::getSingleton().gameConfig.paymentEnabled = config.paymentEnabled && location.compare("vn") == 0;
-        
-		if (config.canUpdate) {
-			showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+		if (config.canUpdate && nver < config.versionIOS - 1) {
+			showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
 				Application::sharedApplication()->openURL(config.linkIOS);
-#else
-				Application::sharedApplication()->openURL(config.linkAndroid);
-#endif
 			});
-		} else if(waitingLogin > 0){
+		}
+#else
+		if (config.canUpdate && nver < config.version - 1) {
+			showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
+				Application::sharedApplication()->openURL(config.linkAndroid);
+			});
+		}
+#endif
+		else if(waitingLogin > 0){
             if(waitingLogin == 1){
                 loginNormal();
             }else if(waitingLogin == 2){
@@ -481,6 +486,6 @@ void LoginScene::initRegisterNode()
 void LoginScene::requestGameConfig()
 {
 	showWaiting();
-	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
-	SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchan.txt", 1);
+	SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
+	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchan.txt", 1);
 }
