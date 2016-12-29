@@ -15,15 +15,18 @@ void MainScene::onInit()
 	currentMoneyType = Utils::getSingleton().moneyType;
 
 	std::vector<Vec2> vecPos;
+	vecPos.push_back(Vec2(80, 65));
 	vecPos.push_back(Vec2(240, 65));
-	vecPos.push_back(Vec2(405, 65));
-	vecPos.push_back(Vec2(570, 65));
-	vecPos.push_back(Vec2(732, 65));
-	vecPos.push_back(Vec2(872, 65));
+	vecPos.push_back(Vec2(400, 65));
+	vecPos.push_back(Vec2(560, 65));
+	vecPos.push_back(Vec2(730, 65));
+	vecPos.push_back(Vec2(900, 65));
+	vecPos.push_back(Vec2(1040, 65));
 	vecPos.push_back(Vec2(140, 335));
 	vecPos.push_back(Vec2(426, 335));
 	vecPos.push_back(Vec2(703, 335));
 	vecPos.push_back(Vec2(988, 335));
+	int m = 0;
 
 	initHeaderWithInfos();
 
@@ -31,8 +34,17 @@ void MainScene::onInit()
 	bg->setPosition(560, 350);
 	addChild(bg);
 
+	ui::Button* btnAgency = ui::Button::create("main/icon_agency.png");
+	btnAgency->setPosition(vecPos[m++]);
+	btnAgency->setVisible(paymentEnabled);
+	addTouchEventListener(btnAgency, [=]() {
+		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
+	});
+	mLayer->addChild(btnAgency);
+	autoScaleNode(btnAgency);
+
 	ui::Button* btnGuide = ui::Button::create("main/icon_guide.png");
-	btnGuide->setPosition(vecPos[0]);
+	btnGuide->setPosition(vecPos[m++]);
 	btnGuide->setVisible(paymentEnabled);
 	addTouchEventListener(btnGuide, [=]() {
 		showPopup(popupGuide);
@@ -41,7 +53,7 @@ void MainScene::onInit()
 	autoScaleNode(btnGuide);
 
 	ui::Button* btnCharge = ui::Button::create("main/icon_charge.png");
-	btnCharge->setPosition(vecPos[1]);
+	btnCharge->setPosition(vecPos[m++]);
 	btnCharge->setVisible(paymentEnabled);
 	addTouchEventListener(btnCharge, [=]() {
 		showPopup(popupCharge);
@@ -50,7 +62,7 @@ void MainScene::onInit()
 	autoScaleNode(btnCharge);
 
 	ui::Button* btnShop = ui::Button::create("main/icon_shop.png");
-	btnShop->setPosition(vecPos[2]);
+	btnShop->setPosition(vecPos[m++]);
 	btnShop->setVisible(paymentEnabled);
 	addTouchEventListener(btnShop, [=]() {
 		showPopup(popupShop);
@@ -62,7 +74,7 @@ void MainScene::onInit()
 	autoScaleNode(btnShop);
 
 	ui::Button* btnNews = ui::Button::create("main/icon_news.png");
-	btnNews->setPosition(vecPos[3]);
+	btnNews->setPosition(vecPos[m++]);
 	btnNews->setVisible(paymentEnabled);
 	addTouchEventListener(btnNews, [=]() {
 		showPopupNews();
@@ -74,7 +86,7 @@ void MainScene::onInit()
 	autoScaleNode(btnNews);
 
 	ui::Button* btnMail = ui::Button::create("main/icon_mail.png");
-	btnMail->setPosition(vecPos[4]);
+	btnMail->setPosition(vecPos[m++]);
 	btnMail->setVisible(paymentEnabled);
 	addTouchEventListener(btnMail, [=]() {
 		showPopupMail();
@@ -92,8 +104,17 @@ void MainScene::onInit()
 	lbNewMail->setPosition(circleNewMail->getContentSize().width / 2 - 4, circleNewMail->getContentSize().height / 2);
 	circleNewMail->addChild(lbNewMail);
 
+	ui::Button* btnGiftcode = ui::Button::create("main/icon_giftcode.png");
+	btnGiftcode->setPosition(vecPos[m++]);
+	btnGiftcode->setVisible(paymentEnabled);
+	addTouchEventListener(btnGiftcode, [=]() {
+		showPopup(popupGiftcode);
+	});
+	mLayer->addChild(btnGiftcode);
+	autoScaleNode(btnGiftcode);
+
 	ui::Button* btnNhaTranh = ui::Button::create("main/nhatranh.png", "main/nhatranh.png");
-	btnNhaTranh->setPosition(vecPos[5]);
+	btnNhaTranh->setPosition(vecPos[m++]);
 	addTouchEventListener(btnNhaTranh, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -104,7 +125,7 @@ void MainScene::onInit()
 	mLayer->addChild(btnNhaTranh);
 
 	ui::Button* btnDinhLang = ui::Button::create("main/dinhlang.png", "main/dinhlang.png");
-	btnDinhLang->setPosition(vecPos[6]);
+	btnDinhLang->setPosition(vecPos[m++]);
 	addTouchEventListener(btnDinhLang, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -115,7 +136,7 @@ void MainScene::onInit()
 	mLayer->addChild(btnDinhLang);
 
 	ui::Button* btnPhuChua = ui::Button::create("main/phuchua.png", "main/phuchua.png");
-	btnPhuChua->setPosition(vecPos[7]);
+	btnPhuChua->setPosition(vecPos[m++]);
 	addTouchEventListener(btnPhuChua, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -126,7 +147,7 @@ void MainScene::onInit()
 	mLayer->addChild(btnPhuChua);
 
 	ui::Button* btnLoiDai = ui::Button::create("main/loidai.png", "main/loidai.png");
-	btnLoiDai->setPosition(vecPos[8]);
+	btnLoiDai->setPosition(vecPos[m++]);
 	addTouchEventListener(btnLoiDai, [=]() {
 		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
 	});
@@ -141,6 +162,7 @@ void MainScene::onInit()
 	initPopupSettings();
 	initPopupHistory();
 	initPopupDisplayName();
+	initPopupGiftcode();
 	initEventView(Vec2(0, 562), Size(1120, 40));
 	//initWebView();
 
@@ -780,7 +802,7 @@ void MainScene::initPopupCharge()
 	popupCharge->setVisible(false);
 	popupCharge->setTag(0);
 	mLayer->addChild(popupCharge, constant::ZORDER_POPUP);
-	autoScaleNode(popupCharge);
+	//autoScaleNode(popupCharge);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);
@@ -1204,7 +1226,7 @@ void MainScene::initPopupGuide()
 	popupGuide->setVisible(false);
 	popupGuide->setTag(0);
 	mLayer->addChild(popupGuide, constant::ZORDER_POPUP);
-	autoScaleNode(popupGuide);
+	//autoScaleNode(popupGuide);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);
@@ -1295,7 +1317,7 @@ void MainScene::initPopupMail()
 	popupMail->setPosition(560, 350);
 	popupMail->setVisible(false);
 	mLayer->addChild(popupMail, constant::ZORDER_POPUP);
-	autoScaleNode(popupMail);
+	//autoScaleNode(popupMail);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);
@@ -1386,7 +1408,7 @@ void MainScene::initPopupNews()
 	popupNews->setVisible(false);
 	popupNews->setTag(1);
 	mLayer->addChild(popupNews, constant::ZORDER_POPUP);
-	autoScaleNode(popupNews);
+	//autoScaleNode(popupNews);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);
@@ -1454,7 +1476,7 @@ void MainScene::initPopupShop()
 	popupShop->setVisible(false);
 	popupShop->setTag(0);
 	mLayer->addChild(popupShop, constant::ZORDER_POPUP);
-	autoScaleNode(popupShop);
+	//autoScaleNode(popupShop);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);
@@ -1599,13 +1621,72 @@ void MainScene::initWebView()
 	autoScaleNode(btnClose);
 }
 
+void MainScene::initPopupGiftcode()
+{
+	popupGiftcode = Node::create();
+	popupGiftcode->setPosition(560, 350);
+	popupGiftcode->setVisible(false);
+	mLayer->addChild(popupGiftcode, constant::ZORDER_POPUP);
+	//autoScaleNode(popupGiftcode);
+
+	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
+	bg->setInsetBottom(0);
+	bg->setInsetTop(0);
+	bg->setInsetLeft(100);
+	bg->setInsetRight(100);
+	bg->setContentSize(Size(800, 400));
+	bg->setScale(.8f);
+	popupGiftcode->addChild(bg);
+
+	Sprite* title = Sprite::create("popup/title_giftcode.png");
+	title->setPosition(0, 110);
+	title->setScale(.8f);
+	popupGiftcode->addChild(title);
+
+	ui::EditBox* tfGiftcode = ui::EditBox::create(Size(340, 55), "login/box.png");
+	tfGiftcode->setPosition(Vec2(0, 0));
+	tfGiftcode->setFontName("Arial");
+	tfGiftcode->setFontSize(25);
+	tfGiftcode->setFontColor(Color3B::WHITE);
+	tfGiftcode->setMaxLength(20);
+	tfGiftcode->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
+	tfGiftcode->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
+	tfGiftcode->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
+	tfGiftcode->setDelegate(this);
+	popupGiftcode->addChild(tfGiftcode);
+
+	/*Label* lb = Label::create(Utils::getSingleton().getStringForKey("nhap_giftcode"), "fonts/arial.ttf", 30);
+	lb->setPosition(0, 60);
+	popupGiftcode->addChild(lb);*/
+
+	ui::Button* btnSubmit = ui::Button::create("popup/btn_submit.png", "popup/btn_submit_clicked.png");
+	btnSubmit->setPosition(Vec2(0, -95));
+	addTouchEventListener(btnSubmit, [=]() {
+		string code = Utils::getSingleton().trim(tfGiftcode->getText());
+		if (code.length() > 0) {
+			SFSRequest::getSingleton().RequestGiftcode(code);
+			tfGiftcode->setText("");
+			//hidePopup(popupGiftcode);
+		}
+	});
+	popupGiftcode->addChild(btnSubmit);
+
+	ui::Button* btnClose = ui::Button::create("popup/btn_dong.png", "popup/btn_dong_clicked.png");
+	btnClose->setPosition(Vec2(240, 110));
+	btnClose->setScale(.7f);
+	addTouchEventListener(btnClose, [=]() {
+		hidePopup(popupGiftcode);
+	});
+	popupGiftcode->addChild(btnClose);
+}
+
 void MainScene::initPopupDisplayName()
 {
 	popupDisplayName = Node::create();
 	popupDisplayName->setPosition(560, 350);
 	popupDisplayName->setVisible(false);
 	mLayer->addChild(popupDisplayName, constant::ZORDER_POPUP);
-	autoScaleNode(popupDisplayName);
+	//autoScaleNode(popupDisplayName);
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
 	bg->setInsetBottom(0);

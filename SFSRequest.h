@@ -44,6 +44,7 @@ public:
 	void RequestMailContent(long id);
 	void RequestUpdateDisplayName(std::string name);
 	void RequestNews(int page);
+	void RequestGiftcode(std::string giftcode);
 
 	void RequestGameReady();
 	void RequestGameChooseStilt(int stilt);

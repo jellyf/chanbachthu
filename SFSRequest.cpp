@@ -195,6 +195,15 @@ void SFSRequest::RequestNews(int page)
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::NEWS, parameters);
 }
 
+void SFSRequest::RequestGiftcode(std::string giftcode)
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
+	data->WriteUTF(giftcode);
+	parameters->PutByteArray("d", data);
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::GIFT_CODE, parameters);
+}
+
 void SFSRequest::RequestRegister(std::string username, std::string password, std::string email)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());

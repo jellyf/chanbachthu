@@ -36,6 +36,7 @@ private:
 	void initPopupNews();
 	void initPopupShop();
 	void initWebView();
+	void initPopupGiftcode();
 	void initPopupDisplayName();
 
 	void showPopupMail();
@@ -47,6 +48,7 @@ private:
 	cocos2d::Node* popupNews;
 	cocos2d::Node* popupGuide;
 	cocos2d::Node* popupCharge;
+	cocos2d::Node* popupGiftcode;
 	cocos2d::Node* popupDisplayName;
 	cocos2d::Node* nodeWebview;
 
