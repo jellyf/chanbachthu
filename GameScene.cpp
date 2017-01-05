@@ -1357,14 +1357,16 @@ void GameScene::delayFunction(Node * node, float time, std::function<void()> fun
 void GameScene::beatenNodeAndHide(cocos2d::Node * node, float scale1, float scale2, float timeToBeaten, float timeToHide)
 {
 	node->setVisible(true);
-	float scale = node->getScale();
-	ScaleTo* scaleTo1 = ScaleTo::create(timeToBeaten, scale1);
-	ScaleTo* scaleTo2 = ScaleTo::create(timeToBeaten, scale2);
+	Vec2 scale = Vec2(node->getScaleX(), node->getScaleY());
+	Vec2 scale11 = getScaleSmoothly(scale1);
+	Vec2 scale22 = getScaleSmoothly(scale2);
+	ScaleTo* scaleTo1 = ScaleTo::create(timeToBeaten, scale11.x, scale11.y);
+	ScaleTo* scaleTo2 = ScaleTo::create(timeToBeaten, scale22.x, scale22.y);
 	node->runAction(RepeatForever::create(Sequence::create(scaleTo1, scaleTo2, nullptr)));
 
 	DelayTime* delay = DelayTime::create(timeToHide);
 	CallFunc* func = CallFunc::create([=]() {
-		node->setScale(scale);
+		node->setScale(scale.x, scale.y);
 		node->setVisible(false);
 	});
 	node->runAction(Sequence::create(delay, func, nullptr));
