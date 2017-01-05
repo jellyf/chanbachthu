@@ -1644,7 +1644,7 @@ void MainScene::initPopupGiftcode()
 	popupGiftcode->addChild(title);
 
 	ui::EditBox* tfGiftcode = ui::EditBox::create(Size(340, 55), "login/box.png");
-	tfGiftcode->setPosition(Vec2(0, 0));
+	tfGiftcode->setPosition(Vec2(0, -20));
 	tfGiftcode->setFontName("Arial");
 	tfGiftcode->setFontSize(25);
 	tfGiftcode->setFontColor(Color3B::WHITE);
@@ -1655,12 +1655,12 @@ void MainScene::initPopupGiftcode()
 	tfGiftcode->setDelegate(this);
 	popupGiftcode->addChild(tfGiftcode);
 
-	/*Label* lb = Label::create(Utils::getSingleton().getStringForKey("nhap_giftcode"), "fonts/arial.ttf", 30);
-	lb->setPosition(0, 60);
-	popupGiftcode->addChild(lb);*/
+	Label* lb = Label::create(Utils::getSingleton().getStringForKey("nhap_giftcode"), "fonts/arial.ttf", 30);
+	lb->setPosition(0, 30);
+	popupGiftcode->addChild(lb);
 
 	ui::Button* btnSubmit = ui::Button::create("popup/btn_submit.png", "popup/btn_submit_clicked.png");
-	btnSubmit->setPosition(Vec2(0, -95));
+	btnSubmit->setPosition(Vec2(0, -105));
 	addTouchEventListener(btnSubmit, [=]() {
 		string code = Utils::getSingleton().trim(tfGiftcode->getText());
 		if (code.length() > 0) {
