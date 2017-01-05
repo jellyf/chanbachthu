@@ -276,6 +276,15 @@ struct RankData
 	long Exp;
 };
 
+struct RankWinData
+{
+	long Uid;
+	long Point;
+	std::string Name;
+	std::string Cuoc;
+	std::string Date;
+};
+
 struct PlayLogData
 {
 	std::string Date;

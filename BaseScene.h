@@ -23,6 +23,7 @@ public:
 
 	void onUserDataMeResponse();
 	void onRankDataResponse(std::vector<std::vector<RankData>> list);
+	void onRankWinDataResponse(std::vector<RankWinData> list);
 	void onListEventDataResponse(std::vector<EventData> list);
 	void onPlayLogDataResponse(std::vector<PlayLogData> logs);
 protected:
@@ -43,6 +44,7 @@ protected:
 	void setMoneyType(int type);
 	void showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose = true);
 	void showPopupRank(int type);
+	void showPopupRankWin();
 	void showPopupUserInfo(UserData userData, bool showHistoryIfIsMe = true);
 	void showPopupHistory();
 	void showSplash();
@@ -91,6 +93,7 @@ protected:
 	int tmpIndex;
 
 private:
+	std::vector<RankWinData> listRankWin;
 	std::vector<std::vector<RankData>> listRanks;
 	cocos2d::Vector<Node*> vecPopupNotices;
 };

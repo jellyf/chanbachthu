@@ -52,6 +52,7 @@ SFSResponse::SFSResponse()
 	mapFunctions[cmd::LOBBY_RESPONSE_DATA_USER] = std::bind(&SFSResponse::onLobbyUserResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::LOBBY_RESPONSE_INVITE_PLAYER] = std::bind(&SFSResponse::onLobbyInviteResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::RESPONSE_RANK] = std::bind(&SFSResponse::onRankResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::RANK_WIN] = std::bind(&SFSResponse::onRankWinResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::PLAY_HISTORY] = std::bind(&SFSResponse::onPlayLogResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::SHOP_HISTORY] = std::bind(&SFSResponse::onShopHistoryResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::SHOP_ITEMS] = std::bind(&SFSResponse::onShopItemsResponse, this, std::placeholders::_1);
@@ -873,6 +874,32 @@ void SFSResponse::onRankResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	list.push_back(list2);
 	if (EventHandler::getSingleton().onRankDataSFSResponse != NULL) {
 		EventHandler::getSingleton().onRankDataSFSResponse(list);
+	}
+}
+
+void SFSResponse::onRankWinResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	std::vector<RankWinData > list;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	while (byteArray->Position() < byteArray->Length()) {
+		unsigned char size1;
+		std::vector<unsigned char> tmp1;
+		byteArray->ReadByte(size1);
+		byteArray->ReadBytes(size1, tmp1);
+		boost::shared_ptr<ByteArray> byteArray1 = boost::shared_ptr<ByteArray>(new ByteArray(boost::shared_ptr<vector<unsigned char>>(new vector<unsigned char>(tmp1))));
+
+		RankWinData data;
+		byteArray1->ReadInt(data.Uid);
+		byteArray1->ReadUTF(data.Name);
+		byteArray1->ReadInt(data.Point);
+		byteArray1->ReadUTF(data.Cuoc);
+		byteArray1->ReadUTF(data.Date);
+		list.push_back(data);
+
+		//CCLOG("%d %s %d %s %s", data.Uid, data.Name.c_str(), data.Point, data.Cuoc.c_str(), data.Date.c_str());
+	}
+	if (EventHandler::getSingleton().onRankWinDataSFSResponse != NULL) {
+		EventHandler::getSingleton().onRankWinDataSFSResponse(list);
 	}
 }
 

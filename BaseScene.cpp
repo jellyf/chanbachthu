@@ -119,6 +119,7 @@ void BaseScene::registerEventListenner()
 {
 	EventHandler::getSingleton().onUserDataMeSFSResponse = std::bind(&BaseScene::onUserDataMeResponse, this);
 	EventHandler::getSingleton().onRankDataSFSResponse = std::bind(&BaseScene::onRankDataResponse, this, std::placeholders::_1);
+	EventHandler::getSingleton().onRankWinDataSFSResponse = std::bind(&BaseScene::onRankWinDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onListEventDataSFSResponse = std::bind(&BaseScene::onListEventDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onPlayLogDataSFSResponse = bind(&BaseScene::onPlayLogDataResponse, this, placeholders::_1);
 }
@@ -127,6 +128,7 @@ void BaseScene::unregisterEventListenner()
 {
 	EventHandler::getSingleton().onUserDataMeSFSResponse = NULL;
 	EventHandler::getSingleton().onRankDataSFSResponse = NULL;
+	EventHandler::getSingleton().onRankWinDataSFSResponse = NULL;
 	EventHandler::getSingleton().onListEventDataSFSResponse = NULL;
 	EventHandler::getSingleton().onPlayLogDataSFSResponse = NULL;
 }
@@ -322,7 +324,15 @@ void BaseScene::showPopupRank(int type)
 	btn->loadTextureNormal("popup/box2.png");
 	popupRank->setTag(type);
 
+	if (type == 2) {
+		showPopupRankWin();
+		return;
+	}
+
 	ui::ScrollView* scroll = (ui::ScrollView*)popupRank->getChildByName("scroll");
+	ui::ScrollView* scrollWin = (ui::ScrollView*)popupRank->getChildByName("scrollwin");
+	scroll->setVisible(true);
+	scrollWin->setVisible(false);
 	int height = listRanks[type].size() * 55;
 	int width = scroll->getContentSize().width;
 	scroll->setInnerContainerSize(Size(width, height));
@@ -366,6 +376,86 @@ void BaseScene::showPopupRank(int type)
 			Label* lb3 = (Label*)node->getChildByTag(3);
 			lb2->setString(listRanks[type][i].Name);
 			lb3->setString(Utils::getSingleton().formatMoneyWithComma(listRanks[type][i].Money));
+		}
+	}
+	int i = 20;
+	Node* n;
+	while ((n = popupRank->getChildByTag(10 + i)) != nullptr) {
+		n->setVisible(false);
+	}
+}
+
+void BaseScene::showPopupRankWin()
+{
+	/*listRankWin.clear();
+	for (int i = 0; i < 20; i++) {
+		RankWinData data;
+		data.Uid = 1000 + rand() % 10000;
+		data.Name = "stormus" + to_string(data.Uid);
+		data.Point = rand() % 60;
+		data.Cuoc = "Nha lau xe hoi Hoa roi cua phat Ca nhay dau thuyen ngu ong bat ca Chua do nat hoa";
+		data.Date = "05/01/2016";
+		listRankWin.push_back(data);
+	}*/
+
+	ui::ScrollView* scroll = (ui::ScrollView*)popupRank->getChildByName("scroll");
+	ui::ScrollView* scrollWin = (ui::ScrollView*)popupRank->getChildByName("scrollwin");
+	scroll->setVisible(false);
+	scrollWin->setVisible(true);
+	int height = listRankWin.size() * 75;
+	int width = scrollWin->getContentSize().width;
+	scrollWin->setInnerContainerSize(Size(width, height));
+	for (int i = 0; i < listRankWin.size(); i++) {
+		Node* node = popupRank->getChildByTag(10 + i);
+		if (node == nullptr) {
+			node = Node::create();
+			node->setPosition(scrollWin->getContentSize().width / 2, height - 40 - i * 75);
+			node->setTag(10 + i);
+			scrollWin->addChild(node);
+
+			ui::Scale9Sprite* nbg = ui::Scale9Sprite::create("popup/box1.png");
+			nbg->setContentSize(Size(width, 85));
+			node->addChild(nbg);
+
+			Label* lb1 = Label::create(to_string(i + 1), "fonts/guanine.ttf", 25);
+			lb1->setAnchorPoint(Vec2(0, .5f));
+			lb1->setColor(Color3B(50, 50, 50));
+			lb1->setPosition(-width / 2 + 70, 5);
+			lb1->setTag(1);
+			node->addChild(lb1);
+
+			Label* lb2 = Label::create(listRankWin[i].Name, "fonts/arial.ttf", 20);
+			lb2->setAnchorPoint(Vec2(0, .5f));
+			lb2->setColor(Color3B(50, 50, 50));
+			lb2->setPosition(-width / 2 + 150, 10);
+			lb2->setWidth(400);
+			lb2->setHeight(30);
+			lb2->setTag(2);
+			node->addChild(lb2);
+
+			Label* lb3 = Label::create(listRankWin[i].Cuoc, "fonts/guanine.ttf", 20);
+			lb3->setAnchorPoint(Vec2(0, .5f));
+			lb3->setColor(Color3B::RED);
+			lb3->setPosition(-width / 2 + 150, -10);
+			lb3->setWidth(600);
+			lb3->setHeight(30);
+			lb3->setTag(3);
+			node->addChild(lb3);
+
+			Label* lb4 = Label::create(Utils::getSingleton().formatMoneyWithComma(listRankWin[i].Point), "fonts/arialbd.ttf", 25);
+			lb4->setAnchorPoint(Vec2(1, .5f));
+			lb4->setColor(Color3B::RED);
+			lb4->setPosition(width / 2 - 50, 0);
+			lb4->setTag(4);
+			node->addChild(lb4);
+		} else {
+			node->setVisible(true);
+			Label* lb2 = (Label*)node->getChildByTag(2);
+			Label* lb3 = (Label*)node->getChildByTag(3);
+			Label* lb4 = (Label*)node->getChildByTag(4);
+			lb2->setString(listRankWin[i].Name);
+			lb3->setString(listRankWin[i].Cuoc);
+			lb4->setString(Utils::getSingleton().formatMoneyWithComma(listRankWin[i].Point));
 		}
 	}
 	int i = 20;
@@ -508,6 +598,7 @@ void BaseScene::initHeaderWithInfos()
 	addTouchEventListener(btnRank, [=]() {
 		if (listRanks.size() == 0) {
 			SFSRequest::getSingleton().RequestRank();
+			SFSRequest::getSingleton().RequestRankWin();
 		} else {
 			showPopupRank(0);
 		}
@@ -807,7 +898,16 @@ void BaseScene::initPopupRank()
 	scroll->setName("scroll");
 	popupRank->addChild(scroll);
 
-	vector<string> texts = { "quan" , "xu" };
+	ui::ScrollView* scrollWin = ui::ScrollView::create();
+	scrollWin->setDirection(ui::ScrollView::Direction::VERTICAL);
+	scrollWin->setBounceEnabled(true);
+	scrollWin->setPosition(Vec2(-w / 2, -227));
+	scrollWin->setContentSize(Size(w, 350));
+	scrollWin->setScrollBarEnabled(false);
+	scrollWin->setName("scrollwin");
+	popupRank->addChild(scrollWin);
+
+	vector<string> texts = { "quan", "xu", "win" };
 	int x = -315;
 	for (int i = 0; i < texts.size(); i++) {
 		ui::Button* btn = ui::Button::create(i == 0 ? "popup/box2.png" : "popup/box1.png");
@@ -1175,6 +1275,11 @@ void BaseScene::onRankDataResponse(std::vector<std::vector<RankData>> list)
 {
 	this->listRanks = list;
 	showPopupRank(0);
+}
+
+void BaseScene::onRankWinDataResponse(std::vector<RankWinData> list)
+{
+	this->listRankWin = list;
 }
 
 void BaseScene::onListEventDataResponse(std::vector<EventData> list)

@@ -36,6 +36,7 @@ public:
 	void RequestChargeCard(std::string code, std::string seri, std::string serviceId);
 	void RequestUserInfo(std::string username);
 	void RequestRank();
+	void RequestRankWin();
 	void RequestPlayHistory(int type, int page);
 	void RequestShopHistory(int page);
 	void RequestShopItems();

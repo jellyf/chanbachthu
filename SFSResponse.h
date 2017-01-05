@@ -49,6 +49,7 @@ private:
 	void onPlayingCardFromJson(std::string json, std::vector<std::vector<char>> &vec);
 	void onGameSpectatorResponse(boost::shared_ptr<ISFSObject> isfsObject);
 	void onRankResponse(boost::shared_ptr<ISFSObject> isfsObject);
+	void onRankWinResponse(boost::shared_ptr<ISFSObject> isfsObject);
 	void onPlayLogResponse(boost::shared_ptr<ISFSObject> isfsObject);
 	void onGameMyReconnectResponse(boost::shared_ptr<ISFSObject> isfsObject);
 	void onGameUserReconnectResponse(boost::shared_ptr<ISFSObject> isfsObject);

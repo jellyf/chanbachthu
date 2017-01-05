@@ -125,6 +125,15 @@ void SFSRequest::RequestRank()
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::REQUEST_RANK, parameters);
 }
 
+void SFSRequest::RequestRankWin()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
+	data->WriteBool(false);
+	parameters->PutByteArray("d", data);
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::RANK_WIN, parameters);
+}
+
 void SFSRequest::RequestPlayHistory(int type, int page)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
