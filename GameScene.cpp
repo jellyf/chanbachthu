@@ -522,9 +522,9 @@ void GameScene::onInit()
 		autoScaleNode(spBB);
 
 		Label* lb1 = Label::createWithTTF("100,000", "fonts/UTM AZUKI.ttf", 45);
+		mLayer->addChild(lb1, constant::GAME_ZORDER_USER + 11);
 		lb1->setPosition(vecUserPos[i]);
 		lb1->setOpacity(0);
-		mLayer->addChild(lb1, constant::GAME_ZORDER_USER + 11);
 		lbWinMoneys.push_back(lb1);
 	}
 
@@ -903,7 +903,7 @@ void GameScene::dealCards()
 {
 	state = DEAL;
 
-	if (soundDealId == -1) {
+	/*if (soundDealId == -1) {
 		soundDealId = experimental::AudioEngine::play2d("sound/deal_card.mp3", true, .1f);
 	} else {
 		experimental::AudioEngine::setCurrentTime(soundDealId, 0);
@@ -913,7 +913,7 @@ void GameScene::dealCards()
 	CallFunc* funcStopSound = CallFunc::create([=]() {
 		experimental::AudioEngine::pause(soundDealId);
 	});
-	this->runAction(Sequence::create(delayStopSound, funcStopSound, nullptr));
+	this->runAction(Sequence::create(delayStopSound, funcStopSound, nullptr));*/
 
 	vector<Vec2> nodePos;
 	nodePos.push_back(Vec2(320, 350));
@@ -927,7 +927,7 @@ void GameScene::dealCards()
 		nodes.push_back(node);
 	}
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 6; i++) {
 		for (int j = 0; j < dealPos.size(); j++) {
 			for (int k = 0; k < nodePos.size(); k++) {
 				Sprite* sp = Sprite::create("cards/100.png");
@@ -936,23 +936,28 @@ void GameScene::dealCards()
 				nodes[k]->addChild(sp);
 				spDealCards.push_back(sp);
 
-				DelayTime* delay = DelayTime::create(.203f * (i * dealPos.size() + j));
-				MoveBy* move = MoveBy::create(.15f, dealPos[j] + Vec2(rand() % 20 - 10, rand() % 20 - 10));
-				RotateBy* rotate = RotateBy::create(.15f, rand() % 60 - 30);
+				DelayTime* delay = DelayTime::create(.2f * (i * dealPos.size() + j));
+				DelayTime* delay2 = DelayTime::create(.1f + .2f * (i * dealPos.size() + j));
+				MoveBy* move = MoveBy::create(.3f, dealPos[j] + Vec2(rand() % 20 - 10, rand() % 20 - 10));
+				RotateBy* rotate = RotateBy::create(.3f, rand() % 60 - 30);
+				CallFunc* func = CallFunc::create([=]() {
+					experimental::AudioEngine::play2d("sound/deal_card.mp3", false, .1f);
+				});
 
 				sp->runAction(Sequence::create(delay, move, nullptr));
 				sp->runAction(Sequence::create(delay->clone(), rotate, nullptr));
+				sp->runAction(Sequence::create(delay2, func, nullptr));
 			}
 		}
 	}
 
 	for (Node* n : nodes) {
-		DelayTime* delay = DelayTime::create(11);
+		DelayTime* delay = DelayTime::create(7);
 		MoveTo* move = MoveTo::create(.5f, Vec2(560, 350));
 		n->runAction(Sequence::create(delay, move, nullptr));
 	}
 
-	DelayTime* delayStilt = DelayTime::create(12);
+	DelayTime* delayStilt = DelayTime::create(8);
 	CallFunc* func = CallFunc::create([=]() {
 		for (Sprite* sp : spDealCards) {
 			int i = atoi(sp->getName().c_str());
@@ -1292,15 +1297,17 @@ void GameScene::showSettings()
 
 void GameScene::showError(std::string msg)
 {
-	showPopup(lbError->getParent());
-	lbError->setString(msg);
+	//showPopup(lbError->getParent());
+	//lbError->setString(msg);
 
-	DelayTime* delay = DelayTime::create(2);
-	CallFunc* func = CallFunc::create([=]() {
-		hidePopup(lbError->getParent());
-	});
-	//lbError->getParent()->stopAllActions();
-	lbError->getParent()->runAction(Sequence::create(delay, func, nullptr));
+	//DelayTime* delay = DelayTime::create(2);
+	//CallFunc* func = CallFunc::create([=]() {
+	//	hidePopup(lbError->getParent());
+	//});
+	////lbError->getParent()->stopAllActions();
+	//lbError->getParent()->runAction(Sequence::create(delay, func, nullptr));
+
+	showSystemNotice(msg);
 }
 
 void GameScene::showSystemNotice(std::string msg)
@@ -1483,6 +1490,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		spInvites[i]->setVisible(true);
 		vecUsers[i]->setVisible(false);
 		spBatBaos[i]->setVisible(false);
+		spSanSangs[i]->setVisible(false);
 	}
 	int num = 0;
 	for (int i = 0; i < 4; i++) {
@@ -1589,16 +1597,19 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	if (winMoneyData.ListUserId.size() > 0) {
 		for (int i = 0; i < winMoneyData.ListUserId.size(); i++) {
 			int index = userIndexs2[winMoneyData.ListUserId[i]];
-			FadeIn* fadeIn = FadeIn::create(.5f);
-			MoveBy* move = MoveBy::create(2, Vec2(0, 50));
+			FadeIn* fadeIn = FadeIn::create(.2f);
+			MoveBy* move = MoveBy::create(.5f, Vec2(0, 80));
+			DelayTime* delay = DelayTime::create(1.5f);
 			FadeOut* fadeOut = FadeOut::create(.5f);
 
 			std::string str1 = Utils::getSingleton().formatMoneyWithComma(winMoneyData.ListUserAmount[i]);// > 0 ? money : -money);
 			std::string moneystr = String::createWithFormat(winMoneyData.ListUserAmount[i] > 0 ? "+%s" : "%s", str1.c_str())->getCString();
-			lbWinMoneys[index]->setColor(winMoneyData.ListUserAmount[i] > 0 ? Color3B::YELLOW : Color3B::GRAY);
+			lbWinMoneys[index]->enableOutline(Color4B::BLACK, 1);
+			lbWinMoneys[index]->setColor(winMoneyData.ListUserAmount[i] > 0 ? Color3B::YELLOW : Color3B::RED);
 			lbWinMoneys[index]->setPosition(vecUserPos[index] + Vec2(0, -40));
 			lbWinMoneys[index]->setString(moneystr);
-			lbWinMoneys[index]->runAction(Sequence::create(fadeIn, move, fadeOut, nullptr));
+			lbWinMoneys[index]->runAction(fadeIn);
+			lbWinMoneys[index]->runAction(Sequence::create(move, delay, fadeOut, nullptr));
 		}
 		winMoneyData.ListUserId.clear();
 		winMoneyData.ListUserAmount.clear();
@@ -1743,8 +1754,8 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 			int tmpChosen = chosenStiltHost < chosenStilt ? chosenStiltHost : (chosenStiltHost - 1);
 			int diff = (chosenHost + handPos.size() - tmpChosen) % handPos.size();
 			int rotation = diff * 90;
-			float runTime = diff * .5f + .5f;
-			if (diff == 0) runTime = .5f;
+			float runTime = diff * .3f + .3f;
+			if (diff == 0) runTime = .3f;
 			for (Node* n : vecStilts) {
 				if (n->isVisible()) {
 					DelayTime* delay2 = DelayTime::create(.1f);
@@ -1768,7 +1779,7 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 			}
 		}
 
-		DelayTime* delay3 = DelayTime::create(3);
+		DelayTime* delay3 = DelayTime::create(2);
 		CallFunc* func3 = CallFunc::create([=]() {
 			spDealCards.clear();
 			for (Node* n : vecStilts) {
@@ -1783,7 +1794,7 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 	runAction(Sequence::create(delay1, func1, nullptr));
 
 	if (!startGameData.CanWin) {
-		DelayTime* delay4 = DelayTime::create(6);
+		DelayTime* delay4 = DelayTime::create(5);
 		CallFunc* func4 = CallFunc::create([=]() {
 			if (startGameData.CurrentTurn == sfsIdMe) {
 				btnBash->setVisible(true);
