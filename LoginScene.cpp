@@ -166,6 +166,8 @@ void LoginScene::onInit()
 	if (Utils::getSingleton().gameConfig.phone.length() == 0) {
 		requestGameConfig();
 	}
+
+	loadTextureCache();
 }
 
 void LoginScene::registerEventListenner()
@@ -488,4 +490,11 @@ void LoginScene::requestGameConfig()
 	showWaiting();
 	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
 	SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchan.txt", 1);
+}
+
+void LoginScene::loadTextureCache()
+{
+	TextureCache::sharedTextureCache()->addImage("popup/title_thongbao.png");
+	TextureCache::sharedTextureCache()->addImage("popup/btn_submit.png");
+	TextureCache::sharedTextureCache()->addImage("popup/btn_submit_clicked.png");
 }

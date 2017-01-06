@@ -26,6 +26,7 @@ private:
 	void loginFacebook();
 	void initRegisterNode();
 	void requestGameConfig();
+	void loadTextureCache();
     
 	int waitingLogin;
 	int currentConfigLink = 0;
