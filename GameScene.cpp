@@ -2669,7 +2669,12 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 	}
 	lbCardNoc->getParent()->setVisible(true);
 	lbCardNoc->setString(to_string((int)data.StiltCount));
-	runTimeWaiting(data.TurnId, timeTurn);
+
+	DelayTime* delay = DelayTime::create(.5f);
+	CallFunc* func = CallFunc::create([=]() {
+		runTimeWaiting(data.TurnId, timeTurn);
+	});
+	this->runAction(Sequence::createWithTwoActions(delay, func));
 }
 
 void GameScene::onGameSpectatorDataResponse(std::vector<PlayerData> spectators)
@@ -2752,6 +2757,15 @@ void GameScene::onGameUserReconnectDataResponse(std::vector<UserReconnectData> l
 				player.Info.SfsUserId = list[i].SfsUserId;
 			}
 		}
+	}
+}
+
+void GameScene::onKeyHome()
+{
+	if (state != NONE && state != READY) {
+		double timeSecs = Utils::getSingleton().getCurrentSystemTimeInSecs();
+		UserDefault::getInstance()->setDoubleForKey(constant::KEY_RECONNECT_TIME.c_str(), timeSecs + 300);
+		UserDefault::getInstance()->setIntegerForKey(constant::KEY_RECONNECT_ZONE_INDEX.c_str(), Utils::getSingleton().getCurrentZoneIndex());
 	}
 }
 

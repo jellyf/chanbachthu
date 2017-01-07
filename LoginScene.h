@@ -12,6 +12,7 @@ public:
 
 	void onConnected();
 	void onLoginZone();
+	void onConnectionLost(std::string reason);
 	void onConnectionFailed();
 	void onConfigZoneReceived();
 	void onUserDataMeResponse();
@@ -19,6 +20,7 @@ public:
 	void onErrorResponse(unsigned char code, std::string msg);
 	void onHttpResponse(int tag, std::string content);
 	void onHttpResponseFailed();
+	void onTableDataResponse(LobbyListTable data);
 protected:
 	virtual void onKeyBack();
 private:
@@ -30,8 +32,11 @@ private:
     
 	int waitingLogin;
 	int currentConfigLink = 0;
+	int tmpZoneIndex;
 	std::string fbToken = "";
     bool isIPv4 = true;
+	bool canCheckReconnect = false;
+	bool isReconnecting = false;
 
 	cocos2d::Node* loginNode;
 	cocos2d::Node* registerNode;

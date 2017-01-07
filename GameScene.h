@@ -51,6 +51,8 @@ public:
 	void onGameSpectatorDataResponse(std::vector<PlayerData> spectators);
 	void onGameMyReconnectDataResponse(GameReconnectData data);
 	void onGameUserReconnectDataResponse(std::vector<UserReconnectData> list);
+protected:
+	virtual void onKeyHome();
 private:
 	void initChatTable();
 	void initCrestTable();

@@ -684,6 +684,10 @@ void BaseScene::onKeyBack()
 {
 }
 
+void BaseScene::onKeyHome()
+{
+}
+
 void BaseScene::hideSplash()
 {
 	if (isWaiting) return;

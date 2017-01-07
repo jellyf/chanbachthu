@@ -21,6 +21,8 @@ public:
 	std::string replaceString(std::string str, std::string strSearch, std::string strReplace);
 	std::string trim(std::string str);
 	std::string getUserCountry();
+	double getCurrentSystemTimeInSecs();
+	int getCurrentZoneIndex();
 	bool isEmailValid(std::string email);
 	bool isUsernameValid(std::string username);
 	bool isPasswordValid(std::string password);
@@ -44,6 +46,8 @@ public:
 	void reconnect();
 	void reloginZone();
 	void rejoinRoom();
+	void connectZoneByIndex(int moneyType, int index);
+	void loginZoneByIndex(int moneyType, int index);
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;
@@ -58,6 +62,8 @@ public:
 	std::string currentLobbyName;
 	std::string currentRoomName;
 	std::string currentZoneName;
+	std::string currentZoneIp;
+	long currentZonePort;
 	int currentRoomId;
 	int currentLobbyId;
 	int loginType;

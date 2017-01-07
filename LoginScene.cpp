@@ -164,6 +164,7 @@ void LoginScene::onInit()
 
     SFSRequest::getSingleton().ForceIPv6(false);
 	if (Utils::getSingleton().gameConfig.phone.length() == 0) {
+		canCheckReconnect = true;
 		requestGameConfig();
 	}
 
@@ -175,11 +176,13 @@ void LoginScene::registerEventListenner()
 	BaseScene::registerEventListenner();
 	EventHandler::getSingleton().onConnected = std::bind(&LoginScene::onConnected, this);
 	EventHandler::getSingleton().onLoginZone = std::bind(&LoginScene::onLoginZone, this);
+	EventHandler::getSingleton().onConnectionLost = std::bind(&LoginScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onConnectionFailed = std::bind(&LoginScene::onConnectionFailed, this);
 	EventHandler::getSingleton().onConfigZoneReceived = std::bind(&LoginScene::onConfigZoneReceived, this);
 	EventHandler::getSingleton().onErrorSFSResponse = std::bind(&LoginScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
 	EventHandler::getSingleton().onUserDataMeSFSResponse = std::bind(&LoginScene::onUserDataMeResponse, this);
 	EventHandler::getSingleton().onLoginFacebook = std::bind(&LoginScene::onLoginFacebook, this, std::placeholders::_1);
+	EventHandler::getSingleton().onLobbyTableSFSResponse = bind(&LoginScene::onTableDataResponse, this, placeholders::_1);
 
 	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&LoginScene::onHttpResponseFailed, this);
 	SFSRequest::getSingleton().onHttpResponse = std::bind(&LoginScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
@@ -195,6 +198,7 @@ void LoginScene::unregisterEventListenner()
 	EventHandler::getSingleton().onErrorSFSResponse = NULL;
 	EventHandler::getSingleton().onUserDataMeSFSResponse = NULL;
 	EventHandler::getSingleton().onLoginFacebook = NULL;
+	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
 
 	SFSRequest::getSingleton().onHttpResponse = NULL;
 	SFSRequest::getSingleton().onHttpResponseFailed = NULL;
@@ -206,20 +210,35 @@ void LoginScene::editBoxReturn(ui::EditBox * editBox)
 
 void LoginScene::onConnected()
 {
-	SFSRequest::getSingleton().LoginZone("", "g", Utils::getSingleton().gameConfig.zone);
+	if (isReconnecting) {
+		Utils::getSingleton().loginZoneByIndex(tmpZoneIndex / 10, tmpZoneIndex % 10);
+	} else {
+		SFSRequest::getSingleton().LoginZone("", "g", Utils::getSingleton().gameConfig.zone);
+	}
 }
 
 void LoginScene::onLoginZone()
 {
-	if (loginNode->isVisible()) {
-		if (fbToken.length() > 0) {
-			SFSRequest::getSingleton().RequestLoginFacebook(fbToken);
-		} else {
-			SFSRequest::getSingleton().RequestLogin(tfUsername->getText(), md5(tfPassword->getText()));
-		}
+	if (isReconnecting) {
+
 	} else {
-		//SFSRequest::getSingleton().RequestRegister(tfResUname->getText(), md5(tfResPass->getText()), tfResEmail->getText());
-		SFSRequest::getSingleton().RequestRegister(tfResUname->getText(), md5(tfResPass->getText()), md5(tfResPassAgain->getText()));
+		if (loginNode->isVisible()) {
+			if (fbToken.length() > 0) {
+				SFSRequest::getSingleton().RequestLoginFacebook(fbToken);
+			} else {
+				SFSRequest::getSingleton().RequestLogin(tfUsername->getText(), md5(tfPassword->getText()));
+			}
+		} else {
+			//SFSRequest::getSingleton().RequestRegister(tfResUname->getText(), md5(tfResPass->getText()), tfResEmail->getText());
+			SFSRequest::getSingleton().RequestRegister(tfResUname->getText(), md5(tfResPass->getText()), md5(tfResPassAgain->getText()));
+		}
+	}
+}
+
+void LoginScene::onConnectionLost(std::string reason)
+{
+	if (isReconnecting) {
+		Utils::getSingleton().connectZoneByIndex(tmpZoneIndex / 10, tmpZoneIndex % 10);
 	}
 }
 
@@ -239,6 +258,17 @@ void LoginScene::onConnectionFailed()
 
 void LoginScene::onConfigZoneReceived()
 {
+	if (canCheckReconnect) {
+		double currentTime = Utils::getSingleton().getCurrentSystemTimeInSecs();
+		double interruptedTime = UserDefault::sharedUserDefault()->getDoubleForKey(constant::KEY_RECONNECT_TIME.c_str(), 0);
+		if (currentTime < interruptedTime) {
+			tmpZoneIndex = UserDefault::getInstance()->getIntegerForKey(constant::KEY_RECONNECT_ZONE_INDEX.c_str(), 0);
+			UserDefault::getInstance()->setDoubleForKey(constant::KEY_RECONNECT_TIME.c_str(), 0);
+			SFSRequest::getSingleton().Disconnect();
+			isReconnecting = true;
+			return;
+		}
+	}
 	Utils::getSingleton().goToMainScene();
 }
 
@@ -353,6 +383,11 @@ void LoginScene::onHttpResponseFailed()
 		hideWaiting();
 		showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"), [=]() {});
 	}
+}
+
+void LoginScene::onTableDataResponse(LobbyListTable data)
+{
+	Utils::getSingleton().goToLobbyScene();
 }
 
 void LoginScene::onKeyBack()

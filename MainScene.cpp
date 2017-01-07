@@ -255,9 +255,7 @@ void MainScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
 void MainScene::onConnected()
 {
 	if (tmpZoneId == -1) return;
-	std::string zoneName = Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZoneName;
-	Utils::getSingleton().currentZoneName = zoneName;
-	SFSRequest::getSingleton().LoginZone(Utils::getSingleton().username, Utils::getSingleton().password, zoneName);
+	Utils::getSingleton().loginZoneByIndex(currentMoneyType, tmpZoneId);
 	tmpZoneId = -1;
 }
 
@@ -265,12 +263,7 @@ void MainScene::onConnectionLost(std::string reason)
 {
 	if (isBackToLogin) return;
 	if (isGoToLobby && tmpZoneId >= 0) {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-		std::string host = Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZoneIpIos;
-#else
-		std::string host = Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZoneIp;
-#endif
-		SFSRequest::getSingleton().Connect(host, Utils::getSingleton().zones[currentMoneyType][tmpZoneId].ZonePort);
+		Utils::getSingleton().connectZoneByIndex(currentMoneyType, tmpZoneId);
 	} else {
 		showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
 			Utils::getSingleton().goToLoginScene();

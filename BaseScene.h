@@ -31,6 +31,7 @@ protected:
 	virtual void onBackScene();
 	virtual void onChangeMoneyType(int type);
 	virtual void onKeyBack();
+	virtual void onKeyHome();
 
 	void addTouchEventListener(cocos2d::ui::Button* btn, std::function<void()> func, float scale = 1.0f);
 	void hideSplash();

@@ -129,6 +129,22 @@ std::string Utils::getUserCountry()
 #endif
 }
 
+double Utils::getCurrentSystemTimeInSecs()
+{
+	timeval time;
+	gettimeofday(&time, NULL);
+	return time.tv_sec;
+}
+
+int Utils::getCurrentZoneIndex()
+{
+	for (int i = 0; i < zones[moneyType].size(); i++) {
+		if (zones[moneyType][i].ZoneName.compare(currentZoneName) == 0) {
+			return moneyType * 10 + i;
+		}
+	}
+}
+
 bool Utils::isEmailValid(std::string email)
 {
 	int length = email.length();
@@ -363,4 +379,29 @@ void Utils::reloginZone()
 void Utils::rejoinRoom()
 {
 	SFSRequest::getSingleton().RequestJoinRoom(currentRoomName, true);
+}
+
+void Utils::connectZoneByIndex(int moneyType, int index)
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	std::string host = zones[moneyType][index].ZoneIpIos;
+#else
+	std::string host = zones[moneyType][index].ZoneIp;
+#endif
+	SFSRequest::getSingleton().Connect(host, Utils::getSingleton().zones[moneyType][index].ZonePort);
+}
+
+void Utils::loginZoneByIndex(int moneyType, int index)
+{
+	long zonePort =zones[moneyType][index].ZonePort;
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	std::string zoneIp = zones[moneyType][index].ZoneIpIos;
+#else
+	std::string zoneIp = zones[moneyType][index].ZoneIp;
+#endif
+	std::string zoneName = zones[moneyType][index].ZoneName;
+	currentZonePort = zonePort;
+	currentZoneIp = zoneIp;
+	currentZoneName = zoneName;
+	SFSRequest::getSingleton().LoginZone(username, password, zoneName);
 }
