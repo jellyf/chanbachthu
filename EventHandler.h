@@ -13,6 +13,8 @@ public:
 	static EventHandler& getSingleton(void);
 	static EventHandler* getSingletonPtr(void);
 
+	std::function<void()> onApplicationDidEnterBackground = NULL;
+
 	std::function<void(std::string)> onLoginFacebook = NULL;
 
 	std::function<void()> onConnected = NULL;

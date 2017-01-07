@@ -193,6 +193,7 @@ void LoginScene::unregisterEventListenner()
 	BaseScene::unregisterEventListenner();
 	EventHandler::getSingleton().onConnected = NULL;
 	EventHandler::getSingleton().onLoginZone = NULL;
+	EventHandler::getSingleton().onConnectionLost = NULL;
 	EventHandler::getSingleton().onConnectionFailed = NULL;
 	EventHandler::getSingleton().onConfigZoneReceived = NULL;
 	EventHandler::getSingleton().onErrorSFSResponse = NULL;
@@ -260,7 +261,7 @@ void LoginScene::onConfigZoneReceived()
 {
 	if (canCheckReconnect) {
 		double currentTime = Utils::getSingleton().getCurrentSystemTimeInSecs();
-		double interruptedTime = UserDefault::sharedUserDefault()->getDoubleForKey(constant::KEY_RECONNECT_TIME.c_str(), 0);
+		double interruptedTime = UserDefault::getInstance()->getDoubleForKey(constant::KEY_RECONNECT_TIME.c_str(), 0);
 		if (currentTime < interruptedTime) {
 			tmpZoneIndex = UserDefault::getInstance()->getIntegerForKey(constant::KEY_RECONNECT_ZONE_INDEX.c_str(), 0);
 			UserDefault::getInstance()->setDoubleForKey(constant::KEY_RECONNECT_TIME.c_str(), 0);

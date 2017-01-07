@@ -665,6 +665,7 @@ void GameScene::onInit()
 
 void GameScene::registerEventListenner()
 {
+	EventHandler::getSingleton().onApplicationDidEnterBackground = std::bind(&GameScene::onApplicationDidEnterBackground, this);
 	EventHandler::getSingleton().onConnected = std::bind(&GameScene::onConnected, this);
 	EventHandler::getSingleton().onConnectionLost = std::bind(&GameScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onUserDataSFSResponse = std::bind(&GameScene::onUserDataResponse, this, std::placeholders::_1);
@@ -700,6 +701,7 @@ void GameScene::registerEventListenner()
 void GameScene::unregisterEventListenner()
 {
 	BaseScene::unregisterEventListenner();
+	EventHandler::getSingleton().onApplicationDidEnterBackground = NULL;
 	EventHandler::getSingleton().onConnected = NULL;
 	EventHandler::getSingleton().onConnectionLost = NULL;
 	EventHandler::getSingleton().onUserDataSFSResponse = NULL;
@@ -897,6 +899,15 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 	} 
 	
 	return false;
+}
+
+void GameScene::onApplicationDidEnterBackground()
+{
+	if (state != NONE && state != READY) {
+		double timeSecs = Utils::getSingleton().getCurrentSystemTimeInSecs();
+		UserDefault::getInstance()->setDoubleForKey(constant::KEY_RECONNECT_TIME.c_str(), timeSecs + 300);
+		UserDefault::getInstance()->setIntegerForKey(constant::KEY_RECONNECT_ZONE_INDEX.c_str(), Utils::getSingleton().getCurrentZoneIndex());
+	}
 }
 
 void GameScene::dealCards()
@@ -2762,11 +2773,6 @@ void GameScene::onGameUserReconnectDataResponse(std::vector<UserReconnectData> l
 
 void GameScene::onKeyHome()
 {
-	if (state != NONE && state != READY) {
-		double timeSecs = Utils::getSingleton().getCurrentSystemTimeInSecs();
-		UserDefault::getInstance()->setDoubleForKey(constant::KEY_RECONNECT_TIME.c_str(), timeSecs + 300);
-		UserDefault::getInstance()->setIntegerForKey(constant::KEY_RECONNECT_ZONE_INDEX.c_str(), Utils::getSingleton().getCurrentZoneIndex());
-	}
 }
 
 void GameScene::initChatTable()

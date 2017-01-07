@@ -35,6 +35,10 @@ bool BaseScene::init()
 		if (keyCode == EventKeyboard::KeyCode::KEY_BACK)
 		{
 			onKeyBack();
+		} 
+		else if (keyCode == EventKeyboard::KeyCode::KEY_HOME)
+		{
+			onKeyHome();
 		}
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
