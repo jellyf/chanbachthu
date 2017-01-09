@@ -1899,9 +1899,6 @@ void GameScene::onUserBash(BashData data)
 			if (data.TurnId == sfsIdMe) {
 				waitAction = constant::GAME_ACTION_BASH;
 			}
-			delayFunction(btnDropWin, 10, [=]() {
-				dropWin();
-			});
 		}else if (data.TurnId == sfsIdMe) {
 			noaction++;
 			btnHold->setVisible(true);
@@ -2006,9 +2003,6 @@ void GameScene::onUserBashBack(BashBackData data)
 					waitAction = constant::GAME_ACTION_BASH;
 				}
 			}
-			delayFunction(btnDropWin, 10, [=]() {
-				dropWin();
-			});
 		}else if (data.TurnId == sfsIdMe) {
 			noaction++;
 			btnHold->setVisible(true);
@@ -2194,9 +2188,6 @@ void GameScene::onUserPick(PickData data)
 			if (data.TurnId == sfsIdMe) {
 				waitAction = constant::GAME_ACTION_PICK;
 			}
-			delayFunction(btnDropWin, 10, [=]() {
-				dropWin();
-			});
 		}else if (data.TurnId == sfsIdMe) {
 			noaction++;
 			btnHold->setVisible(true);
