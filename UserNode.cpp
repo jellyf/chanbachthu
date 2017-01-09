@@ -50,8 +50,8 @@ void UserNode::setPlayerName(std::string name)
 {
 	fullName = name;
 	int i = name.find_first_of(' ');
-	if (i == std::string::npos || i > 12) {
-		name = name.substr(0, 12);
+	if (i == std::string::npos || i > 10) {
+		name = name.substr(0, 10);
 	}
 	lbName->setString(name);
 }
