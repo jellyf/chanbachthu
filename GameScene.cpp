@@ -1889,9 +1889,6 @@ void GameScene::onUserBash(BashData data)
 		updateCardHand(data.CardHand);
 	}
 	if (!isBatBao) {
-		if (data.CanPenet) {
-			beatenNodeAndHide(btnPenet, 1.2f, 1, .7f, 7);
-		}
 		if (data.CanPenetWin) {
 			noaction++;
 			beatenNodeAndHide(btnWin, 1.1f, .9f, .7f, 10);
@@ -1899,7 +1896,9 @@ void GameScene::onUserBash(BashData data)
 			if (data.TurnId == sfsIdMe) {
 				waitAction = constant::GAME_ACTION_BASH;
 			}
-		}else if (data.TurnId == sfsIdMe) {
+		} else if (data.CanPenet) {
+			beatenNodeAndHide(btnPenet, 1.2f, 1, .7f, 7);
+		} else if (data.TurnId == sfsIdMe) {
 			noaction++;
 			btnHold->setVisible(true);
 			btnPick->setVisible(true);
@@ -1989,9 +1988,6 @@ void GameScene::onUserBashBack(BashBackData data)
 		updateCardHand(data.CardHand);
 	}
 	if (!isBatBao) {
-		if (data.CanPenet) {
-			beatenNodeAndHide(btnPenet, 1.2f, 1, .7f, 7);
-		}
 		if (data.CanPenetWin) {
 			noaction++;
 			beatenNodeAndHide(btnWin, 1.1f, .9f, .7f, 10);
@@ -2003,7 +1999,9 @@ void GameScene::onUserBashBack(BashBackData data)
 					waitAction = constant::GAME_ACTION_BASH;
 				}
 			}
-		}else if (data.TurnId == sfsIdMe) {
+		} else if (data.CanPenet) {
+			beatenNodeAndHide(btnPenet, 1.2f, 1, .7f, 7);
+		} else if (data.TurnId == sfsIdMe) {
 			noaction++;
 			btnHold->setVisible(true);
 			if (data.IsPicked) {
@@ -2178,9 +2176,6 @@ void GameScene::onUserPick(PickData data)
 		btnPenet->stopAllActions();
 	}
 	if (!isBatBao) {
-		if (data.CanPenet) {
-			beatenNodeAndHide(btnPenet, 1.2f, 1, .7f, 7);
-		}
 		if (data.CanWin) {
 			noaction++;
 			beatenNodeAndHide(btnWin, 1.1f, .9f, .7f, 10);
@@ -2188,7 +2183,9 @@ void GameScene::onUserPick(PickData data)
 			if (data.TurnId == sfsIdMe) {
 				waitAction = constant::GAME_ACTION_PICK;
 			}
-		}else if (data.TurnId == sfsIdMe) {
+		} else if (data.CanPenet) {
+			beatenNodeAndHide(btnPenet, 1.2f, 1, .7f, 7);
+		} else if (data.TurnId == sfsIdMe) {
 			noaction++;
 			btnHold->setVisible(true);
 			btnForward->setVisible(true);
