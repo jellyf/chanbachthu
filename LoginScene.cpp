@@ -290,11 +290,13 @@ void LoginScene::onLoginFacebook(std::string token)
 	hideWaiting();
 	if (token.length() == 0) {
 		showPopupNotice(Utils::getSingleton().getStringForKey("error_unknown"), [=]() {});
-		return;
+	} else if (token.compare("cancel") == 0) {
+		
+	} else {
+		fbToken = token;
+		showWaiting();
+		SFSRequest::getSingleton().Connect();
 	}
-	fbToken = token;
-	showWaiting();
-	SFSRequest::getSingleton().Connect();
 }
 
 void LoginScene::onErrorResponse(unsigned char code, std::string msg)
