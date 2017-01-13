@@ -589,13 +589,11 @@ void SFSResponse::onLobbyTableResponse(boost::shared_ptr<ISFSObject> isfsObject)
 
 		while (byteArray1->Position() < byteArray1->Length()) {
 			byteArray1->ReadShort(size2);
-			byteArray1->ReadBytes(size2, tmp1);
 
-			boost::shared_ptr<ByteArray> byteArray2 = boost::shared_ptr<ByteArray>(new ByteArray(boost::shared_ptr<vector<unsigned char>>(new vector<unsigned char>(tmp1))));
 			LobbyPlayerData pdata;
-			byteArray2->ReadInt(pdata.UserId);
-			byteArray2->ReadDouble(pdata.Money);
-			byteArray2->ReadUTF(pdata.Name);
+			byteArray1->ReadInt(pdata.UserId);
+			byteArray1->ReadDouble(pdata.Money);
+			byteArray1->ReadUTF(pdata.Name);
 
 			data.ListPlayer.push_back(pdata);
 		}
