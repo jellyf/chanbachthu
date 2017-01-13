@@ -156,6 +156,7 @@ void GameScene::onInit()
 		if (state == NONE || state == READY || myServerSlot < 0) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
+			experimental::AudioEngine::uncacheAll();
 		} else {
 			hasRegisterOut = !hasRegisterOut;
 			showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
@@ -972,7 +973,9 @@ void GameScene::dealCards()
 
 	DelayTime* delayStilt = DelayTime::create(8);
 	CallFunc* func = CallFunc::create([=]() {
+		experimental::AudioEngine::stopAll();
 		for (Sprite* sp : spDealCards) {
+			sp->stopAllActions();
 			int i = atoi(sp->getName().c_str());
 			sp->setParent(nullptr);
 			sp->setPosition(sp->getPosition() - dealPos[i]);
@@ -1406,6 +1409,7 @@ void GameScene::onConnectionLost(std::string reason)
 		} else {
 			SFSRequest::getSingleton().Disconnect();
 			Utils::getSingleton().goToLoginScene();
+			experimental::AudioEngine::uncacheAll();
 		}
 	}, false);
 }
@@ -1432,6 +1436,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 				Utils::getSingleton().goToLobbyScene();
 			}, false);
 		}
+		experimental::AudioEngine::uncacheAll();
 		return;
 	}
 	int index = userIndexs[sfsUId];
@@ -1476,11 +1481,13 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		if (hasRegisterOut) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
+			experimental::AudioEngine::uncacheAll();
 		} else {
 			unregisterEventListenner();
 			showPopupNotice(Utils::getSingleton().getStringForKey("bi_day_ra_vi_khong_thao_tac"), [=]() {
 				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 				Utils::getSingleton().goToLobbyScene();
+				experimental::AudioEngine::uncacheAll();
 			}, false);
 		}
 		return;
@@ -1664,6 +1671,7 @@ void GameScene::onChooseStilt(unsigned char stilt)
 	//if (myServerSlot < 0) return;
 	if (!vecStilts[0]->isVisible() && !vecStilts[1]->isVisible()) return;
 	if (state == DEAL) {
+		experimental::AudioEngine::stopAll();
 		this->stopAllActions();
 		Node* n1 = spDealCards[0]->getParent();
 		Node* n2 = spDealCards[1]->getParent();
