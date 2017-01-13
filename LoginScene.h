@@ -13,7 +13,6 @@ public:
 	void onConnected();
 	void onLoginZone();
 	void onConnectionLost(std::string reason);
-	void onConnectionFailed();
 	void onConfigZoneReceived();
 	void onUserDataMeResponse();
 	void onLoginFacebook(std::string token);
@@ -22,6 +21,7 @@ public:
 	void onHttpResponseFailed();
 	void onTableDataResponse(LobbyListTable data);
 protected:
+	virtual void onConnectionFailed();
 	virtual void onKeyBack();
 private:
 	void loginNormal();

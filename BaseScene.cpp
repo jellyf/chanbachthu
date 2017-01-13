@@ -121,6 +121,7 @@ void BaseScene::update(float delta)
 
 void BaseScene::registerEventListenner()
 {
+	EventHandler::getSingleton().onConnectionFailed = std::bind(&BaseScene::onConnectionFailed, this);
 	EventHandler::getSingleton().onUserDataMeSFSResponse = std::bind(&BaseScene::onUserDataMeResponse, this);
 	EventHandler::getSingleton().onRankDataSFSResponse = std::bind(&BaseScene::onRankDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onRankWinDataSFSResponse = std::bind(&BaseScene::onRankWinDataResponse, this, std::placeholders::_1);
@@ -130,6 +131,7 @@ void BaseScene::registerEventListenner()
 
 void BaseScene::unregisterEventListenner()
 {
+	EventHandler::getSingleton().onConnectionFailed = NULL;
 	EventHandler::getSingleton().onUserDataMeSFSResponse = NULL;
 	EventHandler::getSingleton().onRankDataSFSResponse = NULL;
 	EventHandler::getSingleton().onRankWinDataSFSResponse = NULL;
@@ -521,6 +523,14 @@ void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> fun
 				break;
 		}
 	});
+}
+
+void BaseScene::onConnectionFailed()
+{
+	showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {
+		SFSRequest::getSingleton().Disconnect();
+		Utils::getSingleton().goToLoginScene();
+	}, false);
 }
 
 void BaseScene::initHeaderWithInfos()

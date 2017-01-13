@@ -27,6 +27,7 @@ public:
 	void onListEventDataResponse(std::vector<EventData> list);
 	void onPlayLogDataResponse(std::vector<PlayLogData> logs);
 protected:
+	virtual void onConnectionFailed();
 	virtual void initHeaderWithInfos();
 	virtual void onBackScene();
 	virtual void onChangeMoneyType(int type);
@@ -50,7 +51,7 @@ protected:
 	void showPopupHistory();
 	void showSplash();
 	void showToast(std::string msg, cocos2d::Vec2 pos, cocos2d::Color3B textColor = cocos2d::Color3B::WHITE, cocos2d::Color3B bgColor = cocos2d::Color3B(80, 80, 80), int bgOpacity = 200);
-	void showWaiting(int time = 30);
+	void showWaiting(int time = 15);
 	void showPopup(cocos2d::Node* popup, bool runEffect = true);
 	void setDisplayName(std::string name);
 	void runEffectHidePopup(cocos2d::Node* popup);

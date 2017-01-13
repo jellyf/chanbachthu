@@ -177,7 +177,6 @@ void LoginScene::registerEventListenner()
 	EventHandler::getSingleton().onConnected = std::bind(&LoginScene::onConnected, this);
 	EventHandler::getSingleton().onLoginZone = std::bind(&LoginScene::onLoginZone, this);
 	EventHandler::getSingleton().onConnectionLost = std::bind(&LoginScene::onConnectionLost, this, std::placeholders::_1);
-	EventHandler::getSingleton().onConnectionFailed = std::bind(&LoginScene::onConnectionFailed, this);
 	EventHandler::getSingleton().onConfigZoneReceived = std::bind(&LoginScene::onConfigZoneReceived, this);
 	EventHandler::getSingleton().onErrorSFSResponse = std::bind(&LoginScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
 	EventHandler::getSingleton().onUserDataMeSFSResponse = std::bind(&LoginScene::onUserDataMeResponse, this);
@@ -194,7 +193,6 @@ void LoginScene::unregisterEventListenner()
 	EventHandler::getSingleton().onConnected = NULL;
 	EventHandler::getSingleton().onLoginZone = NULL;
 	EventHandler::getSingleton().onConnectionLost = NULL;
-	EventHandler::getSingleton().onConnectionFailed = NULL;
 	EventHandler::getSingleton().onConfigZoneReceived = NULL;
 	EventHandler::getSingleton().onErrorSFSResponse = NULL;
 	EventHandler::getSingleton().onUserDataMeSFSResponse = NULL;
