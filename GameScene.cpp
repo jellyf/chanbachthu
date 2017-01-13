@@ -952,7 +952,9 @@ void GameScene::dealCards()
 				MoveBy* move = MoveBy::create(.3f, dealPos[j] + Vec2(rand() % 20 - 10, rand() % 20 - 10));
 				RotateBy* rotate = RotateBy::create(.3f, rand() % 60 - 30);
 				CallFunc* func = CallFunc::create([=]() {
-					experimental::AudioEngine::play2d("sound/deal_card.mp3", false, .1f);
+					if (Utils::getSingleton().SoundEnabled) {
+						experimental::AudioEngine::play2d("sound/deal_card.mp3", false, .1f);
+					}
 				});
 
 				sp->runAction(Sequence::create(delay, move, nullptr));
@@ -1479,7 +1481,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			showPopupNotice(Utils::getSingleton().getStringForKey("bi_day_ra_vi_khong_thao_tac"), [=]() {
 				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 				Utils::getSingleton().goToLobbyScene();
-			});
+			}, false);
 		}
 		return;
 	}
