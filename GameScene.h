@@ -81,6 +81,8 @@ private:
 	void beatenNodeAndHide(cocos2d::Node* node, float scale1, float scale2, float timeToBeaten, float timeToHide);
 	int getCardName(unsigned char cardId);
 	cocos2d::Sprite* getCardSprite(int id);
+	cocos2d::Vec2 getScaleScenePosition(cocos2d::Vec2 pos);
+	cocos2d::Vec2 getScaleSceneDistance(cocos2d::Vec2 pos);
 
 	std::map<long, int> userIndexs;
 	std::map<long, int> userIndexs2;

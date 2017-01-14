@@ -806,7 +806,7 @@ void BaseScene::showToast(std::string msg, Vec2 pos, Color3B textColor, Color3B 
 	bg->setOpacity(bgOpacity);
 	nodeChat->addChild(bg, 1);
 
-	float w = Director::getInstance()->getVisibleSize().width;
+	float w = Director::getInstance()->getWinSize().width;
 	if (pos.x > 0.6*w)
 	{
 		bg->setPosition(Vec2(-sizeContent.width*0.5, 0));
@@ -817,7 +817,8 @@ void BaseScene::showToast(std::string msg, Vec2 pos, Color3B textColor, Color3B 
 		lb->setPosition(Vec2(sizeContent.width*0.5, 0));
 	}
 
-	nodeChat->runAction(ScaleTo::create(0.25f, 1.0f));
+	Vec2 smoothScale = getScaleSmoothly(1);
+	nodeChat->runAction(ScaleTo::create(0.25f, smoothScale.x, smoothScale.y));
 	nodeChat->runAction(Sequence::create(DelayTime::create(3), RemoveSelf::create(), nullptr));
 }
 

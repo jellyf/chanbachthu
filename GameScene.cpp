@@ -20,6 +20,7 @@ void GameScene::onInit()
 	state = NONE;
 	myServerSlot = -1;
 	timeTurn = 0;
+	Size winSize = Director::getInstance()->getWinSize();
 
 	dealPos.push_back(Vec2(-120, -170));
 	dealPos.push_back(Vec2(120, -170));
@@ -149,8 +150,9 @@ void GameScene::onInit()
 	//endLayer->setPosition(1120 * (scaleScene.y - 1) / 2, 700 * (scaleScene.x - 1) / 2);
 	endLayer->setPositionY(700 * (scaleScene.x - 1) / 4);
 
+	Vec2 topLeft = Vec2(0, winSize.height);
 	ui::Button* btnBack = ui::Button::create("board/btn_back.png", "board/btn_back_clicked.png");
-	btnBack->setPosition(Vec2(50, 650));
+	btnBack->setPosition(topLeft + getScaleSceneDistance(Vec2(50, -50)));
 	addTouchEventListener(btnBack, [=]() {
 		if (gameSplash->isVisible()) return;
 		if (state == NONE || state == READY || myServerSlot < 0) {
@@ -165,8 +167,9 @@ void GameScene::onInit()
 	mLayer->addChild(btnBack, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnBack);
 
+	Vec2 topRight = Vec2(winSize.width, winSize.height);
 	ui::Button* btnSettings = ui::Button::create("board/btn_settings.png", "board/btn_settings_clicked.png");
-	btnSettings->setPosition(Vec2(1070, 650));
+	btnSettings->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
 	addTouchEventListener(btnSettings, [=]() {
 		if (gameSplash->isVisible()) return;
 		showSettings();
@@ -210,7 +213,7 @@ void GameScene::onInit()
 	autoScaleNode(btnSettings);
 
 	ui::Button* btnChat = ui::Button::create("board/btn_chat.png", "board/btn_chat_clicked.png");
-	btnChat->setPosition(Vec2(975, 650));
+	btnChat->setPosition(topRight + getScaleSceneDistance(Vec2(-145, -50)));// Vec2(975, 650));
 	addTouchEventListener(btnChat, [=]() {
 		if (gameSplash->isVisible()) return;
 		showPopup(tableChat);
@@ -219,13 +222,14 @@ void GameScene::onInit()
 	autoScaleNode(btnChat);
 
 	iconGa = Sprite::create("board/btn_ga_on.png");
-	iconGa->setPosition(880, 650);
+	iconGa->setPosition(topRight + getScaleSceneDistance(Vec2(-240, -50)));// 880, 650);
 	mLayer->addChild(iconGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(iconGa);
 
 	lbMoneyGa = Label::create("", "fonts/arial.ttf", 20);
-	lbMoneyGa->setPosition(880, 610);
+	lbMoneyGa->setPosition(topRight + getScaleSceneDistance(Vec2(-240, -90)));// 880, 610);
 	mLayer->addChild(lbMoneyGa, constant::GAME_ZORDER_BUTTON);
+	autoScaleNode(lbMoneyGa);
 
 	btnReady = ui::Button::create("board/btn.png", "board/btn_clicked.png");
 	btnReady->setPosition(Vec2(560, 350));
@@ -237,6 +241,7 @@ void GameScene::onInit()
 		btnReady->setVisible(false);
 	});
 	mLayer->addChild(btnReady);
+	autoScaleNode(btnReady);
 
 	btnBash = ui::Button::create("board/btn_danh.png", "board/btn_danh_clicked.png");
 	btnBash->setPosition(Vec2(900, 35));
@@ -271,6 +276,7 @@ void GameScene::onInit()
 		onUserBash(data);*/
 	});
 	mLayer->addChild(btnBash, constant::GAME_ZORDER_BUTTON);
+	autoScaleNode(btnBash);
 
 	btnForward = ui::Button::create("board/btn_duoi.png", "board/btn_duoi_clicked.png");
 	btnForward->setPosition(Vec2(900, 35));
@@ -280,6 +286,7 @@ void GameScene::onInit()
 		noaction = 0;
 	});
 	mLayer->addChild(btnForward, constant::GAME_ZORDER_BUTTON);
+	autoScaleNode(btnForward);
 
 	btnBashBack = ui::Button::create("board/btn_danh.png", "board/btn_danh_clicked.png");
 	btnBashBack->setPosition(Vec2(900, 35));
@@ -294,6 +301,7 @@ void GameScene::onInit()
 		noaction = 0;
 	});
 	mLayer->addChild(btnBashBack, constant::GAME_ZORDER_BUTTON);
+	autoScaleNode(btnBashBack);
 
 	btnHold = ui::Button::create("board/btn_an.png", "board/btn_an_clicked.png");
 	btnHold->setPosition(Vec2(220, 35));
@@ -328,6 +336,7 @@ void GameScene::onInit()
 		//runningSpCard->setRotation(0);
 	});
 	mLayer->addChild(btnHold, constant::GAME_ZORDER_BUTTON);
+	autoScaleNode(btnHold);
 
 	btnPick = ui::Button::create("board/btn_boc.png", "board/btn_boc_clicked.png");
 	btnPick->setPosition(Vec2(900, 35));
@@ -351,6 +360,7 @@ void GameScene::onInit()
 		//onUserPick(data);
 	});
 	mLayer->addChild(btnPick, constant::GAME_ZORDER_BUTTON);
+	autoScaleNode(btnPick);
 
 	btnPenet = ui::Button::create("board/btn_chiu.png");
 	btnPenet->setPosition(Vec2(900, 35));
@@ -383,6 +393,7 @@ void GameScene::onInit()
 		//runningSpCard->setRotation(0);
 	});
 	mLayer->addChild(btnPenet, constant::GAME_ZORDER_BUTTON);
+	autoScaleNode(btnPenet);
 
 	btnWin = ui::Button::create("board/btn_u.png");
 	btnWin->setPosition(vecUserPos[0]);
@@ -409,6 +420,7 @@ void GameScene::onInit()
 		dropWin();
 	});
 	mLayer->addChild(btnDropWin, constant::GAME_ZORDER_BUTTON);
+	autoScaleNode(btnDropWin);
 
 	btnXemNoc = ui::Button::create("board/btn_xem_noc.png", "board/btn_xem_noc_clicked.png");
 	btnXemNoc->setPosition(Vec2(560, 280));
@@ -417,6 +429,7 @@ void GameScene::onInit()
 		showStiltCards();
 	});
 	mLayer->addChild(btnXemNoc, constant::GAME_ZORDER_SPLASH + 1);
+	autoScaleNode(btnXemNoc);
 
 	btnDongNoc = ui::Button::create("board/btn_dong_noc.png", "board/btn_dong_noc_clicked.png");
 	btnDongNoc->setPosition(Vec2(560, 280));
@@ -425,6 +438,7 @@ void GameScene::onInit()
 		showWinnerCards();
 	});
 	mLayer->addChild(btnDongNoc, constant::GAME_ZORDER_SPLASH + 1);
+	autoScaleNode(btnDongNoc);
 
 	Label* lbBtnReady = Label::createWithTTF(Utils::getSingleton().getStringForKey("ready"), "fonts/UTM AZUKI.ttf", 30);
 	lbBtnReady->setPosition(btnReady->getContentSize().width/2, btnReady->getContentSize().height/2);
@@ -438,6 +452,7 @@ void GameScene::onInit()
 	lbNoticeAction->enableOutline(Color4B::BLACK, 2);
 	lbNoticeAction->setVisible(false);
 	mLayer->addChild(lbNoticeAction);
+	autoScaleNode(lbNoticeAction);
 
 	/*Sprite* bgDiaNoc = Sprite::create("board/bg_dianoc.png");
 	bgDiaNoc->setPosition(564, 422);
@@ -475,8 +490,8 @@ void GameScene::onInit()
 	bgDiaNoc->addChild(lbCardNoc, 3);
 
 	nodeStilt = Node::create();
-	nodeStilt->setPosition(560, 350);
-	mLayer->addChild(nodeStilt, constant::GAME_ZORDER_USER + 10);
+	nodeStilt->setPosition(getScaleScenePosition(Vec2(560, 350)));
+	playLayer->addChild(nodeStilt, constant::GAME_ZORDER_USER + 10);
 
 	for (Vec2 v : dealPos) {
 		Node* node = Node::create();
@@ -503,7 +518,7 @@ void GameScene::onInit()
 		autoScaleNode(spInvite);
 
 		UserNode* user = UserNode::create();
-		user->setPosition(Vec2(vecUserPos[i].x / scaleScene.y, vecUserPos[i].y / scaleScene.x));
+		user->setPosition(getScaleScenePosition(vecUserPos[i]));
 		user->setVisible(false);
 		playLayer->addChild(user, constant::GAME_ZORDER_USER);
 		vecUsers.push_back(user);
@@ -527,6 +542,7 @@ void GameScene::onInit()
 		lb1->setPosition(vecUserPos[i]);
 		lb1->setOpacity(0);
 		lbWinMoneys.push_back(lb1);
+		autoScaleNode(lb1);
 	}
 
 	progressTimer = ProgressTimer::create(Sprite::create("board/time_line.png"));
@@ -535,8 +551,7 @@ void GameScene::onInit()
 	progressTimer->setReverseProgress(true);
 	progressTimer->setVisible(false);
 	progressTimer->setColor(Color3B::GREEN);
-	mLayer->addChild(progressTimer, constant::GAME_ZORDER_USER + 9);
-	autoScaleNode(progressTimer);
+	playLayer->addChild(progressTimer, constant::GAME_ZORDER_USER + 9);
 
 	spChuPhong = Sprite::create("board/chuphong.png");
 	spChuPhong->setVisible(false);
@@ -546,10 +561,12 @@ void GameScene::onInit()
 	spChonCai = Sprite::create("board/txt_choncai.png");
 	spChonCai->setVisible(false);
 	mLayer->addChild(spChonCai, constant::GAME_ZORDER_USER + 9);
+	autoScaleNode(spChonCai);
 
 	lbCrestTime = Label::create("", "fonts/arialbd.ttf", 50);
-	lbCrestTime->setPosition(750, 280);
+	lbCrestTime->setPosition(btnXemNoc->getPosition() + getScaleSceneDistance(Vec2(190, 0)));
 	mLayer->addChild(lbCrestTime, constant::GAME_ZORDER_SPLASH + 1);
+	autoScaleNode(lbCrestTime);
 
 	DelayTime* delay = DelayTime::create(1);
 	CallFunc* func = CallFunc::create([=]() {
@@ -934,8 +951,8 @@ void GameScene::dealCards()
 	vector<Node*> nodes;
 	for (int i = 0; i < nodePos.size(); i++) {
 		Node* node = Node::create();
-		node->setPosition(nodePos[i]);
-		mLayer->addChild(node, constant::GAME_ZORDER_USER + 1);
+		node->setPosition(getScaleScenePosition(nodePos[i]));
+		playLayer->addChild(node, constant::GAME_ZORDER_USER + 1);
 		nodes.push_back(node);
 	}
 
@@ -967,7 +984,7 @@ void GameScene::dealCards()
 
 	for (Node* n : nodes) {
 		DelayTime* delay = DelayTime::create(7);
-		MoveTo* move = MoveTo::create(.5f, Vec2(560, 350));
+		MoveTo* move = MoveTo::create(.5f, getScaleScenePosition(Vec2(560, 350)));
 		n->runAction(Sequence::create(delay, move, nullptr));
 	}
 
@@ -1068,7 +1085,7 @@ void GameScene::runTimeWaiting(long uid, float time)
 	progressTimer->stopAllActions();
 	progressTimer->setVisible(true);
 	progressTimer->setPercentage(100);
-	progressTimer->setPosition(vecUserPos[userIndexs[uid]]);
+	progressTimer->setPosition(getScaleScenePosition(vecUserPos[userIndexs[uid]]));
 	progressTimer->runAction(ProgressTo::create(time, 0));
 
 	if (uid == sfsIdMe && state == PLAY) {
@@ -1328,7 +1345,7 @@ void GameScene::showError(std::string msg)
 
 void GameScene::showSystemNotice(std::string msg)
 {
-	showToast(msg, Vec2(560, 400), Color3B::BLACK, Color3B(200, 200, 200));
+	showToast(msg, getScaleScenePosition(Vec2(560, 400)), Color3B::BLACK, Color3B(200, 200, 200));
 }
 
 void GameScene::playSoundAction(unsigned char soundId)
@@ -1534,7 +1551,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 				spSanSangs[index]->setVisible(player.Ready);
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
-					spChuPhong->setPosition(vecUserPos[index] + Vec2(50, 0));
+					spChuPhong->setPosition(vecUserPos[index] + Vec2(50 * scaleScene.y, 0));
 				}
 				if (player.Info.SfsUserId == sfsIdMe) {
 					btnReady->setVisible(!player.Ready);
@@ -1560,7 +1577,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		vecUsers[index]->setName(player.Info.Name);
 		if (player.Index == 0) {
 			spChuPhong->setVisible(true);
-			spChuPhong->setPosition(vecUserPos[index] + Vec2(50, 0));
+			spChuPhong->setPosition(vecUserPos[index] + Vec2(50 * scaleScene.y, 0));
 		}
 	}*/
 	if (roomData.Players.size() > 1 && roomData.TimeStart > 0 && myServerSlot >= 0) {
@@ -1572,8 +1589,9 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			btnReady->setVisible(false);
 		} else {
 			//btnReady->setVisible(true);
+			Vec2 lbscale = getScaleSmoothly(1.5f);
 			lbCrestTime->setVisible(true);
-			lbCrestTime->setScale(1.5f);
+			lbCrestTime->setScale(lbscale.x, lbscale.y);
 			lbCrestTime->setColor(Color3B::RED);
 			lbCrestTime->setString(to_string((int)roomData.TimeStart));
 			lbCrestTime->resumeSchedulerAndActions();
@@ -1620,7 +1638,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		for (int i = 0; i < winMoneyData.ListUserId.size(); i++) {
 			int index = userIndexs2[winMoneyData.ListUserId[i]];
 			FadeIn* fadeIn = FadeIn::create(.2f);
-			MoveBy* move = MoveBy::create(.5f, Vec2(0, 80));
+			MoveTo* move = MoveTo::create(.5f, vecUserPos[index] + Vec2(0, 40));
 			DelayTime* delay = DelayTime::create(1.5f);
 			FadeOut* fadeOut = FadeOut::create(.5f);
 
@@ -1693,9 +1711,8 @@ void GameScene::onChooseStilt(unsigned char stilt)
 	hostCard = Sprite::create("cards/100.png");
 	hostCard->setName("hostCard");
 	hostCard->setScale(.7f);
-	//hostCard->setPosition(vecStilts[chosenStilt]->getPosition());
-	hostCard->setPosition(vecStilts[chosenStilt]->getPosition() + Vec2(560, 350));
-	mLayer->addChild(hostCard, constant::GAME_ZORDER_USER + 10);
+	hostCard->setPosition(vecStilts[chosenStilt]->getPosition() + getScaleScenePosition(Vec2(560, 350)));
+	playLayer->addChild(hostCard, constant::GAME_ZORDER_USER + 10);
 
 	if (startGameData.LastWinner == sfsIdMe) {
 		lbNoticeAction->setVisible(false);
@@ -1732,14 +1749,14 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 	}
 
 	//MoveTo* move = MoveTo::create(.5f, vecStilts[chosenStiltHost]->getPosition());
-	MoveTo* move = MoveTo::create(.5f, vecStilts[chosenStiltHost]->getPosition() + Vec2(560, 350));
+	MoveTo* move = MoveTo::create(.5f, vecStilts[chosenStiltHost]->getPosition() + getScaleScenePosition(Vec2(560, 350)));
 	CallFunc* func = CallFunc::create([=]() {
 		int card = getCardName(startGameData.CardStilt);
 		hostCard->initWithFile(String::createWithFormat("cards/%d.png", card)->getCString());
 		hostCard->setParent(nullptr);
 		hostCard->setPosition(0, 0);
 		vecStilts[chosenStiltHost]->addChild(hostCard);
-		mLayer->removeChildByName("hostCard");
+		playLayer->removeChildByName("hostCard");
 	});
 	hostCard->runAction(Sequence::create(move, func, nullptr));
 
@@ -1867,8 +1884,9 @@ void GameScene::onUserBash(BashData data)
 		}
 		if (spCard == NULL) return;
 		int rot = spCard->getRotation();
-		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUserPos[index].x;
-		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUserPos[index].y;
+		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
+		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + scaledUserPos.x;
+		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + scaledUserPos.y;
 		spCard->setPosition(x, y);
 		spCard->setName(to_string((int)data.CardId));
 		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
@@ -1878,7 +1896,7 @@ void GameScene::onUserBash(BashData data)
 		spCard = getCardSprite(data.CardId);
 		spCard->setRotation(0);
 		spCard->setScale(cardScaleTableNew);
-		spCard->setPosition(vecUserPos[index]);
+		spCard->setPosition(getScaleScenePosition(vecUserPos[index]));
 	}
 
 	spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2]);
@@ -1890,7 +1908,7 @@ void GameScene::onUserBash(BashData data)
 	ScaleTo* scaleTo = ScaleTo::create(cardSpeed, cardScaleTableNew);
 	spCard->runAction(move);
 	spCard->runAction(scaleTo);
-	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_USER);
+	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_CARD_FLY);
 
 	if(runningSpCard != NULL) runningSpCard->setScale(cardScaleTable);
 	runningSpCard = spCard;
@@ -1963,8 +1981,9 @@ void GameScene::onUserBashBack(BashBackData data)
 		}
 		if (spCard == NULL) return;
 		int rot = spCard->getRotation();
-		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUserPos[index].x;
-		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUserPos[index].y;
+		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
+		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + scaledUserPos.x;
+		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + scaledUserPos.y;
 		spCard->setPosition(x, y);
 		spCard->setName(to_string((int)data.CardId));
 		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
@@ -1974,7 +1993,7 @@ void GameScene::onUserBashBack(BashBackData data)
 		spCard = getCardSprite(data.CardId);
 		spCard->setRotation(0);
 		spCard->setScale(cardScaleTableNew);
-		spCard->setPosition(vecUserPos[index]);
+		spCard->setPosition(getScaleScenePosition(vecUserPos[index]));
 	}
 
 	spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2]);
@@ -1986,7 +2005,7 @@ void GameScene::onUserBashBack(BashBackData data)
 	ScaleTo* scaleTo = ScaleTo::create(cardSpeed, cardScaleTableNew);
 	spCard->runAction(move);
 	spCard->runAction(scaleTo);
-	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_USER);
+	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_CARD_FLY);
 
 	if(runningSpCard != nullptr) 
 		runningSpCard->setScale(cardScaleTable);
@@ -2081,15 +2100,16 @@ void GameScene::onUserHold(HoldData data)
 		}
 		if (spCard == NULL) return;
 		int rot = spCard->getRotation();
-		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUserPos[index].x;
-		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + vecUserPos[index].y;
+		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
+		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + scaledUserPos.x;
+		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + scaledUserPos.y;
 		spCard->setPosition(x, y);
 		spCard->setName(to_string((int)data.CardId));
 	} else {
 		spCard = getCardSprite(data.CardId);
 		spCard->setRotation(0);
 		spCard->setScale(cardScaleTable);
-		spCard->setPosition(vecUserPos[index]);
+		spCard->setPosition(getScaleScenePosition(vecUserPos[index]));
 	}
 
 	spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2] * 4 + 1);
@@ -2112,8 +2132,8 @@ void GameScene::onUserHold(HoldData data)
 	runningSpCard->stopAllActions();
 	runningSpCard->runAction(move2);
 	runningSpCard->runAction(scaleTo->clone());
-	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_USER);
-	changeZOrderAfterFly(runningSpCard, constant::GAME_ZORDER_USER);
+	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_CARD_FLY + 1);
+	changeZOrderAfterFly(runningSpCard, constant::GAME_ZORDER_CARD_FLY);
 
 	runningSpCard = NULL;
 	if (data.UId == sfsIdMe) {
@@ -2155,7 +2175,7 @@ void GameScene::onUserPick(PickData data)
 	spCard->setTag(constant::TAG_CARD_TABLE + index2);
 	spCard->setName(to_string((int)data.CardId));
 	spCard->setAnchorPoint(Vec2(.5f, .5f));
-	spCard->setPosition(lbCardNoc->getParent()->getPosition());
+	spCard->setPosition(getScaleScenePosition(lbCardNoc->getParent()->getPosition()));
 	spCard->setColor(Color3B(200, 200, 255));
 	spCard->setRotation(70);
 	spCard->setOpacity(0);
@@ -2169,7 +2189,7 @@ void GameScene::onUserPick(PickData data)
 	spCard->runAction(rotate);
 	spCard->runAction(scaleto);
 	spCard->runAction(fade);
-	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_USER);
+	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_CARD_FLY);
 
 	if(runningSpCard != NULL) {
 		runningSpCard->setScale(cardScaleTable);
@@ -2254,8 +2274,9 @@ void GameScene::onUserPenet(PenetData data)
 				cards.push_back(spHandCards[i]);
 
 				int rot = spHandCards[i]->getRotation();
-				float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spHandCards[i]->getContentSize().height + vecUserPos[index].x;
-				float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spHandCards[i]->getContentSize().height + vecUserPos[index].y;
+				Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
+				float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spHandCards[i]->getContentSize().height + scaledUserPos.x;
+				float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spHandCards[i]->getContentSize().height + scaledUserPos.y;
 				spHandCards[i]->setName(to_string((int)data.CardId));
 				spHandCards[i]->setPosition(x, y);
 
@@ -2273,7 +2294,7 @@ void GameScene::onUserPenet(PenetData data)
 			Sprite* spCard = getCardSprite(data.CardId);
 			spCard->setRotation(0);
 			spCard->setScale(cardScaleTable);
-			spCard->setPosition(vecUserPos[index]);
+			spCard->setPosition(getScaleScenePosition(vecUserPos[index]));
 			cards.push_back(spCard);
 		}
 	}
@@ -2290,7 +2311,7 @@ void GameScene::onUserPenet(PenetData data)
 		cards[i]->runAction(move);
 		cards[i]->runAction(scaleTo);
 		cards[i]->runAction(rotate);
-		changeZOrderAfterFly(cards[i], constant::GAME_ZORDER_USER + i);
+		changeZOrderAfterFly(cards[i], constant::GAME_ZORDER_CARD_FLY + i);
 	}
 	if (data.UId == sfsIdMe) {
 		btnHold->setVisible(false);
@@ -2414,7 +2435,8 @@ void GameScene::onEndMatch(EndMatchData data)
 	gameSplash->setVisible(true);
 	lbCrestTime->setVisible(true);
 	lbCrestTime->setString("40");
-	lbCrestTime->setScale(1);
+	Vec2 lbscale = getScaleSmoothly(1);
+	lbCrestTime->setScale(lbscale.x, lbscale.y);
 	lbCrestTime->setColor(Color3B::WHITE);
 	lbCrestTime->resumeSchedulerAndActions();
 	lbCardNoc->getParent()->setVisible(false);
@@ -2525,8 +2547,8 @@ void GameScene::onTableResponse(GameTableData data)
 		cbs.push_back((ui::CheckBox*)popupSettings->getChildByTag(i));
 	}
 	cbs[0]->setSelected(data.IsU411);
-	cbs[1]->setSelected(data.IsQuick);
-	cbs[2]->setSelected(!data.IsQuick);
+	cbs[1]->setSelected(!data.IsQuick);
+	cbs[2]->setSelected(data.IsQuick);
 }
 
 void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
@@ -2620,7 +2642,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 				vecUsers[index]->setName(player.Info.Name);
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
-					spChuPhong->setPosition(vecUserPos[index] + Vec2(50, 0));
+					spChuPhong->setPosition(vecUserPos[index] + Vec2(50 * scaleScene.y, 0));
 				}
 
 				int index2 = index * 2;
@@ -3175,7 +3197,7 @@ void GameScene::initSettingsPopup()
 		UserDefault::getInstance()->setBoolForKey(constant::KEY_AUTO_READY.c_str(), cbs[3]->isSelected());
 		UserDefault::getInstance()->setBoolForKey(constant::KEY_SOUND.c_str(), cbs[4]->isSelected());
 		if (myServerSlot == 0 && (state == NONE || state == READY)){
-			SFSRequest::getSingleton().RequestGameTableInfo(cbs[1]->isSelected(), cbs[0]->isSelected());
+			SFSRequest::getSingleton().RequestGameTableInfo(cbs[2]->isSelected(), cbs[0]->isSelected());
 		}
 		Utils::getSingleton().SoundEnabled = cbs[4]->isSelected();
 	});
@@ -3193,7 +3215,7 @@ void GameScene::initSettingsPopup()
 void GameScene::initTableInfo()
 {
 	tableInfo = Node::create();
-	tableInfo->setPosition(195, 650);
+	tableInfo->setPosition(Vec2(0, 700) + getScaleSceneDistance(Vec2(195, -50)));
 	mLayer->addChild(tableInfo, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(tableInfo);
 
@@ -3246,6 +3268,16 @@ Sprite* GameScene::getCardSprite(int id)
 	playLayer->addChild(sp);
 	spCards.push_back(sp);
 	return sp;
+}
+
+cocos2d::Vec2 GameScene::getScaleScenePosition(Vec2 pos)
+{
+	return cocos2d::Vec2(pos.x / scaleScene.y, pos.y / scaleScene.x);
+}
+
+cocos2d::Vec2 GameScene::getScaleSceneDistance(cocos2d::Vec2 pos)
+{
+	return cocos2d::Vec2(pos.x * scaleScene.y, pos.y * scaleScene.x);
 }
 
 void GameScene::getCardSpriteToHand(int id, int group, int zorder)
