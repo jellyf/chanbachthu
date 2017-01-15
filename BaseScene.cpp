@@ -675,8 +675,6 @@ void BaseScene::initHeaderWithInfos()
 	if (Utils::getSingleton().userDataMe.UserID > 0) {
 		onUserDataMeResponse();
 	}
-
-	SFSRequest::getSingleton().RequestPlayHistory(0, 0);
 }
 
 void BaseScene::onBackScene()
@@ -688,6 +686,25 @@ void BaseScene::showPopupHistory()
 {
 	if (popupHistory == nullptr) return;
 	showPopup(popupHistory);
+	SFSRequest::getSingleton().RequestPlayHistory(0, 0);
+
+	Color3B color1 = Color3B(201, 191, 119);
+	Color3B color2 = Color3B(229, 222, 174);
+	ui::Button* btn0 = (ui::Button*)popupHistory->getChildByTag(10);
+	ui::Button* btn1 = (ui::Button*)popupHistory->getChildByTag(11);
+	btn0->loadTextureNormal("popup/box2.png");
+	btn1->loadTextureNormal("popup/box1.png");
+	popupHistory->setTag(0);
+	popupHistory->getChildByName("nodepage")->setTag(1);
+	for (int i = 1; i <= 5; i++) {
+		ui::Button* btn = (ui::Button*)popupHistory->getChildByTag(1000 + i);
+		btn->setTitleText(to_string(i));
+		if (i == 1) {
+			btn->setColor(color2);
+		} else {
+			btn->setColor(color1);
+		}
+	}
 }
 
 void BaseScene::onChangeMoneyType(int type)
