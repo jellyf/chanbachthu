@@ -1372,7 +1372,7 @@ void MainScene::initPopupMail()
 	popupMail->addChild(nodeDetail);
 
 	ui::Scale9Sprite* bgDetail = ui::Scale9Sprite::create("popup/box1.png");
-	bgDetail->setContentSize(Size(850, 380));
+	bgDetail->setContentSize(Size(860, 380));
 	nodeDetail->addChild(bgDetail);
 
 	for (int i = 0; i < posX.size(); i++) {
@@ -1730,12 +1730,44 @@ void MainScene::showPopupMail()
 	showPopup(popupMail);
 	SFSRequest::getSingleton().RequestListMail(1);
 	lbNewMail->getParent()->setVisible(false);
+
+	popupMail->getChildByName("nodepage")->setTag(1);
+	for (int i = 1; i <= 5; i++) {
+		ui::Button* btn = (ui::Button*)popupMail->getChildByTag(1000 + i);
+		btn->setTitleText(to_string(i));
+		if (i == 1) {
+			btn->setColor(pageColor2);
+		} else {
+			btn->setColor(pageColor1);
+		}
+	}
 }
 
 void MainScene::showPopupNews()
 {
 	showPopup(popupNews);
 	SFSRequest::getSingleton().RequestNews(0);
+
+	ui::ScrollView* scrollTitle = (ui::ScrollView*)popupNews->getChildByName("scrolltitle");
+	ui::ScrollView* scrollContent = (ui::ScrollView*)popupNews->getChildByName("scrollcontent");
+	Label* lbContent = (Label*)scrollContent->getChildByName("lbcontent");
+	lbContent->setString("");
+	scrollTitle->setTag(0);
+	int count = scrollTitle->getChildrenCount();
+	for (int i = 0; i < count; i++) {
+		scrollTitle->getChildByTag(i)->setVisible(false);
+	}
+
+	popupNews->getChildByName("nodepage")->setTag(1);
+	for (int i = 1; i <= 5; i++) {
+		ui::Button* btn = (ui::Button*)popupNews->getChildByTag(1000 + i);
+		btn->setTitleText(to_string(i));
+		if (i == 1) {
+			btn->setColor(pageColor2);
+		} else {
+			btn->setColor(pageColor1);
+		}
+	}
 }
 
 void MainScene::showWebView(std::string url)

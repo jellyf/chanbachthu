@@ -91,6 +91,9 @@ protected:
 	std::vector<cocos2d::ui::Button*> blockedButtons;
 	std::vector<cocos2d::Node*> popups;
 
+	cocos2d::Color3B pageColor1 = cocos2d::Color3B(201, 191, 119);
+	cocos2d::Color3B pageColor2 = cocos2d::Color3B(229, 222, 174);
+
 	cocos2d::Vector<Node*> tmps;
 	int tmpIndex;
 

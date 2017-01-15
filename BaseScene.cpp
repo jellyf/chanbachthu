@@ -688,8 +688,6 @@ void BaseScene::showPopupHistory()
 	showPopup(popupHistory);
 	SFSRequest::getSingleton().RequestPlayHistory(0, 0);
 
-	Color3B color1 = Color3B(201, 191, 119);
-	Color3B color2 = Color3B(229, 222, 174);
 	ui::Button* btn0 = (ui::Button*)popupHistory->getChildByTag(10);
 	ui::Button* btn1 = (ui::Button*)popupHistory->getChildByTag(11);
 	btn0->loadTextureNormal("popup/box2.png");
@@ -700,9 +698,9 @@ void BaseScene::showPopupHistory()
 		ui::Button* btn = (ui::Button*)popupHistory->getChildByTag(1000 + i);
 		btn->setTitleText(to_string(i));
 		if (i == 1) {
-			btn->setColor(color2);
+			btn->setColor(pageColor2);
 		} else {
-			btn->setColor(color1);
+			btn->setColor(pageColor1);
 		}
 	}
 }
@@ -1161,9 +1159,6 @@ void BaseScene::initPopupUserInfo()
 
 void BaseScene::initPopupHistory()
 {
-	Color3B color1 = Color3B(201, 191, 119);
-	Color3B color2 = Color3B(229, 222, 174);
-
 	popupHistory = Node::create();
 	popupHistory->setPosition(560, 350);
 	popupHistory->setVisible(false);
@@ -1227,9 +1222,9 @@ void BaseScene::initPopupHistory()
 				ui::Button* btn = (ui::Button*)popupHistory->getChildByTag(1000 + i);
 				btn->setTitleText(to_string(i));
 				if (i == 1) {
-					btn->setColor(color2);
+					btn->setColor(pageColor2);
 				} else {
-					btn->setColor(color1);
+					btn->setColor(pageColor1);
 				}
 			}
 		});
@@ -1243,7 +1238,7 @@ void BaseScene::initPopupHistory()
 		x += 210;
 	}
 
-	vector<int> posX = { -390, -290, -70, 170, 300, 389 };
+	vector<int> posX = { -390, -300, -80, 160, 290, 380 };
 	vector<int> widths = { 50, 100, 320, 210, 150, 60 };
 	vector<string> historyTitles = { "STT", Utils::getSingleton().getStringForKey("ngay"), Utils::getSingleton().getStringForKey("thong_tin"),
 		Utils::getSingleton().getStringForKey("tien_van"), Utils::getSingleton().getStringForKey("tien"), "ID" };
@@ -1261,7 +1256,7 @@ void BaseScene::initPopupHistory()
 	popupHistory->addChild(nodeDetail);
 
 	ui::Scale9Sprite* bgDetail = ui::Scale9Sprite::create("popup/box1.png");
-	bgDetail->setContentSize(Size(850, 326));
+	bgDetail->setContentSize(Size(860, 326));
 	nodeDetail->addChild(bgDetail);
 
 	for (int i = 0; i < posX.size(); i++) {
@@ -1339,7 +1334,7 @@ void BaseScene::onPlayLogDataResponse(std::vector<PlayLogData> logs)
 	logs.push_back(data);
 	}*/
 
-	vector<int> posX = { -390, -290, -70, 170, 300, 389 };
+	vector<int> posX = { -390, -300, -80, 160, 290, 380 };
 	vector<int> widths = { 50, 100, 320, 210, 150, 60 };
 	ui::ScrollView* scroll = (ui::ScrollView*)popupHistory->getChildByName("scroll");
 	int height = logs.size() * 60;
@@ -1408,9 +1403,6 @@ void BaseScene::onPlayLogDataResponse(std::vector<PlayLogData> logs)
 
 void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::function<void(int)> funcPage)
 {
-	Color3B color1 = Color3B(201, 191, 119);
-	Color3B color2 = Color3B(229, 222, 174);
-
 	Node* nodePage = Node::create();
 	nodePage->setTag(1);
 	nodePage->setName("nodepage");
@@ -1426,14 +1418,14 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 		btn->setContentSize(Size(40, 40));
 		btn->setPosition(Vec2(x1, -260));
 		btn->setScale9Enabled(true);
-		btn->setColor(i == 1 ? color2 : color1);
+		btn->setColor(i == 1 ? pageColor2 : pageColor1);
 		btn->setTag(1000 + i);
 		addTouchEventListener(btn, [=]() {
 			int curPage = nodePage->getTag();
 			int numb = atoi(btn->getTitleText().c_str());
 			if (numb == curPage) return;
-			node->getChildByTag(1000 + ((curPage - 1) % 5) + 1)->setColor(color1);
-			btn->setColor(color2);
+			node->getChildByTag(1000 + ((curPage - 1) % 5) + 1)->setColor(pageColor1);
+			btn->setColor(pageColor2);
 			nodePage->setTag(numb);
 			funcPage(numb);
 		});
@@ -1449,7 +1441,7 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 	btnPre->setContentSize(Size(60, 40));
 	btnPre->setPosition(Vec2(-160, -260));
 	btnPre->setScale9Enabled(true);
-	btnPre->setColor(color1);
+	btnPre->setColor(pageColor1);
 	addTouchEventListener(btnPre, [=]() {
 		for (int i = 1; i <= 5; i++) {
 			ui::Button* btn = (ui::Button*)node->getChildByTag(1000 + i);
@@ -1457,9 +1449,9 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 			if (numb == 1) return;
 			btn->setTitleText(to_string(numb - 5));
 			if (numb - 5 == nodePage->getTag()) {
-				btn->setColor(color2);
+				btn->setColor(pageColor2);
 			} else {
-				btn->setColor(color1);
+				btn->setColor(pageColor1);
 			}
 		}
 	});
@@ -1473,7 +1465,7 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 	btnNext->setContentSize(Size(60, 40));
 	btnNext->setPosition(Vec2(160, -260));
 	btnNext->setScale9Enabled(true);
-	btnNext->setColor(color1);
+	btnNext->setColor(pageColor1);
 	addTouchEventListener(btnNext, [=]() {
 		for (int i = 1; i <= 5; i++) {
 			ui::Button* btn = (ui::Button*)node->getChildByTag(1000 + i);
@@ -1481,9 +1473,9 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 			if (numb == 995) return;
 			btn->setTitleText(to_string(numb + 5));
 			if (numb + 5 == nodePage->getTag()) {
-				btn->setColor(color2);
+				btn->setColor(pageColor2);
 			} else {
-				btn->setColor(color1);
+				btn->setColor(pageColor1);
 			}
 		}
 	});
