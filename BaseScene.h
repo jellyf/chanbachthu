@@ -34,7 +34,7 @@ protected:
 	virtual void onKeyBack();
 	virtual void onKeyHome();
 
-	void addTouchEventListener(cocos2d::ui::Button* btn, std::function<void()> func, float scale = 1.0f);
+	void addTouchEventListener(cocos2d::ui::Button* btn, std::function<void()> func, bool isNew = true);
 	void hideSplash();
 	void hideWaiting();
 	void hidePopup(cocos2d::Node* popup, bool runEffect = true);

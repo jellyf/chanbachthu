@@ -357,6 +357,7 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 		ui::Button* btn;
 		Label *lb1, *lb2, *lb3, *lb4, *lb5;
 		lb1 = (Label*)scrollHistory->getChildByTag(tag);
+		bool isNewBtn;
 		if (lb1 == nullptr) {
 			lb1 = Label::create("", "fonts/aurora.ttf", 25);
 			lb1->setPosition(posX[0] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
@@ -395,16 +396,18 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 			btn->setOpacity(0);
 			btn->setTag(tag + 5);
 			scrollHistory->addChild(btn);
+			isNewBtn = true;
 		} else {
 			lb2 = (Label*)scrollHistory->getChildByTag(tag + 1);
 			lb3 = (Label*)scrollHistory->getChildByTag(tag + 2);
 			lb4 = (Label*)scrollHistory->getChildByTag(tag + 3);
 			lb5 = (Label*)scrollHistory->getChildByTag(tag + 4);
 			btn = (ui::Button*)scrollHistory->getChildByTag(tag + 5);
+			isNewBtn = false;
 		}
 		addTouchEventListener(btn, [=]() {
 			showPopupNotice(list[i].Content, [=]() {}, false);
-		});
+		}, isNewBtn);
 		if (list[i].Status < 1) {
 			list[i].Status = 1;
 		} else if (list[i].Status > strStatus.size()) {
@@ -736,7 +739,9 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 	scrollTitle->setInnerContainerSize(Size(scrollTitle->getContentSize().width, heightTitle));
 	for (int i = 0; i < list.size(); i++) {
 		ui::Button* btn = (ui::Button*) scrollTitle->getChildByTag(i);
+		bool isNewBtn;
 		if (btn == nullptr) {
+			isNewBtn = true;
 			btn = ui::Button::create();
 			btn->setTitleFontName("fonts/arial.ttf");
 			btn->setTitleColor(Color3B::BLACK);
@@ -746,6 +751,7 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 			btn->setTag(i);
 			scrollTitle->addChild(btn);
 		} else {
+			isNewBtn = false;
 			btn->setVisible(true);
 		}
 		btn->loadTextureNormal(i == 0 ? "popup/box2.png" : "popup/box1.png");
@@ -764,7 +770,7 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 			}
 			scrollContent->setInnerContainerSize(Size(scrollContent->getContentSize().width, height));
 			lbContent->setPosition(0, height);
-		});
+		}, isNewBtn);
 	}
 	int count = scrollTitle->getChildrenCount();
 	for (int i = list.size(); i < count; i++) {
@@ -1385,7 +1391,7 @@ void MainScene::initPopupMail()
 	btnCloseDetail->setScale(.7f);
 	addTouchEventListener(btnCloseDetail, [=]() {
 		nodeDetail->setVisible(false);
-	}, .7f);
+	});
 	nodeDetail->addChild(btnCloseDetail);
 
 	addBtnChoosePage(-100, -260, popupMail, [=](int page) {
@@ -1609,7 +1615,7 @@ void MainScene::initWebView()
 		hideSplash();
 		nodeWebview->setVisible(false);
 		nodeWebview->removeChildByName("webview");
-	}, .6f);
+	});
 	nodeWebview->addChild(btnClose);
 	autoScaleNode(btnClose);
 }

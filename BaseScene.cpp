@@ -183,7 +183,7 @@ void BaseScene::showPopupNotice(std::string msg, std::function<void()> func, boo
 	addTouchEventListener(btnSubmit, [=]() {
 		func();
 		hidePopup(popupNotice);
-	});
+	}, false);
 }
 
 void BaseScene::showSplash()
@@ -502,9 +502,11 @@ void BaseScene::setMoneyType(int type)
 	//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), type == 1);
 }
 
-void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> func, float scale)
+void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> func, bool isNew)
 {
-	buttons.push_back(btn);
+	if (isNew) {
+		buttons.push_back(btn);
+	}
 	btn->addTouchEventListener([=](Ref* ref, ui::Widget::TouchEventType type) {
 		switch (type)
 		{
@@ -512,14 +514,11 @@ void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> fun
 				if (Utils::getSingleton().SoundEnabled) {
 					experimental::AudioEngine::play2d("sound/click.mp3");
 				}
-				//btn->setScale(scale * 1.05f);
 				break;
 			case cocos2d::ui::Widget::TouchEventType::ENDED:
-				//btn->setScale(scale);
 				func();
 				break;
 			default:
-				//btn->setScale(scale);
 				break;
 		}
 	});
@@ -868,7 +867,7 @@ Node* BaseScene::createPopupNotice()
 	btndong->setName("btnclose");
 	addTouchEventListener(btndong, [=]() {
 		hidePopup(popupNotice);
-	}, .7f);
+	});
 	popupNotice->addChild(btndong);
 
 	return popupNotice;
@@ -1264,7 +1263,7 @@ void BaseScene::initPopupHistory()
 	btnCloseDetail->setScale(.7f);
 	addTouchEventListener(btnCloseDetail, [=]() {
 		nodeDetail->setVisible(false);
-	}, .7f);
+	});
 	nodeDetail->addChild(btnCloseDetail);
 
 	addBtnChoosePage(-100, -260, popupHistory, [=](int page) {

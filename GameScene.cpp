@@ -2553,6 +2553,16 @@ void GameScene::onTableResponse(GameTableData data)
 
 void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
 {
+	/*int numb = rand() % 20;
+	listUser.clear();
+	for (int i = 0; i < numb; i++) {
+		UserData data;
+		data.DisplayName = "Stormus" + to_string(rand() % 1000);
+		data.MoneyFree = rand() % 10000;
+		data.MoneyReal = rand() % 10000;
+		listUser.push_back(data);
+	}*/
+
 	if (hasClickInvite) {
 		hasClickInvite = false;
 		showPopup(tableInvite);
@@ -2564,40 +2574,71 @@ void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
 			y = scroll->getContentSize().height - 25;
 		scroll->setInnerContainerSize(Size(sx, y + 25));
 
-		scroll->removeAllChildren();
 		bool isRealMoney = Utils::getSingleton().moneyType == 1;
-		for (UserData u : listUser) {
-			Label* lb1 = Label::create();
-			lb1->setString(u.DisplayName.length() > 0 ? u.DisplayName : u.Name);
-			lb1->setSystemFontSize(25);
-			lb1->setPosition(0, y);
-			lb1->setAnchorPoint(Vec2(0, .5f));
-			lb1->setWidth(sx - 350);
-			lb1->setHeight(30);
-			scroll->addChild(lb1);
+		int childCount = scroll->getChildrenCount();
+		for (int i = 0; i < listUser.size(); i++) {
+			int posY = y - i * 60;
+			int tag = i * 4;
+			Label* lb1;
+			Label* lb2;
+			Sprite* sp;
+			ui::Button* btn;
+			bool isNewBtn;
+			if (tag >= childCount) {
+				lb1 = Label::create();
+				lb1->setSystemFontSize(25);
+				lb1->setAnchorPoint(Vec2(0, .5f));
+				lb1->setWidth(sx - 350);
+				lb1->setHeight(30);
+				lb1->setTag(tag);
+				scroll->addChild(lb1);
 
-			Sprite* sp = Sprite::create(isRealMoney ? "main/icon_gold.png" : "main/icon_silver.png");
-			sp->setPosition(sx - 320, y);
-			sp->setScale(.6f);
-			scroll->addChild(sp);
+				sp = Sprite::create();
+				sp->setScale(.6f);
+				sp->setTag(tag + 1);
+				scroll->addChild(sp);
 
-			Label* lb2 = Label::create();
-			lb2->setString(Utils::getSingleton().formatMoneyWithComma(isRealMoney ? u.MoneyReal : u.MoneyFree));
-			lb2->setSystemFontSize(25);
-			lb2->setPosition(sx - 300, y);
-			lb2->setAnchorPoint(Vec2(0, .5f));
-			scroll->addChild(lb2);
+				lb2 = Label::create();
+				lb2->setSystemFontSize(25);
+				lb2->setAnchorPoint(Vec2(0, .5f));
+				lb2->setTag(tag + 2);
+				scroll->addChild(lb2);
 
-			ui::Button* btn = ui::Button::create("board/btn_moi.png", "board/btn_moi_clicked.png");
-			btn->setPosition(Vec2(sx - 60, y));
-			btn->setScale(.8f);
+				btn = ui::Button::create("board/btn_moi.png", "board/btn_moi_clicked.png");
+				btn->setScale(.8f);
+				btn->setTag(tag + 3);
+				scroll->addChild(btn);
+				isNewBtn = true;
+			} else {
+				lb1 = (Label*)scroll->getChildByTag(tag);
+				sp = (Sprite*)scroll->getChildByTag(tag + 1);
+				lb2 = (Label*)scroll->getChildByTag(tag + 2);
+				btn = (ui::Button*)scroll->getChildByTag(tag + 3);
+
+				lb1->setVisible(true);
+				lb2->setVisible(true);
+				sp->setVisible(true);
+				btn->setVisible(true);
+				isNewBtn = false;
+			}
+
+			lb1->setPosition(0, posY);
+			sp->setPosition(sx - 320, posY);
+			lb2->setPosition(sx - 300, posY);
+			btn->setPosition(Vec2(sx - 60, posY));
+
+			lb1->setString(listUser[i].DisplayName.length() > 0 ? listUser[i].DisplayName : listUser[i].Name);
+			lb2->setString(Utils::getSingleton().formatMoneyWithComma(isRealMoney ? listUser[i].MoneyReal : listUser[i].MoneyFree));
+			sp->initWithFile(isRealMoney ? "main/icon_gold.png" : "main/icon_silver.png");
 			addTouchEventListener(btn, [=]() {
 				btn->setVisible(false);
-				SFSRequest::getSingleton().RequestGameInvitePlayer(u.SfsUserId);
-			});
-			scroll->addChild(btn);
+				SFSRequest::getSingleton().RequestGameInvitePlayer(listUser[i].SfsUserId);
+			}, isNewBtn);
+		}
 
-			y -= 60;
+		int count = listUser.size() * 4;
+		for (int i = count; i < childCount; i++) {
+			scroll->getChildByTag(i)->setVisible(false);
 		}
 	} else {
 

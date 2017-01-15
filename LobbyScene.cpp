@@ -263,9 +263,12 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 	ppos.push_back(Vec2(180, 45));
 	for (int i = 0; i < data.Size; i++) {
 		ui::Button* btn;
+		bool isNewBtn;
 		if (i < vecTables.size()) {
 			btn = vecTables[i];
+			isNewBtn = false;
 		} else {
+			isNewBtn = true;
 			btn = ui::Button::create("lobby/table_" + zone + ".png");
 			btn->setPosition(Vec2(100 + (i % 4) * 210, height - 100 - (i / 4) * 170));
 			btn->setTag(i + 1);
@@ -336,7 +339,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			string name = String::createWithFormat(strformat.c_str(), btn->getTag())->getCString();
 			SFSRequest::getSingleton().RequestJoinRoom(name);
 			showWaiting();
-		}, .8f);
+		}, isNewBtn);
 
 		Sprite* spga = (Sprite*)btn->getChildByName("iconga");
 		Label* lbMoney = (Label*)btn->getChildByName("lbmoney");
