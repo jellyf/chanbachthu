@@ -675,6 +675,8 @@ void BaseScene::initHeaderWithInfos()
 	if (Utils::getSingleton().userDataMe.UserID > 0) {
 		onUserDataMeResponse();
 	}
+
+	SFSRequest::getSingleton().RequestPlayHistory(0, 0);
 }
 
 void BaseScene::onBackScene()
@@ -686,7 +688,6 @@ void BaseScene::showPopupHistory()
 {
 	if (popupHistory == nullptr) return;
 	showPopup(popupHistory);
-	SFSRequest::getSingleton().RequestPlayHistory(0, 0);
 }
 
 void BaseScene::onChangeMoneyType(int type)
@@ -1186,7 +1187,6 @@ void BaseScene::initPopupHistory()
 	scroll->setContentSize(Size(w, 300));
 	scroll->setScrollBarEnabled(false);
 	scroll->setName("scroll");
-	scroll->setTag(1);
 	popupHistory->addChild(scroll);
 
 	vector<string> texts = { "quan" , "xu" };
@@ -1203,9 +1203,9 @@ void BaseScene::initPopupHistory()
 			btn1->loadTextureNormal("popup/box1.png");
 			btn->loadTextureNormal("popup/box2.png");
 			popupHistory->setTag(i);
-			scroll->setTag(1);
 			SFSRequest::getSingleton().RequestPlayHistory(i, 0);
 
+			popupHistory->getChildByName("nodepage")->setTag(1);
 			for (int i = 1; i <= 5; i++) {
 				ui::Button* btn = (ui::Button*)popupHistory->getChildByTag(1000 + i);
 				btn->setTitleText(to_string(i));
