@@ -1553,7 +1553,14 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 					spChuPhong->setPosition(vecUserPos[index] + Vec2(50 * scaleScene.y, 0));
 				}
 				if (player.Info.SfsUserId == sfsIdMe) {
-					btnReady->setVisible(!player.Ready);
+					bool isAutoReady = UserDefault::getInstance()->getBoolForKey(constant::KEY_AUTO_READY.c_str());
+					if (isAutoReady && !player.Ready) {
+						state = READY;
+						btnReady->setVisible(false);
+						SFSRequest::getSingleton().RequestGameReady();
+					} else {
+						btnReady->setVisible(!player.Ready);
+					}
 				}
 			}
 		}
@@ -1561,25 +1568,8 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			num++;
 		}
 	}
-	/*for (PlayerData player : roomData.Players) {
-		int index = index = (4 + (player.Index - (myServerSlot >= 0 ? myServerSlot : 0))) % 4;
-		if (roomData.Players.size() == 2 && (index == 1 || index == 3)) {
-			index = 2;
-		}
-		userIndexs[player.Info.SfsUserId] = index;
-		userIndexs2[player.Info.UserID] = index;
-		spInvites[index]->setVisible(false);
-		vecUsers[index]->setVisible(true);
-		vecUsers[index]->setAlpha(255);
-		vecUsers[index]->setUserName(player.Info.Name);
-		vecUsers[index]->setUserMoney(player.PMoney);
-		vecUsers[index]->setName(player.Info.Name);
-		if (player.Index == 0) {
-			spChuPhong->setVisible(true);
-			spChuPhong->setPosition(vecUserPos[index] + Vec2(50 * scaleScene.y, 0));
-		}
-	}*/
-	if (roomData.Players.size() > 1 && roomData.TimeStart > 0 && myServerSlot >= 0) {
+	
+	/*if (roomData.Players.size() > 1 && roomData.TimeStart > 0 && myServerSlot >= 0) {
 		bool isAutoReady = UserDefault::getInstance()->getBoolForKey(constant::KEY_AUTO_READY.c_str());
 		if (isAutoReady) {
 			state = READY;
@@ -1598,6 +1588,15 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		btnReady->setVisible(false);
 		lbCrestTime->setVisible(false);
 		lbCrestTime->pauseSchedulerAndActions();
+	}*/
+
+	if (!lbCrestTime->isVisible()) {
+		Vec2 lbscale = getScaleSmoothly(1.5f);
+		lbCrestTime->setVisible(true);
+		lbCrestTime->setScale(lbscale.x, lbscale.y);
+		lbCrestTime->setColor(Color3B::RED);
+		lbCrestTime->setString(to_string((int)roomData.TimeStart));
+		lbCrestTime->resumeSchedulerAndActions();
 	}
 
 	state = roomData.TimeStart > 0 ? NONE : READY;
@@ -1919,6 +1918,9 @@ void GameScene::onUserBash(BashData data)
 			noaction++;
 			beatenNodeAndHide(btnWin, 1.1f, .9f, .7f, 10);
 			btnDropWin->setVisible(true);
+			delayFunction(btnDropWin, 10, [=]() {
+				btnDropWin->setVisible(false);
+			});
 			if (data.TurnId == sfsIdMe) {
 				waitAction = constant::GAME_ACTION_BASH;
 			}
@@ -2019,6 +2021,9 @@ void GameScene::onUserBashBack(BashBackData data)
 			noaction++;
 			beatenNodeAndHide(btnWin, 1.1f, .9f, .7f, 10);
 			btnDropWin->setVisible(true);
+			delayFunction(btnDropWin, 10, [=]() {
+				btnDropWin->setVisible(false);
+			});
 			if (data.TurnId == sfsIdMe) {
 				if (data.IsPicked) {
 					waitAction = constant::GAME_ACTION_PICK;
@@ -2208,6 +2213,9 @@ void GameScene::onUserPick(PickData data)
 			noaction++;
 			beatenNodeAndHide(btnWin, 1.1f, .9f, .7f, 10);
 			btnDropWin->setVisible(true);
+			delayFunction(btnDropWin, 10, [=]() {
+				btnDropWin->setVisible(false);
+			});
 			if (data.TurnId == sfsIdMe) {
 				waitAction = constant::GAME_ACTION_PICK;
 			}
@@ -2547,6 +2555,7 @@ void GameScene::onTableResponse(GameTableData data)
 	for (int i = 0; i < 3; i++) {
 		cbs.push_back((ui::CheckBox*)popupSettings->getChildByTag(i));
 	}
+
 	cbs[0]->setSelected(data.IsU411);
 	cbs[1]->setSelected(!data.IsQuick);
 	cbs[2]->setSelected(data.IsQuick);
