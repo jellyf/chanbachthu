@@ -1466,7 +1466,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 
 void GameScene::onErrorResponse(unsigned char code, std::string msg)
 {
-	if (code == 31 || code == 30) {
+	if (code == 31 || code == 30 || code == 29) {
 		showSystemNotice(msg);
 		return;
 	}
@@ -1479,7 +1479,7 @@ void GameScene::onErrorResponse(unsigned char code, std::string msg)
 		}, false);*/
 		return;
 	}
-	if(code != 29) showError(msg);
+	showError(msg);
 }
 
 void GameScene::onPublicMessage(long uid, std::string msg)
@@ -2689,6 +2689,13 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 
 				int index2 = index * 2;
 				float scale = 1;
+
+				//Test
+				/*for (int i = 0; i < 5; i++) {
+					player.SingleCards.push_back(0);
+				}*/
+				//endtest
+
 				if (player.SingleCards.size() > maxTableCardNumb[index2]) {
 					scale = ((float)maxTableCardNumb[index2]) / player.SingleCards.size();
 				}
@@ -2711,6 +2718,16 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 
 				index2 = index * 2 + 1;
 				scale = 1;
+
+				//Test
+				/*for (int i = 0; i < 5; i++) {
+					vector<char> vec;
+					vec.push_back(0);
+					vec.push_back(0);
+					player.PairCards.push_back(vec);
+				}*/
+				//end test
+
 				if (player.PairCards.size() > maxTableCardNumb[index2]) {
 					scale = ((float)maxTableCardNumb[index2] - 1) / (player.PairCards.size() - 1);
 				}
@@ -2723,7 +2740,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 					}
 					for (int i = 0; i < v.size(); i++) {
 						Sprite* spCard = getCardSprite(v[i]);
-						spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2] * 4 + i + 1);
+						spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + (tableCardNumb[index2] + 1) * 4 + i);
 						spCard->setTag(constant::TAG_CARD_TABLE + index2);
 						spCard->setName(to_string((int)std::abs(v[i])));
 						spCard->setAnchorPoint(Vec2(.5f, .5f));
@@ -3299,14 +3316,14 @@ Sprite* GameScene::getCardSprite(int id)
 	int cardName = getCardName(id);
 	for (Sprite* sp : spCards) {
 		if (sp && !sp->isVisible()) {
-			sp->initWithFile(String::createWithFormat("cards/%d.png", getCardName(id))->getCString());
+			sp->initWithFile(String::createWithFormat("cards/%d.png", cardName)->getCString());
 			sp->setColor(Color3B::WHITE);
 			sp->setVisible(true);
 			sp->setScale(1);
 			return sp;
 		}
 	}
-	Sprite* sp = Sprite::create(String::createWithFormat("cards/%d.png", getCardName(id))->getCString());
+	Sprite* sp = Sprite::create(String::createWithFormat("cards/%d.png", cardName)->getCString());
 	playLayer->addChild(sp);
 	spCards.push_back(sp);
 	return sp;
