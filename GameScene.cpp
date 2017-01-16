@@ -174,6 +174,14 @@ void GameScene::onInit()
 		if (gameSplash->isVisible()) return;
 		showSettings();
 
+		/*if (isPause) {
+			isPause = false;
+			unscheduleUpdate();
+		} else {
+			isPause = true;
+			scheduleUpdate();
+		}*/
+
 		/*nodeStilt->setRotation(0);
 		nodeStilt->setVisible(true);
 		for (int i = 0; i < vecStilts.size();i++) {
@@ -564,6 +572,7 @@ void GameScene::onInit()
 
 	lbCrestTime = Label::create("", "fonts/arialbd.ttf", 50);
 	lbCrestTime->setPosition(btnXemNoc->getPosition() + getScaleSceneDistance(Vec2(190, 0)));
+	lbCrestTime->setVisible(false);
 	mLayer->addChild(lbCrestTime, constant::GAME_ZORDER_SPLASH + 1);
 	autoScaleNode(lbCrestTime);
 
@@ -1568,7 +1577,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 						btnReady->setVisible(false);
 						SFSRequest::getSingleton().RequestGameReady();
 					} else {
-						btnReady->setVisible(!player.Ready);
+						btnReady->setVisible(!player.Ready && roomData.Players.size() > 1);
 					}
 				}
 			}
@@ -1599,13 +1608,17 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		lbCrestTime->pauseSchedulerAndActions();
 	}*/
 
-	if (!lbCrestTime->isVisible()) {
-		Vec2 lbscale = getScaleSmoothly(1.5f);
-		lbCrestTime->setVisible(true);
-		lbCrestTime->setScale(lbscale.x, lbscale.y);
-		lbCrestTime->setColor(Color3B::RED);
-		lbCrestTime->setString(to_string((int)roomData.TimeStart));
-		lbCrestTime->resumeSchedulerAndActions();
+	if (roomData.Players.size() == 1) {
+		lbCrestTime->setVisible(false);
+	} else {
+		if (roomData.TimeStart > 0 && !lbCrestTime->isVisible()) {
+			Vec2 lbscale = getScaleSmoothly(1.5f);
+			lbCrestTime->setVisible(true);
+			lbCrestTime->setScale(lbscale.x, lbscale.y);
+			lbCrestTime->setColor(Color3B::RED);
+			lbCrestTime->setString(to_string((int)timeStart));
+			lbCrestTime->resumeSchedulerAndActions();
+		}
 	}
 
 	state = roomData.TimeStart > 0 ? NONE : READY;
@@ -1896,6 +1909,7 @@ void GameScene::onUserBash(BashData data)
 		spCard->setPosition(x, y);
 		spCard->setName(to_string((int)data.CardId));
 		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
+		spCard->stopAllActions();
 		spCard->runAction(rotate);
 		zorder = spCard->getLocalZOrder();
 	} else {
@@ -1996,6 +2010,7 @@ void GameScene::onUserBashBack(BashBackData data)
 		spCard->setPosition(x, y);
 		spCard->setName(to_string((int)data.CardId));
 		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
+		spCard->stopAllActions();
 		spCard->runAction(rotate);
 		zorder = spCard->getLocalZOrder();
 	} else {
@@ -2142,6 +2157,7 @@ void GameScene::onUserHold(HoldData data)
 	spCard->runAction(move1);
 	spCard->runAction(scaleTo);
 	runningSpCard->stopAllActions();
+	runningSpCard->setOpacity(255);
 	runningSpCard->runAction(move2);
 	runningSpCard->runAction(scaleTo->clone());
 	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_CARD_FLY + 1);
@@ -2323,6 +2339,7 @@ void GameScene::onUserPenet(PenetData data)
 		ScaleTo* scaleTo = ScaleTo::create(cardSpeed, cardScaleTable);
 		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
 		cards[i]->stopAllActions();
+		cards[i]->setOpacity(255);
 		cards[i]->runAction(move);
 		cards[i]->runAction(scaleTo);
 		cards[i]->runAction(rotate);
@@ -2498,12 +2515,14 @@ void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 	btnPenet->stopAllActions();
 	progressTimer->stopAllActions();
 
-	Vec2 pos = lbCardNoc->getParent()->getPosition() + Vec2(0, 20);
-	Sprite* sp = getCardSprite(stiltCards[0]);
-	sp->setScale(.8f);
-	sp->setRotation(0);
-	sp->setAnchorPoint(Vec2(.5f, .5f));
-	sp->setPosition(pos.x / scaleScene.y, pos.y / scaleScene.x);
+	if (stiltCards.size() == 1) {
+		Vec2 pos = lbCardNoc->getParent()->getPosition() + Vec2(0, 20);
+		Sprite* sp = getCardSprite(stiltCards[0]);
+		sp->setScale(.8f);
+		sp->setRotation(0);
+		sp->setAnchorPoint(Vec2(.5f, .5f));
+		sp->setPosition(pos.x / scaleScene.y, pos.y / scaleScene.x);
+	}
 
 	DelayTime* delay = DelayTime::create(3);
 	CallFunc* func = CallFunc::create([=]() {
@@ -3335,8 +3354,10 @@ Sprite* GameScene::getCardSprite(int id)
 	for (Sprite* sp : spCards) {
 		if (sp && !sp->isVisible()) {
 			sp->initWithFile(String::createWithFormat("cards/%d.png", cardName)->getCString());
+			sp->setAnchorPoint(Vec2(.5f, .5f));
 			sp->setColor(Color3B::WHITE);
 			sp->setVisible(true);
+			sp->setOpacity(255);
 			sp->setScale(1);
 			return sp;
 		}

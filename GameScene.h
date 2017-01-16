@@ -173,6 +173,7 @@ private:
 	bool hasRegisterOut = false;
 	bool isReconnecting = false;
 	bool isKickForNotReady = false;
+	bool isPause = false;
 	GameState state;
 	StartGameData startGameData;
 	CardHandData myCardHand;
