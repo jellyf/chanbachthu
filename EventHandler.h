@@ -61,7 +61,7 @@ public:
 	std::function<void(EndMatchMoneyData)> onEndMatchMoneySFSResponse = NULL;
 	std::function<void(std::vector<unsigned char>)> onEndMatchTieSFSResponse = NULL;
 	std::function<void(long, std::string)> onGamePunishSFSResponse = NULL;
-	std::function<void(long)> onGameReadySFSResponse = NULL;
+	std::function<void(long, bool)> onGameReadySFSResponse = NULL;
 	std::function<void(GameTableData)> onGameTableSFSResponse = NULL;
 	std::function<void(bool, double)> onGameRoomDataGaSFSResponse = NULL;
 	std::function<void(PlayingTableData)> onGamePlayingDataSFSResponse = NULL;

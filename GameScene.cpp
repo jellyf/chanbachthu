@@ -237,7 +237,6 @@ void GameScene::onInit()
 	addTouchEventListener(btnReady, [=]() {
 		state = READY;
 		SFSRequest::getSingleton().RequestGameReady();
-		//lbCrestTime->setVisible(false);
 		btnReady->setVisible(false);
 	});
 	mLayer->addChild(btnReady);
@@ -706,7 +705,7 @@ void GameScene::registerEventListenner()
 	EventHandler::getSingleton().onEndMatchTieSFSResponse = std::bind(&GameScene::onEndMatchTie, this, std::placeholders::_1);
 	EventHandler::getSingleton().onEndMatchMoneySFSResponse = std::bind(&GameScene::onEndMatchMoney, this, std::placeholders::_1);
 	EventHandler::getSingleton().onGamePunishSFSResponse = std::bind(&GameScene::onPunishResponse, this, std::placeholders::_1, std::placeholders::_2);
-	EventHandler::getSingleton().onGameReadySFSResponse = std::bind(&GameScene::onUserReadyResponse, this, std::placeholders::_1);
+	EventHandler::getSingleton().onGameReadySFSResponse = std::bind(&GameScene::onUserReadyResponse, this, std::placeholders::_1, std::placeholders::_2);
 	EventHandler::getSingleton().onGameTableSFSResponse = std::bind(&GameScene::onTableResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onLobbyUserDataSFSResponse = std::bind(&GameScene::onLobbyUserResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onGameRoomDataGaSFSResponse = std::bind(&GameScene::onRoomDataGaResponse, this, std::placeholders::_1, std::placeholders::_2);
@@ -1588,7 +1587,6 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			lbCrestTime->setVisible(false);
 			btnReady->setVisible(false);
 		} else {
-			//btnReady->setVisible(true);
 			Vec2 lbscale = getScaleSmoothly(1.5f);
 			lbCrestTime->setVisible(true);
 			lbCrestTime->setScale(lbscale.x, lbscale.y);
@@ -2522,9 +2520,12 @@ void GameScene::onPunishResponse(long UiD, std::string msg)
 	btnForward->setVisible(false);
 }
 
-void GameScene::onUserReadyResponse(long UiD)
+void GameScene::onUserReadyResponse(long UiD, bool isReady)
 {
-	spSanSangs[userIndexs2[UiD]]->setVisible(true);
+	spSanSangs[userIndexs2[UiD]]->setVisible(isReady);
+	if (UiD == sfsIdMe) {
+		btnReady->setVisible(!isReady);
+	}
 }
 
 void GameScene::onTableResponse(GameTableData data)

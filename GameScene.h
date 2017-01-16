@@ -46,7 +46,7 @@ public:
 	void onEndMatchMoney(EndMatchMoneyData data);
 	void onEndMatchTie(std::vector<unsigned char> stiltCards);
 	void onPunishResponse(long UiD, std::string msg);
-	void onUserReadyResponse(long UiD);
+	void onUserReadyResponse(long UiD, bool isReady);
 	void onTableResponse(GameTableData data);
 	void onLobbyUserResponse(std::vector<UserData> listUser);
 	void onGamePlayingDataResponse(PlayingTableData data);

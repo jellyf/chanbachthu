@@ -621,11 +621,13 @@ void SFSResponse::onGamePunishResponse(boost::shared_ptr<ISFSObject> isfsObject)
 void SFSResponse::onGameReadyResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
 	long uid;
+	bool isReady;
 	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
 	byteArray->ReadInt(uid);
-	//CCLOG("%d", UiD);
+	byteArray->ReadBool(isReady);
+	//CCLOG("%d %s", uid, isReady ? "true" : "false");
 	if (EventHandler::getSingleton().onGameReadySFSResponse != NULL) {
-		EventHandler::getSingleton().onGameReadySFSResponse(uid);
+		EventHandler::getSingleton().onGameReadySFSResponse(uid, isReady);
 	}
 }
 
