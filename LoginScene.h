@@ -34,9 +34,9 @@ private:
 	int currentConfigLink = 0;
 	int tmpZoneIndex;
 	std::string fbToken = "";
-    bool isIPv4 = true;
 	bool canCheckReconnect = false;
 	bool isReconnecting = false;
+	bool isIPv4 = CC_TARGET_PLATFORM == CC_PLATFORM_IOS;
 
 	cocos2d::Node* loginNode;
 	cocos2d::Node* registerNode;

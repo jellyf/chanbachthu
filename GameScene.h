@@ -24,6 +24,7 @@ public:
 	void onApplicationDidEnterBackground();
 
 	void onConnected();
+	void onConnectionFailed();
 	void onConnectionLost(std::string reason);
 	void onUserDataResponse(UserData data);
 	void onUserExitRoom(long sfsUId);

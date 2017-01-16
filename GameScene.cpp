@@ -684,6 +684,7 @@ void GameScene::registerEventListenner()
 {
 	EventHandler::getSingleton().onApplicationDidEnterBackground = std::bind(&GameScene::onApplicationDidEnterBackground, this);
 	EventHandler::getSingleton().onConnected = std::bind(&GameScene::onConnected, this);
+	EventHandler::getSingleton().onConnectionFailed = std::bind(&GameScene::onConnectionFailed, this);
 	EventHandler::getSingleton().onConnectionLost = std::bind(&GameScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onUserDataSFSResponse = std::bind(&GameScene::onUserDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onUserExitRoom = std::bind(&GameScene::onUserExitRoom, this, std::placeholders::_1);
@@ -720,6 +721,7 @@ void GameScene::unregisterEventListenner()
 	BaseScene::unregisterEventListenner();
 	EventHandler::getSingleton().onApplicationDidEnterBackground = NULL;
 	EventHandler::getSingleton().onConnected = NULL;
+	EventHandler::getSingleton().onConnectionFailed = NULL;
 	EventHandler::getSingleton().onConnectionLost = NULL;
 	EventHandler::getSingleton().onUserDataSFSResponse = NULL;
 	EventHandler::getSingleton().onUserExitRoom = NULL;
@@ -1413,6 +1415,13 @@ int GameScene::getCardName(unsigned char cardId)
 void GameScene::onConnected()
 {
 	Utils::getSingleton().reloginZone();
+}
+
+void GameScene::onConnectionFailed()
+{
+	SFSRequest::getSingleton().Disconnect();
+	Utils::getSingleton().goToLoginScene();
+	experimental::AudioEngine::uncacheAll();
 }
 
 void GameScene::onConnectionLost(std::string reason)

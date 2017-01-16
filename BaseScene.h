@@ -51,7 +51,7 @@ protected:
 	void showPopupHistory();
 	void showSplash();
 	void showToast(std::string msg, cocos2d::Vec2 pos, cocos2d::Color3B textColor = cocos2d::Color3B::WHITE, cocos2d::Color3B bgColor = cocos2d::Color3B(80, 80, 80), int bgOpacity = 200);
-	void showWaiting(int time = 15);
+	void showWaiting(int time = 10);
 	void showPopup(cocos2d::Node* popup, bool runEffect = true);
 	void setDisplayName(std::string name);
 	void runEffectHidePopup(cocos2d::Node* popup);

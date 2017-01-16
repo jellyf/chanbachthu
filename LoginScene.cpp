@@ -248,10 +248,10 @@ void LoginScene::onConnectionFailed()
         SFSRequest::getSingleton().ForceIPv6(true);
         SFSRequest::getSingleton().Connect();
     }else{
-        isIPv4 = true;
+        isIPv4 = CC_TARGET_PLATFORM == CC_PLATFORM_IOS;
         SFSRequest::getSingleton().ForceIPv6(false);
         hideWaiting();
-        showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"), [=]() {});
+        showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {});
     }
 }
 
