@@ -1333,9 +1333,11 @@ void GameScene::showSettings()
 	int opacity = myServerSlot == 0 ? 255 : 200;
 	for (int i = 0; i < 3; i++) {
 		auto cb = (ui::CheckBox*)popupSettings->getChildByTag(i);
-		cb->setEnabled(myServerSlot == 0 && (state == NONE || state == READY));
+		//cb->setEnabled(myServerSlot == 0 && (state == NONE || state == READY));
 		cb->setOpacity(opacity);
 	}
+	auto btnNo = (ui::Button*)popupSettings->getChildByName("btnno");
+	btnNo->setVisible(!(myServerSlot == 0 && (state == NONE || state == READY)));
 }
 
 void GameScene::showError(std::string msg)
@@ -1904,8 +1906,8 @@ void GameScene::onUserBash(BashData data)
 		if (spCard == NULL) return;
 		int rot = spCard->getRotation();
 		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
-		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + scaledUserPos.x;
-		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + scaledUserPos.y;
+		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.x;
+		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.y;
 		spCard->setPosition(x, y);
 		spCard->setName(to_string((int)data.CardId));
 		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
@@ -3306,6 +3308,14 @@ void GameScene::initSettingsPopup()
 		hidePopup(popupSettings);
 	});
 	popupSettings->addChild(btnClose);
+
+	ui::Button* btnNo = ui::Button::create("white.png", "white.png");
+	btnNo->setContentSize(Size(500, 150));
+	btnNo->setPosition(Vec2(0, 60));
+	btnNo->setScale9Enabled(true);
+	btnNo->setOpacity(0);
+	btnNo->setName("btnno");
+	popupSettings->addChild(btnNo);
 }
 
 void GameScene::initTableInfo()
