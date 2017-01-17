@@ -2007,8 +2007,8 @@ void GameScene::onUserBashBack(BashBackData data)
 		if (spCard == NULL) return;
 		int rot = spCard->getRotation();
 		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
-		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + scaledUserPos.x;
-		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + scaledUserPos.y;
+		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.x;
+		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.y;
 		spCard->setPosition(x, y);
 		spCard->setName(to_string((int)data.CardId));
 		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
@@ -2130,8 +2130,8 @@ void GameScene::onUserHold(HoldData data)
 		if (spCard == NULL) return;
 		int rot = spCard->getRotation();
 		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
-		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + scaledUserPos.x;
-		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spCard->getContentSize().height + scaledUserPos.y;
+		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.x;
+		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.y;
 		spCard->setPosition(x, y);
 		spCard->setName(to_string((int)data.CardId));
 	} else {
@@ -2308,8 +2308,8 @@ void GameScene::onUserPenet(PenetData data)
 
 				int rot = spHandCards[i]->getRotation();
 				Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
-				float x = sin(CC_DEGREES_TO_RADIANS(rot)) * .85f * spHandCards[i]->getContentSize().height + scaledUserPos.x;
-				float y = cos(CC_DEGREES_TO_RADIANS(rot)) * .85f * spHandCards[i]->getContentSize().height + scaledUserPos.y;
+				float x = sin(CC_DEGREES_TO_RADIANS(rot)) * spHandCards[i]->getContentSize().height + scaledUserPos.x;
+				float y = cos(CC_DEGREES_TO_RADIANS(rot)) * spHandCards[i]->getContentSize().height + scaledUserPos.y;
 				spHandCards[i]->setName(to_string((int)data.CardId));
 				spHandCards[i]->setPosition(x, y);
 
