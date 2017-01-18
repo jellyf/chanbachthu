@@ -243,12 +243,28 @@ void GameScene::onInit()
 	btnReady->setPosition(Vec2(560, 350));
 	btnReady->setVisible(false);
 	addTouchEventListener(btnReady, [=]() {
+		if (state != NONE && state != READY) return;
 		state = READY;
 		SFSRequest::getSingleton().RequestGameReady();
 		btnReady->setVisible(false);
+		btnCancelReady->setVisible(true);
 	});
 	mLayer->addChild(btnReady);
 	autoScaleNode(btnReady);
+
+	btnCancelReady = ui::Button::create("board/btn.png", "board/btn_clicked.png");
+	btnCancelReady->setContentSize(Size(200, 65));
+	btnCancelReady->setPosition(Vec2(560, 350));
+	btnCancelReady->setScale9Enabled(true);
+	btnCancelReady->setVisible(false);
+	addTouchEventListener(btnCancelReady, [=]() {
+		if (state != NONE && state != READY) return;
+		SFSRequest::getSingleton().RequestGameReady();
+		btnReady->setVisible(true);
+		btnCancelReady->setVisible(false);
+	});
+	mLayer->addChild(btnCancelReady);
+	autoScaleNode(btnCancelReady);
 
 	btnBash = ui::Button::create("board/btn_danh.png", "board/btn_danh_clicked.png");
 	btnBash->setPosition(Vec2(900, 35));
@@ -452,6 +468,12 @@ void GameScene::onInit()
 	lbBtnReady->setColor(Color3B::YELLOW);
 	lbBtnReady->enableOutline(Color4B::BLACK, 2);
 	btnReady->addChild(lbBtnReady);
+
+	Label* lbBtnCancelReady = Label::createWithTTF(Utils::getSingleton().getStringForKey("cancel_ready"), "fonts/UTM AZUKI.ttf", 30);
+	lbBtnCancelReady->setPosition(btnCancelReady->getContentSize().width / 2, btnCancelReady->getContentSize().height / 2);
+	lbBtnCancelReady->setColor(Color3B::YELLOW);
+	lbBtnCancelReady->enableOutline(Color4B::BLACK, 2);
+	btnCancelReady->addChild(lbBtnCancelReady);
 
 	lbNoticeAction = Label::createWithTTF("", "fonts/UTM AZUKI.ttf", 35);
 	lbNoticeAction->setPosition(560, 350);
@@ -1578,7 +1600,8 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 						state = READY;
 						SFSRequest::getSingleton().RequestGameReady();
 					} else {
-						btnReady->setVisible(!player.Ready && roomData.Players.size() > 1);
+						btnReady->setVisible(!player.Ready);
+						btnCancelReady->setVisible(player.Ready);
 					}
 				}
 			}
@@ -1590,6 +1613,9 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 
 	if (roomData.Players.size() == 1) {
 		lbCrestTime->setVisible(false);
+		btnReady->setVisible(false);
+		btnCancelReady->setVisible(false);
+		spSanSangs[0]->setVisible(false);
 	} else {
 		if (roomData.TimeStart > 0 && !lbCrestTime->isVisible()) {
 			Vec2 lbscale = getScaleSmoothly(1.5f);
@@ -1674,6 +1700,7 @@ void GameScene::onStartGameDataResponse(StartGameData data)
 	this->startGameData = data;
 	this->myCardHand = data.CardHand;
 	btnReady->setVisible(false);
+	btnCancelReady->setVisible(false);
 	lbCrestTime->setVisible(false);
 	lbCrestTime->pauseSchedulerAndActions();
 	for (Sprite* sp : spSanSangs) {
@@ -2541,6 +2568,7 @@ void GameScene::onUserReadyResponse(long UiD, bool isReady)
 	spSanSangs[userIndexs2[UiD]]->setVisible(isReady);
 	if (UiD == sfsIdMe) {
 		btnReady->setVisible(!isReady);
+		btnCancelReady->setVisible(isReady);
 	}
 }
 
