@@ -2605,8 +2605,8 @@ void GameScene::onTableResponse(GameTableData data)
 	}
 
 	cbs[0]->setSelected(data.IsU411);
-	cbs[1]->setSelected(!data.IsQuick);
-	cbs[2]->setSelected(data.IsQuick);
+	cbs[1]->setSelected(data.IsQuick);
+	cbs[2]->setSelected(!data.IsQuick);
 }
 
 void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
@@ -3313,7 +3313,7 @@ void GameScene::initSettingsPopup()
 		UserDefault::getInstance()->setBoolForKey(constant::KEY_AUTO_READY.c_str(), cbs[3]->isSelected());
 		UserDefault::getInstance()->setBoolForKey(constant::KEY_SOUND.c_str(), cbs[4]->isSelected());
 		if (myServerSlot == 0 && (state == NONE || state == READY)){
-			SFSRequest::getSingleton().RequestGameTableInfo(cbs[2]->isSelected(), cbs[0]->isSelected());
+			SFSRequest::getSingleton().RequestGameTableInfo(cbs[1]->isSelected(), cbs[0]->isSelected());
 		}
 		Utils::getSingleton().SoundEnabled = cbs[4]->isSelected();
 	});
