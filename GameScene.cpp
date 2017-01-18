@@ -1576,7 +1576,6 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 					bool isAutoReady = UserDefault::getInstance()->getBoolForKey(constant::KEY_AUTO_READY.c_str());
 					if (isAutoReady && !player.Ready) {
 						state = READY;
-						btnReady->setVisible(false);
 						SFSRequest::getSingleton().RequestGameReady();
 					} else {
 						btnReady->setVisible(!player.Ready && roomData.Players.size() > 1);
@@ -1588,27 +1587,6 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			num++;
 		}
 	}
-	
-	/*if (roomData.Players.size() > 1 && roomData.TimeStart > 0 && myServerSlot >= 0) {
-		bool isAutoReady = UserDefault::getInstance()->getBoolForKey(constant::KEY_AUTO_READY.c_str());
-		if (isAutoReady) {
-			state = READY;
-			SFSRequest::getSingleton().RequestGameReady();
-			lbCrestTime->setVisible(false);
-			btnReady->setVisible(false);
-		} else {
-			Vec2 lbscale = getScaleSmoothly(1.5f);
-			lbCrestTime->setVisible(true);
-			lbCrestTime->setScale(lbscale.x, lbscale.y);
-			lbCrestTime->setColor(Color3B::RED);
-			lbCrestTime->setString(to_string((int)roomData.TimeStart));
-			lbCrestTime->resumeSchedulerAndActions();
-		}
-	} else {
-		btnReady->setVisible(false);
-		lbCrestTime->setVisible(false);
-		lbCrestTime->pauseSchedulerAndActions();
-	}*/
 
 	if (roomData.Players.size() == 1) {
 		lbCrestTime->setVisible(false);
