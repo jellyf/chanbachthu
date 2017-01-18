@@ -600,7 +600,7 @@ void GameScene::onInit()
 
 	DelayTime* delay = DelayTime::create(1);
 	CallFunc* func = CallFunc::create([=]() {
-		if (state != PLAY && (btnXemNoc->isVisible() || btnDongNoc->isVisible())) {
+		if (state != ENDING && (btnXemNoc->isVisible() || btnDongNoc->isVisible())) {
 			btnXemNoc->setVisible(false);
 			btnDongNoc->setVisible(false);
 			endLayer->removeAllChildren();
@@ -1697,6 +1697,7 @@ void GameScene::onRoomDataGaResponse(bool isGa, double gaMoney)
 
 void GameScene::onStartGameDataResponse(StartGameData data)
 {
+	state = START;
 	this->startGameData = data;
 	this->myCardHand = data.CardHand;
 	btnReady->setVisible(false);
@@ -2416,6 +2417,15 @@ void GameScene::onUserWin(long uId, unsigned char sound)
 
 void GameScene::onCrestResponse(CrestResponseData data)
 {
+	if (!btnXemNoc->isVisible() && !btnDongNoc->isVisible()) {
+		state == ENDING;
+		gameSplash->setVisible(true);
+		for (Sprite* sp : spCards) {
+			if (sp->isVisible()) {
+				sp->setVisible(false);
+			}
+		}
+	}
 	lbCrestTime->setVisible(false);
 	tableCrest->setVisible(false);
 	tableEndMatch->setVisible(true);
@@ -2470,6 +2480,7 @@ void GameScene::onCrestResponse(CrestResponseData data)
 void GameScene::onEndMatch(EndMatchData data)
 {
 	if (state == NONE || state == READY) return;
+	state = ENDING;
 	this->endMatchData = data;
 	gameSplash->setVisible(true);
 	lbCrestTime->setVisible(true);
@@ -2505,6 +2516,7 @@ void GameScene::onEndMatchMoney(EndMatchMoneyData data)
 void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 {
 	if (state == NONE || state == READY) return;
+	state = ENDING;
 	btnXemNoc->setVisible(false);
 	btnDongNoc->setVisible(false);
 	progressTimer->setVisible(false);

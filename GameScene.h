@@ -6,10 +6,12 @@ enum GameState {
 	WAIT,
 	NONE,
 	READY,
+	START,
 	DEAL,
 	CHOOSE_STILT,
 	CHOOSE_HOST,
-	PLAY
+	PLAY,
+	ENDING
 };
 class GameScene : public BaseScene, public cocos2d::ui::EditBoxDelegate
 {
