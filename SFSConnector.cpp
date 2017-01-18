@@ -573,7 +573,12 @@ void SFSConnector::Connect(std::string host, int port)
 void SFSConnector::Disconnect()
 {
 	CCLOG("SFSConnector::Disconnect");
-	mSmartFox->Disconnect();
+	try {
+		mSmartFox->Disconnect();
+	} catch (exception e) {
+		CCLOG("SFSConnector::Disconnect::Exception: %s", e.what());
+		//Utils::getSingleton().goToLoginScene();
+	}
 }
 
 void SFSConnector::ProcessEvents()
