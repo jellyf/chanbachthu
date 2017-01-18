@@ -1821,8 +1821,8 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 			int tmpChosen = chosenStiltHost < chosenStilt ? chosenStiltHost : (chosenStiltHost - 1);
 			int diff = (chosenHost + handPos.size() - tmpChosen) % handPos.size();
 			int rotation = diff * 90;
-			float runTime = diff * .3f + .3f;
-			if (diff == 0) runTime = .3f;
+			float runTime = diff * .5f + .5f;
+			if (diff == 0) runTime = .5f;
 			for (Node* n : vecStilts) {
 				if (n->isVisible()) {
 					DelayTime* delay2 = DelayTime::create(.1f);
@@ -1846,7 +1846,7 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 			}
 		}
 
-		DelayTime* delay3 = DelayTime::create(2);
+		DelayTime* delay3 = DelayTime::create(3);
 		CallFunc* func3 = CallFunc::create([=]() {
 			spDealCards.clear();
 			for (Node* n : vecStilts) {
