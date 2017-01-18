@@ -1379,7 +1379,7 @@ void GameScene::showError(std::string msg)
 
 void GameScene::showSystemNotice(std::string msg)
 {
-	showToast(msg, getScaleScenePosition(Vec2(560, 400)), Color3B::BLACK, Color3B(200, 200, 200));
+	showToast(msg, Vec2(560, 400), Color3B::BLACK, Color3B(200, 200, 200));
 }
 
 void GameScene::playSoundAction(unsigned char soundId)
