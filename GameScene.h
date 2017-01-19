@@ -172,6 +172,7 @@ private:
 	float cardScaleTableNew = .9f;
 	long sfsIdMe;
 	bool isBatBao;
+	bool isOverlapLogin = false;
 	bool hasClickInvite = false;
 	bool hasRegisterOut = false;
 	bool isReconnecting = false;

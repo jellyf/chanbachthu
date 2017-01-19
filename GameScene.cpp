@@ -1459,6 +1459,9 @@ void GameScene::onConnectionFailed()
 
 void GameScene::onConnectionLost(std::string reason)
 {
+	if (isOverlapLogin) {
+		reason = "overlap_login";
+	}
 	showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
 		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0) {
 			isReconnecting = true;
@@ -1508,6 +1511,10 @@ void GameScene::onUserExitRoom(long sfsUId)
 
 void GameScene::onErrorResponse(unsigned char code, std::string msg)
 {
+	if (code == 38) {
+		isOverlapLogin = true;
+		return;
+	}
 	if (code == 31 || code == 30 || code == 29) {
 		showSystemNotice(msg);
 		return;
