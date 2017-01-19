@@ -265,6 +265,7 @@ void MainScene::unregisterEventListenner()
 	EventHandler::getSingleton().onListMailDataSFSResponse = NULL;
 	EventHandler::getSingleton().onMailContentSFSResponse = NULL;
 	EventHandler::getSingleton().onNewsDataSFSResponse = NULL;
+	EventHandler::getSingleton().onExchangeItemSFSResponse = NULL;
 }
 
 void MainScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
