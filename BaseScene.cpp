@@ -321,6 +321,9 @@ void BaseScene::runEventView(std::vector<EventData> list, int currentPosX)
 
 void BaseScene::showPopupRank(int type)
 {
+	if (popupRank == nullptr) {
+		initPopupRank();
+	}
 	if (!popupRank->isVisible()) {
 		showPopup(popupRank);
 	}
@@ -622,6 +625,9 @@ void BaseScene::initHeaderWithInfos()
 	ui::Button* btnSettings = ui::Button::create("main/settings.png");
 	btnSettings->setPosition(vecPos[6]);
 	addTouchEventListener(btnSettings, [=]() {
+		if (popupMainSettings == nullptr) {
+			initPopupSettings();
+		}
 		showPopup(popupMainSettings);
 	});
 	mLayer->addChild(btnSettings, constant::MAIN_ZORDER_HEADER);
@@ -684,7 +690,9 @@ void BaseScene::onBackScene()
 
 void BaseScene::showPopupHistory()
 {
-	if (popupHistory == nullptr) return;
+	if (popupHistory == nullptr) {
+		initPopupHistory();
+	}
 	showPopup(popupHistory);
 	SFSRequest::getSingleton().RequestPlayHistory(0, 0);
 

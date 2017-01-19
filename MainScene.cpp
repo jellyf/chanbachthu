@@ -47,6 +47,9 @@ void MainScene::onInit()
 	btnGuide->setPosition(vecPos[m++]);
 	btnGuide->setVisible(paymentEnabled);
 	addTouchEventListener(btnGuide, [=]() {
+		if (popupGuide == nullptr) {
+			initPopupGuide();
+		}
 		showPopup(popupGuide);
 	});
 	mLayer->addChild(btnGuide);
@@ -56,6 +59,9 @@ void MainScene::onInit()
 	btnCharge->setPosition(vecPos[m++]);
 	btnCharge->setVisible(paymentEnabled);
 	addTouchEventListener(btnCharge, [=]() {
+		if (popupCharge == nullptr) {
+			initPopupCharge();
+		}
 		showPopup(popupCharge);
 	});
 	mLayer->addChild(btnCharge);
@@ -65,6 +71,9 @@ void MainScene::onInit()
 	btnShop->setPosition(vecPos[m++]);
 	btnShop->setVisible(paymentEnabled);
 	addTouchEventListener(btnShop, [=]() {
+		if (popupShop == nullptr) {
+			initPopupShop();
+		}
 		showPopup(popupShop);
 		if (popupShop->getChildByTag(10)->getChildByName("scrollcard")->getChildrenCount() == 0) {
 			SFSRequest::getSingleton().RequestShopItems();
@@ -108,6 +117,9 @@ void MainScene::onInit()
 	btnGiftcode->setPosition(vecPos[m++]);
 	btnGiftcode->setVisible(paymentEnabled);
 	addTouchEventListener(btnGiftcode, [=]() {
+		if (popupGiftcode == nullptr) {
+			initPopupGiftcode();
+		}
 		showPopup(popupGiftcode);
 	});
 	mLayer->addChild(btnGiftcode);
@@ -153,7 +165,7 @@ void MainScene::onInit()
 	});
 	mLayer->addChild(btnLoiDai);
 
-	initPopupCharge();
+	/*initPopupCharge();
 	initPopupGuide();
 	initPopupMail();
 	initPopupNews();
@@ -162,11 +174,14 @@ void MainScene::onInit()
 	initPopupSettings();
 	initPopupHistory();
 	initPopupDisplayName();
-	initPopupGiftcode();
+	initPopupGiftcode();*/
 	initEventView(Vec2(0, 562), Size(1120, 40));
 	//initWebView();
 
 	if (Utils::getSingleton().userDataMe.Name.length() > 0 && Utils::getSingleton().userDataMe.DisplayName.length() == 0) {
+		if (popupDisplayName == nullptr) {
+			initPopupDisplayName();
+		}
 		showPopup(popupDisplayName);
 	}
 	if (Utils::getSingleton().isRunningEvent) {
@@ -180,28 +195,32 @@ void MainScene::onInit()
 		Utils::getSingleton().LoadTextureFromURL(host + name1 + ".png", [=](Texture2D* texture) {
 			if (Utils::getSingleton().currentScene != this) return;
 			textures[name1] = texture;
-			if (i == 1) {
-				Sprite* sp = (Sprite*)popupCharge->getChildByName("providerimg" + to_string(i));
-				sp->initWithTexture(texture);
-			}
-			if (textures.size() == 8) {
-				for (int k = 1; k <= 4; k++) {
-					ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + to_string(k));
-					btn->setTouchEnabled(true);
+			if (popupCharge != nullptr) {
+				if (i == 1) {
+					Sprite* sp = (Sprite*)popupCharge->getChildByName("providerimg" + to_string(i));
+					sp->initWithTexture(texture);
+				}
+				if (textures.size() == 8) {
+					for (int k = 1; k <= 4; k++) {
+						ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + to_string(k));
+						btn->setTouchEnabled(true);
+					}
 				}
 			}
 		});
 		Utils::getSingleton().LoadTextureFromURL(host + name2 + ".png", [=](Texture2D* texture) {
 			if (Utils::getSingleton().currentScene != this) return;
 			textures[name2] = texture;
-			if (i > 1) {
-				Sprite* sp = (Sprite*)popupCharge->getChildByName("providerimg" + to_string(i));
-				sp->initWithTexture(texture);
-			}
-			if (textures.size() == 8) {
-				for (int k = 1; k <= 4; k++) {
-					ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + to_string(k));
-					btn->setTouchEnabled(true);
+			if (popupCharge != nullptr) {
+				if (i > 1) {
+					Sprite* sp = (Sprite*)popupCharge->getChildByName("providerimg" + to_string(i));
+					sp->initWithTexture(texture);
+				}
+				if (textures.size() == 8) {
+					for (int k = 1; k <= 4; k++) {
+						ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + to_string(k));
+						btn->setTouchEnabled(true);
+					}
 				}
 			}
 		});
@@ -924,9 +943,12 @@ void MainScene::initPopupCharge()
 	smsContent = smsContent.substr(0, strIndex);
 	smsContent = Utils::getSingleton().replaceString(smsContent, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 	for (int i = 1; i <= strProviders.size(); i++) {
-		Sprite* sp = Sprite::create();
-
 		string stri = to_string(i);
+		Sprite* sp = Sprite::create();
+		if (textures.size() == 8) {
+			sp->initWithTexture(textures["provider" + stri + (i > 1 ? "_dark" : "")]);
+		}
+
 		//ui::Button* btnProvider = ui::Button::create("popup/provider" + stri + (i > 1 ? "_dark" : "") + ".png");
 		ui::Button* btnProvider = ui::Button::create();
 		btnProvider->loadTextureNormal("popup/box5.png");
@@ -936,7 +958,7 @@ void MainScene::initPopupCharge()
 		btnProvider->setTag(i == 1 ? 1 : 0);
 		btnProvider->setName("btn" + stri);
 		btnProvider->setBright(false);
-		btnProvider->setTouchEnabled(false);
+		btnProvider->setTouchEnabled(textures.size() == 8);
 		btnProvider->setScale(.9f);
 		addTouchEventListener(btnProvider, [=]() {
 			if (btnProvider->getTag() == 1) return;
@@ -1727,6 +1749,9 @@ void MainScene::initPopupDisplayName()
 
 void MainScene::showPopupMail()
 {
+	if (popupMail == nullptr) {
+		initPopupMail();
+	}
 	showPopup(popupMail);
 	SFSRequest::getSingleton().RequestListMail(1);
 	lbNewMail->getParent()->setVisible(false);
@@ -1745,6 +1770,9 @@ void MainScene::showPopupMail()
 
 void MainScene::showPopupNews()
 {
+	if (popupNews == nullptr) {
+		initPopupNews();
+	}
 	showPopup(popupNews);
 	SFSRequest::getSingleton().RequestNews(0);
 

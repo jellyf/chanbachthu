@@ -530,7 +530,14 @@ void LoginScene::requestGameConfig()
 
 void LoginScene::loadTextureCache()
 {
+	TextureCache::sharedTextureCache()->addImage("loadingicon.png");
+	//TextureCache::sharedTextureCache()->addImage("popup/bg.png");
+	//TextureCache::sharedTextureCache()->addImage("popup/bg1.png");
 	TextureCache::sharedTextureCache()->addImage("popup/title_thongbao.png");
 	TextureCache::sharedTextureCache()->addImage("popup/btn_submit.png");
 	TextureCache::sharedTextureCache()->addImage("popup/btn_submit_clicked.png");
+	TextureCache::sharedTextureCache()->addImage("main/nhatranh.png");
+	TextureCache::sharedTextureCache()->addImage("main/dinhlang.png");
+	TextureCache::sharedTextureCache()->addImage("main/phuchua.png");
+	TextureCache::sharedTextureCache()->addImage("main/loidai.png");
 }
