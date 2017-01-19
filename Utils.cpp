@@ -129,6 +129,13 @@ std::string Utils::getUserCountry()
 #endif
 }
 
+std::string Utils::getCurrentSystemTimeString()
+{
+	timeval time;
+	gettimeofday(&time, NULL);
+	return String::createWithFormat("%d %d", time.tv_sec, time.tv_usec)->getCString();
+}
+
 double Utils::getCurrentSystemTimeInSecs()
 {
 	timeval time;

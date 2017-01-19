@@ -21,6 +21,7 @@ public:
 	std::string replaceString(std::string str, std::string strSearch, std::string strReplace);
 	std::string trim(std::string str);
 	std::string getUserCountry();
+	std::string getCurrentSystemTimeString();
 	double getCurrentSystemTimeInSecs();
 	int getCurrentZoneIndex();
 	bool isEmailValid(std::string email);
