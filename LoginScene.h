@@ -36,6 +36,8 @@ private:
 	std::string fbToken = "";
 	bool canCheckReconnect = false;
 	bool isReconnecting = false;
+	bool isLogedInZone = false;
+	bool isRequesting = false;
 	bool isIPv4 = CC_TARGET_PLATFORM == CC_PLATFORM_IOS;
 
 	cocos2d::Node* loginNode;

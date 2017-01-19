@@ -166,6 +166,8 @@ void LoginScene::onInit()
 	if (Utils::getSingleton().gameConfig.phone.length() == 0) {
 		canCheckReconnect = true;
 		requestGameConfig();
+	} else {
+		SFSRequest::getSingleton().Connect();
 	}
 
 	loadTextureCache();
@@ -218,9 +220,10 @@ void LoginScene::onConnected()
 
 void LoginScene::onLoginZone()
 {
+	isLogedInZone = true;
 	if (isReconnecting) {
 
-	} else {
+	} else if(isRequesting){
 		if (loginNode->isVisible()) {
 			if (fbToken.length() > 0) {
 				SFSRequest::getSingleton().RequestLoginFacebook(fbToken);
@@ -231,11 +234,14 @@ void LoginScene::onLoginZone()
 			//SFSRequest::getSingleton().RequestRegister(tfResUname->getText(), md5(tfResPass->getText()), tfResEmail->getText());
 			SFSRequest::getSingleton().RequestRegister(tfResUname->getText(), md5(tfResPass->getText()), md5(tfResPassAgain->getText()));
 		}
+	} else {
+		hideWaiting();
 	}
 }
 
 void LoginScene::onConnectionLost(std::string reason)
 {
+	isLogedInZone = false;
 	if (isReconnecting) {
 		Utils::getSingleton().connectZoneByIndex(tmpZoneIndex / 10, tmpZoneIndex % 10);
 	}
@@ -243,6 +249,7 @@ void LoginScene::onConnectionLost(std::string reason)
 
 void LoginScene::onConnectionFailed()
 {
+	isLogedInZone = false;
     if(isIPv4){
         isIPv4 = false;
         SFSRequest::getSingleton().ForceIPv6(true);
@@ -293,7 +300,11 @@ void LoginScene::onLoginFacebook(std::string token)
 	} else {
 		fbToken = token;
 		showWaiting();
-		SFSRequest::getSingleton().Connect();
+		if (isLogedInZone) {
+			SFSRequest::getSingleton().RequestLoginFacebook(fbToken);
+		} else {
+			SFSRequest::getSingleton().Connect();
+		}
 	}
 }
 
@@ -355,24 +366,23 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 			showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
 				Application::sharedApplication()->openURL(config.linkIOS);
 			});
-		}
 #else
 		if (config.canUpdate && nver < config.version - 1) {
 			showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
 				Application::sharedApplication()->openURL(config.linkAndroid);
 			});
-		}
 #endif
-		else if(waitingLogin > 0){
+			SFSRequest::getSingleton().Connect();
+		} else if (waitingLogin > 0) {
             if(waitingLogin == 1){
                 loginNormal();
             }else if(waitingLogin == 2){
                 loginFacebook();
             }
             waitingLogin = 0;
-        }
+		}
 	}
-	hideWaiting();
+	//hideWaiting();
 }
 
 void LoginScene::onHttpResponseFailed()
@@ -398,6 +408,7 @@ void LoginScene::onKeyBack()
 
 void LoginScene::loginNormal()
 {
+	isRequesting = true;
     string username = tfUsername->getText();// Utils::getSingleton().trim(tfUsername->getText());
     if (username.length() == 0) {
         showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_tai_khoan"), [=]() {});
@@ -409,13 +420,18 @@ void LoginScene::loginNormal()
         return;
     }
     showWaiting();
-    SFSRequest::getSingleton().Connect();
+	if (isLogedInZone) {
+		SFSRequest::getSingleton().RequestLogin(tfUsername->getText(), md5(tfPassword->getText()));
+	} else {
+		SFSRequest::getSingleton().Connect();
+	}
 }
 
 void LoginScene::loginFacebook()
 {
+	isRequesting = true;
     showWaiting();
-    Utils::getSingleton().loginFacebook();
+	Utils::getSingleton().loginFacebook();
 }
 
 void LoginScene::initRegisterNode()
@@ -511,12 +527,13 @@ void LoginScene::initRegisterNode()
 			showPopupNotice(Utils::getSingleton().getStringForKey("error_retype_password"), [=]() {});
 			return;
 		}
-		/*if (!Utils::getSingleton().isEmailValid(tfResEmail->getText())) {
-			showPopupNotice(Utils::getSingleton().getStringForKey("error_email_format"), [=]() {});
-			return;
-		}*/
+		isRequesting = true;
 		showWaiting();
-		SFSRequest::getSingleton().Connect();
+		if (isLogedInZone) {
+			SFSRequest::getSingleton().RequestRegister(tfResUname->getText(), md5(tfResPass->getText()), md5(tfResPassAgain->getText()));
+		} else {
+			SFSRequest::getSingleton().Connect();
+		}
 	});
 	registerNode->addChild(btnRegister);
 }

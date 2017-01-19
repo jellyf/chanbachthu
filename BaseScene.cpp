@@ -202,7 +202,7 @@ void BaseScene::showWaiting(int time)
 	CallFunc* func = CallFunc::create([=]() {
 		if (isWaiting) {
 			hideWaiting();
-			showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_unknown"), [=]() {
+			showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {
 				SFSRequest::getSingleton().Disconnect();
 				Utils::getSingleton().goToLoginScene();
 			}, false);
