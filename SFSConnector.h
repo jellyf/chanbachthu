@@ -41,6 +41,8 @@ public:
 	void SendPublicMessage(std::string msg, boost::shared_ptr<ISFSObject> params, boost::shared_ptr<Room> room = NULL);
 	void SendExtensionRequest(std::string cmd, boost::shared_ptr<ISFSObject> params, boost::shared_ptr<Room> room = NULL);
 private:
+	void SendRequest(boost::shared_ptr<IRequest> request);
+
 	boost::shared_ptr<Sfs2X::SmartFox> mSmartFox;
     bool useIPv6 = false;
 };

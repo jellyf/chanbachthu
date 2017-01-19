@@ -237,298 +237,6 @@ void SFSConnector::OnExtensionResponse(unsigned long long ptrContext, boost::sha
 		CCLOG("%s", s.c_str());
 	}*/
 	SFSResponse::getSingleton().onExtensionResponse(ptrNotifiedCmd, ptrNotifiedISFSObject);
-	//if (ptrNotifiedCmd->compare(std::string("err")) == 0) {
-	//	ErrorData error;
-	//	SFSResponse::getErrorData(ptrNotifiedISFSObject, error);
-	//	CCLOG("%d %s", error.Code, error.Message.c_str());
-	//	if (EventHandler::getSingleton().onErrorSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onErrorSFSResponse(error.Code, error.Message);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::RESPONSE_PING) == 0) {
-	//	boost::shared_ptr<long long> ptrTime = ptrNotifiedISFSObject->GetLong("s");
-	//	//CCLOG("%d", *ptrTime);
-	//	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
-	//	parameters->PutLong("s", *ptrTime);
-	//	SFSConnector::getSingleton().SendExtensionRequest(cmd::REQUEST_PING, parameters);
-	//} else if (ptrNotifiedCmd->compare(cmd::RESPONSE_CONFIG_ZONE) == 0) {
-	//	SFSResponse::getConfigZone(ptrNotifiedISFSObject, Utils::getSingleton().zones);
-	//	if (EventHandler::getSingleton().onConfigZoneReceived != NULL) {
-	//		EventHandler::getSingleton().onConfigZoneReceived();
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::REGISTER) == 0) {
-
-	//} else if (ptrNotifiedCmd->compare(cmd::USER_INFO) == 0) {
-	//	//if(Utils::getSingleton().userDataMe.UserID == 0)
-	//	SFSResponse::getUserData(ptrNotifiedISFSObject, Utils::getSingleton().userDataMe);
-	//	if (Utils::getSingleton().moneyType == -1) {
-	//		Utils::getSingleton().moneyType = Utils::getSingleton().userDataMe.MoneyType;
-	//	}
-	//	if (EventHandler::getSingleton().onUserDataMeSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onUserDataMeSFSResponse();
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::RESPONSE_UPDATE_USERINFO) == 0) {
-	//	SFSResponse::getUserData(ptrNotifiedISFSObject, Utils::getSingleton().userDataMe);
-	//	if (EventHandler::getSingleton().onUserDataMeSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onUserDataMeSFSResponse();
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_ROOM_DATA) == 0) {
-	//	RoomData roomData;
-	//	SFSResponse::getRoomData(ptrNotifiedISFSObject, roomData);
-	//	if (EventHandler::getSingleton().onRoomDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onRoomDataSFSResponse(roomData);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_START) == 0) {
-	//	StartGameData startData;
-	//	SFSResponse::getStartGameData(ptrNotifiedISFSObject, startData);
-	//	if (EventHandler::getSingleton().onStartGameDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onStartGameDataSFSResponse(startData);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_STILT) == 0) {
-	//	boost::shared_ptr<ByteArray> byteArray = ptrNotifiedISFSObject->GetByteArray("d");
-	//	unsigned char stilt;
-	//	byteArray->ReadByte(stilt);
-	//	if (EventHandler::getSingleton().onChooseStiltSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onChooseStiltSFSResponse(stilt);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_HOST) == 0) {
-	//	boost::shared_ptr<ByteArray> byteArray = ptrNotifiedISFSObject->GetByteArray("d");
-	//	unsigned char stilt1, stilt2, host;
-	//	byteArray->ReadByte(stilt1);
-	//	//byteArray->ReadByte(stilt2);
-	//	stilt2 = 1;
-	//	byteArray->ReadByte(host);
-	//	if (EventHandler::getSingleton().onChooseHostSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onChooseHostSFSResponse(stilt1, stilt2, host);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_BASH) == 0) {
-	//	BashData data;
-	//	SFSResponse::getBashData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onUserBashSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onUserBashSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_BASH_BACK) == 0) {
-	//	BashBackData data;
-	//	SFSResponse::getBashBackData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onUserBashBackSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onUserBashBackSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_HOLD) == 0) {
-	//	HoldData data;
-	//	SFSResponse::getHoldData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onUserHoldSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onUserHoldSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_PICK) == 0) {
-	//	PickData data;
-	//	SFSResponse::getPickData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onUserPickSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onUserPickSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_PENET) == 0) {
-	//	PenetData data;
-	//	SFSResponse::getPenetData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onUserPenetSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onUserPenetSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_FORWARD) == 0) {
-	//	ForwardData data;
-	//	SFSResponse::getForwardData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onUserForwardSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onUserForwardSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_WIN) == 0) {
-	//	boost::shared_ptr<ByteArray> byteArray = ptrNotifiedISFSObject->GetByteArray("d");
-	//	long uid;
-	//	unsigned char sound;
-	//	byteArray->ReadInt(uid);
-	//	byteArray->ReadByte(sound);
-	//	if (EventHandler::getSingleton().onUserWinSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onUserWinSFSResponse(uid, sound);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_CALL_CREST) == 0) {
-	//	CrestResponseData data;
-	//	SFSResponse::getCrestResponseData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onCrestResponseSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onCrestResponseSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_END_MATCH) == 0) {
-	//	EndMatchData data;
-	//	SFSResponse::getEndMatchData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onEndMatchSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onEndMatchSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_END_MATCH_TIE) == 0) {
-	//	vector<unsigned char> stiltCards;
-	//	SFSResponse::getEndMatchTieData(ptrNotifiedISFSObject, stiltCards);
-	//	if (EventHandler::getSingleton().onEndMatchTieSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onEndMatchTieSFSResponse(stiltCards);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_END_MATCH_MONEY) == 0) {
-	//	EndMatchMoneyData data;
-	//	SFSResponse::getEndMatchMoneyData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onEndMatchMoneySFSResponse != NULL) {
-	//		EventHandler::getSingleton().onEndMatchMoneySFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::LOBBY_RESPONSE_DATA_ROOM) == 0) {
-	//	LobbyListTable data;
-	//	SFSResponse::getLobbyTableData(ptrNotifiedISFSObject, data);
-	//	Utils::getSingleton().lobbyListTable = data;
-	//	if (EventHandler::getSingleton().onLobbyTableSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onLobbyTableSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::LOBBY_RESPONSE_DATA_ROOM_TYPE) == 0) {
-	//	LobbyListRoomType data;
-	//	SFSResponse::getLobbyRoomTypeData(ptrNotifiedISFSObject, data);
-	//	Utils::getSingleton().lobbyListRoomType = data;
-	//	Utils::getSingleton().moneyType = (int)data.IsRealMoney;
-	//	if (EventHandler::getSingleton().onLobbyRoomTypeSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onLobbyRoomTypeSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_PUNISH) == 0) {
-	//	long uid;
-	//	string msg;
-	//	SFSResponse::getGamePunishData(ptrNotifiedISFSObject, uid, msg);
-	//	if (EventHandler::getSingleton().onGamePunishSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onGamePunishSFSResponse(uid, msg);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_READY) == 0) {
-	//	long uid;
-	//	SFSResponse::getGameReadyData(ptrNotifiedISFSObject, uid);
-	//	if (EventHandler::getSingleton().onGameReadySFSResponse != NULL) {
-	//		EventHandler::getSingleton().onGameReadySFSResponse(uid);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_TABLE_INFO) == 0) {
-	//	GameTableData data;
-	//	SFSResponse::getGameTableData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onGameTableSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onGameTableSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::LOBBY_RESPONSE_DATA_USER) == 0) {
-	//	std::vector<UserData> listUser;
-	//	SFSResponse::getLobbyUserData(ptrNotifiedISFSObject, listUser);
-	//	if (EventHandler::getSingleton().onLobbyUserDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onLobbyUserDataSFSResponse(listUser);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::LOBBY_RESPONSE_INVITE_PLAYER) == 0) {
-	//	InviteData data;
-	//	SFSResponse::getLobbyInviteData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onLobbyInviteDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onLobbyInviteDataSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_ROOM_DATA_GA) == 0) {
-	//	bool isGa;
-	//	double gaMoney;
-	//	SFSResponse::getGameRoomDataGa(ptrNotifiedISFSObject, isGa, gaMoney);
-	//	if (EventHandler::getSingleton().onGameRoomDataGaSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onGameRoomDataGaSFSResponse(isGa, gaMoney);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_PLAYING_DATA) == 0) {
-	//	PlayingTableData data;
-	//	SFSResponse::getGamePlayingTableData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onGamePlayingDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onGamePlayingDataSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_SPECTATOR_DATA) == 0) {
-	//	std::vector<PlayerData> list;
-	//	SFSResponse::getGameSpectatorData(ptrNotifiedISFSObject, list);
-	//	if (EventHandler::getSingleton().onGameSpectatorDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onGameSpectatorDataSFSResponse(list);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::RESPONSE_RANK) == 0) {
-	//	std::vector<std::vector<RankData>> list;
-	//	SFSResponse::getRankData(ptrNotifiedISFSObject, list);
-	//	if (EventHandler::getSingleton().onRankDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onRankDataSFSResponse(list);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::VIEW_USER_INFO) == 0) {
-	//	UserData data;
-	//	SFSResponse::getUserData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onUserDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onUserDataSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::PLAY_HISTORY) == 0) {
-	//	std::vector<PlayLogData> list;
-	//	SFSResponse::getPlayLogData(ptrNotifiedISFSObject, list);
-	//	if (EventHandler::getSingleton().onPlayLogDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onPlayLogDataSFSResponse(list);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_MY_RECONNECT_DATA) == 0) {
-	//	GameReconnectData data;
-	//	SFSResponse::getGameMyReconnectData(ptrNotifiedISFSObject, data);
-	//	if (EventHandler::getSingleton().onGameMyReconnectDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onGameMyReconnectDataSFSResponse(data);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::GAME_RESPONSE_USER_RECONNECT_DATA) == 0) {
-	//	std::vector<UserReconnectData> list;
-	//	SFSResponse::getGameUserReconnectData(ptrNotifiedISFSObject, list);
-	//	if (EventHandler::getSingleton().onGameUserReconnectDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onGameUserReconnectDataSFSResponse(list);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::SHOP_HISTORY) == 0) {
-	//	std::vector<ShopHistoryData> list;
-	//	SFSResponse::getShopHistoryData(ptrNotifiedISFSObject, list);
-	//	if (EventHandler::getSingleton().onShopHistoryDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onShopHistoryDataSFSResponse(list);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::SHOP_ITEMS) == 0) {
-	//	std::vector<ShopItemData> list;
-	//	SFSResponse::getShopItemsData(ptrNotifiedISFSObject, list);
-	//	if (EventHandler::getSingleton().onShopItemsDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onShopItemsDataSFSResponse(list);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::EXCHANGE_ITEM) == 0) {
-	//	std::string msg;
-	//	boost::shared_ptr<ByteArray> byteArray = ptrNotifiedISFSObject->GetByteArray("d");
-	//	byteArray->ReadUTF(msg);
-	//	if (EventHandler::getSingleton().onExchangeItemSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onExchangeItemSFSResponse(msg);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::NEW_MAIL) == 0) {
-	//	unsigned char count;
-	//	boost::shared_ptr<ByteArray> byteArray = ptrNotifiedISFSObject->GetByteArray("d");
-	//	byteArray->ReadByte(count);
-	//	if (EventHandler::getSingleton().onNewMailSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onNewMailSFSResponse(count);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::LIST_MAIL) == 0) {
-	//	std::vector<MailData> list;
-	//	SFSResponse::getListMailData(ptrNotifiedISFSObject, list);
-	//	if (EventHandler::getSingleton().onListMailDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onListMailDataSFSResponse(list);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::MAIL_CONTENT) == 0) {
-	//	long tmp;
-	//	std::string content;
-	//	boost::shared_ptr<ByteArray> byteArray = ptrNotifiedISFSObject->GetByteArray("d");
-	//	if (byteArray->Length() > 0) {
-	//		byteArray->ReadInt(tmp);
-	//		byteArray->ReadUTF(content);
-	//	}
-	//	if (EventHandler::getSingleton().onMailContentSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onMailContentSFSResponse(content);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::NEWS) == 0) {
-	//	std::vector<NewsData> list;
-	//	SFSResponse::getNewsData(ptrNotifiedISFSObject, list);
-	//	if (EventHandler::getSingleton().onNewsDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onNewsDataSFSResponse(list);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::EVENTS) == 0) {
-	//	std::vector<EventData> list;
-	//	SFSResponse::getListEventData(ptrNotifiedISFSObject, list);
-	//	Utils::getSingleton().events = list;
-	//	Utils::getSingleton().currentEventPosX = constant::EVENT_START_POSX;
-	//	if (EventHandler::getSingleton().onListEventDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onListEventDataSFSResponse(list);
-	//	}
-	//} else if (ptrNotifiedCmd->compare(cmd::CURRENT_TABLE_RECONNECT) == 0) {
-	//	TableReconnectData data;
-	//	SFSResponse::getTableReconnectData(ptrNotifiedISFSObject, data);
-	//	Utils::getSingleton().tableReconnectData = data;
-	//	if (EventHandler::getSingleton().onTableReconnectDataSFSResponse != NULL) {
-	//		EventHandler::getSingleton().onTableReconnectDataSFSResponse(data);
-	//	}
-	//}
 }
 
 void SFSConnector::OnPublicMessage(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent)
@@ -574,7 +282,9 @@ void SFSConnector::Disconnect()
 {
 	CCLOG("SFSConnector::Disconnect");
 	try {
-		mSmartFox->Disconnect();
+		if (mSmartFox) {
+			mSmartFox->Disconnect();
+		}
 	} catch (exception e) {
 		CCLOG("SFSConnector::Disconnect::Exception: %s", e.what());
 		//Utils::getSingleton().goToLoginScene();
@@ -591,19 +301,19 @@ void SFSConnector::ProcessEvents()
 void SFSConnector::LoginZone(string username, string password, string zone) 
 {
 	boost::shared_ptr<IRequest> request(new LoginRequest(username, password, zone));
-	mSmartFox->Send(request);
+	SendRequest(request);
 }
 
 void SFSConnector::LogoutZone()
 {
 	boost::shared_ptr<IRequest> request(new LogoutRequest());
-	mSmartFox->Send(request);
+	SendRequest(request);
 }
 
 void SFSConnector::RequestLeaveRoom()
 {
 	boost::shared_ptr<IRequest> request(new LeaveRoomRequest());
-	mSmartFox->Send(request);
+	SendRequest(request);
 }
 
 void SFSConnector::EnableLagMonitor()
@@ -619,12 +329,23 @@ void SFSConnector::ForceIPv6(bool value)
 void SFSConnector::SendPublicMessage(std::string msg, boost::shared_ptr<ISFSObject> params, boost::shared_ptr<Room> room)
 {
 	boost::shared_ptr<IRequest> request(new PublicMessageRequest(msg, params, room));
-	mSmartFox->Send(request);
+	SendRequest(request);
 }
 
 void SFSConnector::SendExtensionRequest(std::string cmd, boost::shared_ptr<ISFSObject> params, boost::shared_ptr<Room> room)
 {
 	CCLOG("SendExtensionRequest: %s", cmd.c_str());
 	boost::shared_ptr<IRequest> request(new ExtensionRequest(cmd, params, room));
-	mSmartFox->Send(request);
+	SendRequest(request);
+}
+
+void SFSConnector::SendRequest(boost::shared_ptr<IRequest> request)
+{
+	try {
+		if (mSmartFox) {
+			mSmartFox->Send(request);
+		}
+	} catch (exception e) {
+		CCLOG("SFSConnector::SendRequest::Exception: %s", e.what());
+	}
 }
