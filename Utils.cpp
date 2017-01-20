@@ -136,6 +136,19 @@ std::string Utils::getCurrentSystemTimeString()
 	return String::createWithFormat("%d %d", time.tv_sec, time.tv_usec)->getCString();
 }
 
+std::string Utils::getPlatformOS()
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	return "ios"
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	return "android"
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+	return "win32";
+#else
+	return "unknown";
+#endif
+}
+
 double Utils::getCurrentSystemTimeInSecs()
 {
 	timeval time;

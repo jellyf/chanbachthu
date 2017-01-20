@@ -22,6 +22,7 @@ public:
 	std::string trim(std::string str);
 	std::string getUserCountry();
 	std::string getCurrentSystemTimeString();
+	std::string getPlatformOS();
 	double getCurrentSystemTimeInSecs();
 	int getCurrentZoneIndex();
 	bool isEmailValid(std::string email);

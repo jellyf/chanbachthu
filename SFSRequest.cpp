@@ -229,6 +229,8 @@ void SFSRequest::RequestLogin(std::string username, std::string password)
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
 	parameters->PutUtfString("1", username);
 	parameters->PutUtfString("2", password);
+	parameters->PutUtfString("3", Utils::getSingleton().getPlatformOS());
+	parameters->PutUtfString("4", cocos2d::Application::sharedApplication()->getVersion());
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::LOGIN, parameters);
 }
 
