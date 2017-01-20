@@ -1115,10 +1115,12 @@ void GameScene::dropWin()
 
 void GameScene::runTimeWaiting(long uid, float time)
 {
+	int index = userIndexs[uid];
+	progressTimer->setTag(index);
 	progressTimer->stopAllActions();
 	progressTimer->setVisible(true);
 	progressTimer->setPercentage(100);
-	progressTimer->setPosition(getScaleScenePosition(vecUserPos[userIndexs[uid]]));
+	progressTimer->setPosition(getScaleScenePosition(vecUserPos[index]));
 	progressTimer->runAction(ProgressTo::create(time, 0));
 
 	if (uid == sfsIdMe && state == PLAY) {
@@ -1508,6 +1510,10 @@ void GameScene::onUserExitRoom(long sfsUId)
 		spInvites[index]->setVisible(true);
 		spSanSangs[index]->setVisible(false);
 	}
+	if (progressTimer->getTag() == index) {
+		progressTimer->stopAllActions();
+		progressTimer->setVisible(false);
+	}
 }
 
 void GameScene::onErrorResponse(unsigned char code, std::string msg)
@@ -1649,6 +1655,8 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	tableEndMatch->setVisible(false);
 	lbCardNoc->getParent()->setVisible(false);
 	gameSplash->setVisible(false);
+	progressTimer->stopAllActions();
+	progressTimer->setVisible(false);
 	spHandCards.clear();
 	chosenCuocs.clear();
 	chosenCuocNumbs.clear();
