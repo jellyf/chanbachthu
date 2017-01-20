@@ -139,9 +139,9 @@ std::string Utils::getCurrentSystemTimeString()
 std::string Utils::getPlatformOS()
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	return "ios"
+	return "ios";
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-	return "android"
+	return "android";
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	return "win32";
 #else
