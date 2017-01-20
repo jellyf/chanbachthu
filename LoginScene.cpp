@@ -164,7 +164,6 @@ void LoginScene::onInit()
 
     SFSRequest::getSingleton().ForceIPv6(false);
 	if (Utils::getSingleton().gameConfig.phone.length() == 0) {
-		canCheckReconnect = true;
 		requestGameConfig();
 	} else {
 		SFSRequest::getSingleton().Connect();
@@ -222,7 +221,6 @@ void LoginScene::onLoginZone()
 {
 	isLogedInZone = true;
 	if (isReconnecting) {
-
 	} else if(isRequesting){
 		if (loginNode->isVisible()) {
 			if (fbToken.length() > 0) {
@@ -264,18 +262,18 @@ void LoginScene::onConnectionFailed()
 
 void LoginScene::onConfigZoneReceived()
 {
-	if (canCheckReconnect) {
-		double currentTime = Utils::getSingleton().getCurrentSystemTimeInSecs();
-		double interruptedTime = UserDefault::getInstance()->getDoubleForKey(constant::KEY_RECONNECT_TIME.c_str(), 0);
-		if (currentTime < interruptedTime) {
-			tmpZoneIndex = UserDefault::getInstance()->getIntegerForKey(constant::KEY_RECONNECT_ZONE_INDEX.c_str(), 0);
-			UserDefault::getInstance()->setDoubleForKey(constant::KEY_RECONNECT_TIME.c_str(), 0);
-			SFSRequest::getSingleton().Disconnect();
-			isReconnecting = true;
-			return;
-		}
+	string username = Utils::getSingleton().userDataMe.Name;
+	double currentTime = Utils::getSingleton().getCurrentSystemTimeInSecs();
+	double interruptedTime = UserDefault::getInstance()->getDoubleForKey((constant::KEY_RECONNECT_TIME + username).c_str(), 0);
+	if (currentTime < interruptedTime) {
+		tmpZoneIndex = UserDefault::getInstance()->getIntegerForKey((constant::KEY_RECONNECT_ZONE_INDEX + username).c_str(), 0);
+		UserDefault::getInstance()->setDoubleForKey((constant::KEY_RECONNECT_TIME + username).c_str(), 0);
+		SFSRequest::getSingleton().Disconnect();
+		isReconnecting = true;
+		return;
+	} else {
+		Utils::getSingleton().goToMainScene();
 	}
-	Utils::getSingleton().goToMainScene();
 }
 
 void LoginScene::onUserDataMeResponse()
@@ -380,6 +378,8 @@ void LoginScene::onHttpResponse(int tag, std::string content)
                 loginFacebook();
             }
             waitingLogin = 0;
+		} else {
+			SFSRequest::getSingleton().Connect();
 		}
 	}
 	//hideWaiting();

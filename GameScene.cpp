@@ -946,17 +946,18 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 				}
 			}
 		}
-	} 
+	}
 	
 	return false;
 }
 
 void GameScene::onApplicationDidEnterBackground()
 {
-	if (state != NONE && state != READY) {
+	if (state != NONE && state != READY && myServerSlot >= 0) {
+		string username = Utils::getSingleton().userDataMe.Name;
 		double timeSecs = Utils::getSingleton().getCurrentSystemTimeInSecs();
-		UserDefault::getInstance()->setDoubleForKey(constant::KEY_RECONNECT_TIME.c_str(), timeSecs + 300);
-		UserDefault::getInstance()->setIntegerForKey(constant::KEY_RECONNECT_ZONE_INDEX.c_str(), Utils::getSingleton().getCurrentZoneIndex());
+		UserDefault::getInstance()->setDoubleForKey((constant::KEY_RECONNECT_TIME + username).c_str(), timeSecs + 300);
+		UserDefault::getInstance()->setIntegerForKey((constant::KEY_RECONNECT_ZONE_INDEX + username).c_str(), Utils::getSingleton().getCurrentZoneIndex());
 	}
 }
 

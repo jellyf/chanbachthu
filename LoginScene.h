@@ -30,11 +30,10 @@ private:
 	void requestGameConfig();
 	void loadTextureCache();
     
-	int waitingLogin;
+	int waitingLogin = 0;
 	int currentConfigLink = 0;
 	int tmpZoneIndex;
 	std::string fbToken = "";
-	bool canCheckReconnect = false;
 	bool isReconnecting = false;
 	bool isLogedInZone = false;
 	bool isRequesting = false;
