@@ -19,9 +19,7 @@ bool UserNode::init()
 
 	lbName = Label::createWithTTF("Stormus", "fonts/arial.ttf", 20);
 	lbName->setHorizontalAlignment(TextHAlignment::CENTER);
-	lbName->setOverflow(Label::Overflow::CLAMP);
 	lbName->setPosition(0, 65);
-	lbName->setWidth(100);
 	lbName->setHeight(25);
 	addChild(lbName);
 
@@ -49,11 +47,14 @@ void UserNode::setAlpha(int alpha)
 void UserNode::setPlayerName(std::string name)
 {
 	fullName = name;
-	int i = name.find_first_of(' ');
-	if (i == std::string::npos || i > 10) {
+	if (name.length() > 10) {
 		name = name.substr(0, 10);
 	}
 	lbName->setString(name);
+	while (lbName->getContentSize().width > 110) {
+		name = name = name.substr(0, name.length() - 1);
+		lbName->setString(name);
+	}
 }
 
 void UserNode::setPlayerMoney(double money)
