@@ -240,6 +240,8 @@ void SFSRequest::RequestLoginFacebook(std::string token)
 	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
 	data->WriteUTF(token);
 	parameters->PutByteArray("d", data);
+	parameters->PutUtfString("3", Utils::getSingleton().getPlatformOS());
+	parameters->PutUtfString("4", cocos2d::Application::sharedApplication()->getVersion());
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::LOGIN_FACEBOOK, parameters);
 }
 
