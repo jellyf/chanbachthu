@@ -1103,6 +1103,19 @@ void BaseScene::initPopupUserInfo()
 	});
 	popupUserInfo->addChild(btnActive);
 
+	if (Utils::getSingleton().loginType == constant::LOGIN_FACEBOOK) {
+		ui::Button* btnLogoutFb = ui::Button::create("main/btn_logout_fb.png", "main/btn_logout_fb_clicked.png");
+		btnLogoutFb->setPosition(Vec2(186, -135));
+		btnLogoutFb->setName("btnlogoutfb");
+		btnLogoutFb->setScale(.8f);
+		addTouchEventListener(btnLogoutFb, [=]() {
+			SFSRequest::getSingleton().Disconnect();
+			Utils::getSingleton().logoutFacebook();
+			Utils::getSingleton().goToLoginScene();
+		});
+		popupUserInfo->addChild(btnLogoutFb);
+	}
+
 	Label* lbName = Label::create("Stormus", "fonts/arialbd.ttf", 25);
 	lbName->setAnchorPoint(Vec2(0, .5f));
 	lbName->setColor(Color3B::BLACK);
