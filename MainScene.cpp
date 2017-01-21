@@ -803,6 +803,7 @@ void MainScene::onBackScene()
 	showWaiting();
 	isBackToLogin = true;
 	SFSRequest::getSingleton().Disconnect();
+	Utils::getSingleton().logoutFacebook();
 	Utils::getSingleton().goToLoginScene();
 }
 

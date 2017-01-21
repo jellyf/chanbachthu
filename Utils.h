@@ -44,6 +44,7 @@ public:
 	void openSMS(std::string number, std::string text);
 	void openTel(std::string number);
 	void loginFacebook();
+	void logoutFacebook();
 	void onInitSceneCompleted();
 	void reconnect();
 	void reloginZone();

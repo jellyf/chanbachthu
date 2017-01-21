@@ -369,6 +369,22 @@ void Utils::loginFacebook()
 #endif
 }
 
+void Utils::logoutFacebook()
+{
+	if (loginType == constant::LOGIN_FACEBOOK) {
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+		JniMethodInfo methodInfo;
+		if (!JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/cpp/AppActivity", "logoutFacebook", "()V")) {
+			return;
+		}
+		methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID);
+		methodInfo.env->DeleteLocalRef(methodInfo.classID);
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+		IOSHelperCPlus::logoutFacebook();
+#endif
+	}
+}
+
 void Utils::onInitSceneCompleted()
 {
 	isWaitingScene = false;
