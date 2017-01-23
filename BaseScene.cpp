@@ -97,7 +97,7 @@ void BaseScene::onEnter()
 	spNetwork = Sprite::create("wifi3.png");
 	spNetwork->setAnchorPoint(Vec2(1, 0));
 	spNetwork->setPosition(1115, 5);
-	mLayer->addChild(spNetwork, 9999);
+	mLayer->addChild(spNetwork, constant::GAME_ZORDER_SPLASH - 1);
 	autoScaleNode(spNetwork);
 
 	DelayTime* delayCheckPing = DelayTime::create(4.5f);
