@@ -67,8 +67,8 @@ private:
 	void initTableInfo();
 
 	void dealCards();
-	void showMyCards();
 	void dropWin();
+	void showMyCards(bool runEffect = true);
 	void runTimeWaiting(long uid, float time);
 	void getCardSpriteToHand(int id, int group, int zorder);
 	void updateCardHand(CardHandData handData);

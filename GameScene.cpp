@@ -1048,7 +1048,7 @@ void GameScene::dealCards()
 	runAction(Sequence::create(delayStilt, func, nullptr));
 }
 
-void GameScene::showMyCards()
+void GameScene::showMyCards(bool runEffect)
 {
 	int k = 0;
 	for (int i = 0; i < myCardHand.ThienKhai.size(); i++) {
@@ -1088,9 +1088,13 @@ void GameScene::showMyCards()
 	int rot = 11;
 	int startRot = -(rot * spHandCards.size() / 2) + rot / 2;
 	for (int i = 0; i < spHandCards.size(); i++) {
-		spHandCards[i]->setRotation(startRot);
-		RotateBy* rotate = RotateBy::create(i * .1f, i * rot);
-		spHandCards[i]->runAction(rotate);
+		if (runEffect) {
+			spHandCards[i]->setRotation(startRot);
+			RotateBy* rotate = RotateBy::create(i * .1f, i * rot);
+			spHandCards[i]->runAction(rotate);
+		} else {
+			spHandCards[i]->setRotation(startRot + i * rot);
+		}
 	}
 }
 
@@ -2908,7 +2912,7 @@ void GameScene::onGameMyReconnectDataResponse(GameReconnectData data)
 		runTimeWaiting(startGameData.LastWinner, timeChooseHost);*/
 	} else {
 		lbCardNoc->getParent()->setVisible(true);
-		showMyCards();
+		showMyCards(false);
 	}
 }
 
