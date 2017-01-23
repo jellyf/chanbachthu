@@ -21,6 +21,7 @@ public:
 	virtual void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* _event);
 	virtual void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* _event);
 
+	void onPingPong(long timems);
 	void onUserDataMeResponse();
 	void onRankDataResponse(std::vector<std::vector<RankData>> list);
 	void onRankWinDataResponse(std::vector<RankWinData> list);
@@ -66,7 +67,7 @@ protected:
 
 	bool hasHeader = false;
 	bool isWaiting = false;
-	float pingTime = 0;
+	int pingId = 0;
 
 	cocos2d::Vec2 scaleScene;
 
@@ -74,6 +75,7 @@ protected:
 	cocos2d::ui::Button* moneyBg;
 	cocos2d::Sprite* chosenBg;
 	cocos2d::Sprite* spWaiting;
+	cocos2d::Sprite* spNetwork;
 	cocos2d::Layer* mLayer;
 	cocos2d::Label* lbGold;
 	cocos2d::Label* lbSilver;

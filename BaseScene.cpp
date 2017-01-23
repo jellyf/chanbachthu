@@ -94,6 +94,23 @@ void BaseScene::onEnter()
 
 	initPopupUserInfo();
 
+	spNetwork = Sprite::create("wifi3.png");
+	spNetwork->setAnchorPoint(Vec2(1, 0));
+	spNetwork->setPosition(1115, 5);
+	mLayer->addChild(spNetwork, 9999);
+	autoScaleNode(spNetwork);
+
+	DelayTime* delayCheckPing = DelayTime::create(4.5f);
+	CallFunc* funcCheckPing = CallFunc::create([=]() {
+		if (pingId == spNetwork->getTag()) {
+			spNetwork->initWithFile("wifi3.png");
+			spNetwork->setAnchorPoint(Vec2(1, 0));
+		}
+		spNetwork->setTag(pingId);
+	});
+	Sequence* actionCheckPing = Sequence::createWithTwoActions(delayCheckPing, funcCheckPing);
+	spNetwork->runAction(RepeatForever::create(actionCheckPing));
+
 	onInit();
 	registerEventListenner();
 	Utils::getSingleton().onInitSceneCompleted();
@@ -106,21 +123,18 @@ void BaseScene::onExit()
 	Scene::onExit();
 	unscheduleUpdate();
 	unregisterEventListenner();
+	spNetwork->stopAllActions();
 }
 
 void BaseScene::update(float delta)
 {
 	Scene::update(delta);
 	SFSRequest::getSingleton().ProcessEvents();
-	/*pingTime += delta;
-	if (pingTime >= 30) {
-		SFSRequest::getSingleton().Ping();
-		pingTime -= 30;
-	}*/
 }
 
 void BaseScene::registerEventListenner()
 {
+	EventHandler::getSingleton().onPingPong = std::bind(&BaseScene::onPingPong, this, std::placeholders::_1);
 	EventHandler::getSingleton().onConnectionFailed = std::bind(&BaseScene::onConnectionFailed, this);
 	EventHandler::getSingleton().onUserDataMeSFSResponse = std::bind(&BaseScene::onUserDataMeResponse, this);
 	EventHandler::getSingleton().onRankDataSFSResponse = std::bind(&BaseScene::onRankDataResponse, this, std::placeholders::_1);
@@ -131,6 +145,7 @@ void BaseScene::registerEventListenner()
 
 void BaseScene::unregisterEventListenner()
 {
+	EventHandler::getSingleton().onPingPong = NULL;
 	EventHandler::getSingleton().onConnectionFailed = NULL;
 	EventHandler::getSingleton().onUserDataMeSFSResponse = NULL;
 	EventHandler::getSingleton().onRankDataSFSResponse = NULL;
@@ -1306,6 +1321,21 @@ void BaseScene::initPopupHistory()
 	});
 }
 
+
+void BaseScene::onPingPong(long timems)
+{
+	pingId++;
+	if (timems < 150) {
+		spNetwork->initWithFile("wifi0.png");
+	} else if (timems < 500) {
+		spNetwork->initWithFile("wifi1.png");
+	} else if (timems < 1000) {
+		spNetwork->initWithFile("wifi2.png");
+	} else {
+		spNetwork->initWithFile("wifi3.png");
+	}
+	spNetwork->setAnchorPoint(Vec2(1, 0));
+}
 
 void BaseScene::onUserDataMeResponse()
 {

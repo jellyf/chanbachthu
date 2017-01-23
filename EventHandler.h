@@ -27,6 +27,7 @@ public:
 	std::function<void(std::string)> onConnectionLost = NULL;
 	std::function<void(UserData)> onUserDataSFSResponse = NULL;
 	std::function<void(long)> onUserExitRoom = NULL;
+	std::function<void(long)> onPingPong = NULL;
 	std::function<void(short int, std::string)> onLoginZoneError = NULL;
 	std::function<void(long, std::string)> onPublicMessage = NULL;
 	std::function<void(long, std::string)> onJoinRoom = NULL;

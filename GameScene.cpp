@@ -714,6 +714,7 @@ void GameScene::onInit()
 void GameScene::registerEventListenner()
 {
 	EventHandler::getSingleton().onApplicationDidEnterBackground = std::bind(&GameScene::onApplicationDidEnterBackground, this);
+	EventHandler::getSingleton().onPingPong = std::bind(&GameScene::onPingPong, this, std::placeholders::_1);
 	EventHandler::getSingleton().onConnected = std::bind(&GameScene::onConnected, this);
 	EventHandler::getSingleton().onConnectionFailed = std::bind(&GameScene::onConnectionFailed, this);
 	EventHandler::getSingleton().onConnectionLost = std::bind(&GameScene::onConnectionLost, this, std::placeholders::_1);
@@ -1466,7 +1467,7 @@ void GameScene::onConnectionLost(std::string reason)
 		reason = "overlap_login";
 	}
 	showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
-		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0) {
+		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0 && myServerSlot >= 0) {
 			isReconnecting = true;
 			Utils::getSingleton().reconnect();
 			showWaiting();

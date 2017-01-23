@@ -153,7 +153,7 @@ void LoginScene::onInit()
 	autoScaleNode(labelPhone);
 
 	Label* labelVersion = Label::create(string("ver ") + Application::sharedApplication()->getVersion(), "fonts/arial.ttf", 18);
-	labelVersion->setPosition(1115, 3);
+	labelVersion->setPosition(1085, 3);
 	labelVersion->setAnchorPoint(Vec2(1, 0));
 	mLayer->addChild(labelVersion);
 	autoScaleNode(labelVersion);

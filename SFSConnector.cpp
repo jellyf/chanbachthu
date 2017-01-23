@@ -261,7 +261,10 @@ void SFSConnector::OnPingPong(unsigned long long ptrContext, boost::shared_ptr<S
 	boost::shared_ptr<map<string, boost::shared_ptr<void> > > ptrEventParams = ptrEvent->Params();
 	boost::shared_ptr<void> ptrEventParamValue = (*ptrEventParams)["lagValue"];
 	boost::shared_ptr<long> ptrValue = ((boost::static_pointer_cast<long>))(ptrEventParamValue);
-	CCLOG("Measured lag is: %dms", *ptrValue);
+	//CCLOG("Measured lag is: %dms", *ptrValue);
+	if (EventHandler::getSingleton().onPingPong != NULL) {
+		EventHandler::getSingleton().onPingPong(*ptrValue);
+	}
 }
 
 void SFSConnector::Connect(std::string host, int port)
@@ -318,7 +321,7 @@ void SFSConnector::RequestLeaveRoom()
 
 void SFSConnector::EnableLagMonitor()
 {
-	//mSmartFox->EnableLagMonitor(true, 30);
+	mSmartFox->EnableLagMonitor(true, 4);
 }
 
 void SFSConnector::ForceIPv6(bool value)
