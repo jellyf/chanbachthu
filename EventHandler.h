@@ -75,5 +75,12 @@ public:
 	std::function<void(LobbyListRoomType)> onLobbyRoomTypeSFSResponse = NULL;
 	std::function<void(std::vector<UserData>)> onLobbyUserDataSFSResponse = NULL;
 	std::function<void(InviteData)> onLobbyInviteDataSFSResponse = NULL;
+
+public:
+	static void callbackLoginFacebook(std::string token) {
+		if (EventHandler::getSingleton().onLoginFacebook != NULL) {
+			EventHandler::getSingleton().onLoginFacebook(token);
+		}
+	}
 };
 
