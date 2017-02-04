@@ -347,6 +347,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		config.linkAndroid = d["a"].GetString();
 		config.linkIOS = d["i"].GetString();
 		config.canUpdate = d["updatenow"].GetBool();
+        config.inapp = d["inapp"].GetString();
 
 		string verstr = Application::sharedApplication()->getVersion();
 		int i = verstr.find_last_of('.') + 1;
@@ -356,6 +357,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		config.paymentEnabledIOS &= config.versionIOS > nver;
 
 		Utils::getSingleton().gameConfig = config;
+        Utils::getSingleton().queryIAPProduct();
 		labelPhone->setString(config.phone);
 		//string location = Utils::getSingleton().getUserCountry();
 		//Utils::getSingleton().gameConfig.paymentEnabled = config.paymentEnabled && location.compare("vn") == 0;

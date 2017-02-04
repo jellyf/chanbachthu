@@ -473,3 +473,32 @@ void Utils::solveCachedPurchases()
     }
     cachedPaymentTokens.clear();
 }
+
+void Utils::setIAPProducts(std::vector<ProductData> vecProducts)
+{
+    for(int i = 0;i<products.size();i++){
+        for(ProductData p : vecProducts){
+            if(products[i].Id.compare(p.Id) == 0){
+                products[i].Price = p.Price;
+                products[i].Description = p.Description;
+                products[i].CurrencySymbol = p.CurrencySymbol;
+                break;
+            }
+        }
+    }
+}
+
+void Utils::queryIAPProduct()
+{
+    std::vector<std::string> ids;
+    split(gameConfig.inapp, ',', ids);
+    for(int i=0;i<ids.size();i++){
+        ids[i] = "com.chanonline.chanbachthu.goi." + ids[i];
+        ProductData data;
+        data.Id = ids[i];
+        products.push_back(data);
+    }
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    IOSHelperCPlus::queryIAPProducts(ids);
+#endif
+}

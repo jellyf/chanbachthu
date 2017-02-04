@@ -266,6 +266,7 @@ struct GameConfig
 	std::string linkFb;
 	std::string linkAndroid;
 	std::string linkIOS;
+    std::string inapp;
 };
 
 struct RankData
@@ -363,4 +364,12 @@ struct TableReconnectData
 {
 	std::string Room;
 	std::string Message;
+};
+
+struct ProductData
+{
+    double Price;
+    std::string Id;
+    std::string Description;
+    std::string CurrencySymbol;
 };

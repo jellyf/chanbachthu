@@ -53,6 +53,8 @@ public:
 	void loginZoneByIndex(int moneyType, int index);
     void purchaseItem(std::string sku);
     void solveCachedPurchases();
+    void setIAPProducts(std::vector<ProductData> vecProducts);
+    void queryIAPProduct();
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;
@@ -60,7 +62,8 @@ public:
 	LobbyListTable lobbyListTable;
 	LobbyListRoomType lobbyListRoomType;
 	TableReconnectData tableReconnectData;
-	std::vector<std::vector<ZoneData>> zones;
+    std::vector<std::vector<ZoneData>> zones;
+    std::vector<ProductData> products;
 	std::vector<EventData> events;
     std::vector<std::string> cachedPaymentTokens;
 	std::string username;

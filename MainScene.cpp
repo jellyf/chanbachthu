@@ -1295,15 +1295,12 @@ void MainScene::initPopupCharge()
 	//}
     
     //Nap CH
-    vector<string> images = { "main/icon_charge.png", "main/icon_charge.png" , "main/icon_charge.png" };
-    vector<string> ids = { "com.chanonline.chanbachthu.goi.21", "com.chanonline.chanbachthu.goi.105", "com.chanonline.chanbachthu.goi.210" };
-    vector<long> values = { 21000, 105000, 210000 };
-    vector<long> costs = { 22000, 110000, 220000 };
-    
-    for (int i = 0; i < ids.size(); i++) {
-        string strValue = Utils::getSingleton().formatMoneyWithComma(values[i]);
-        string strCost = Utils::getSingleton().formatMoneyWithComma(costs[i]) + " vnd";
-        string strId = ids[i];
+    vector<ProductData> products = Utils::getSingleton().products;
+    for (int i = 0; i < products.size(); i++) {
+        int index = products[i].Description.find(' ');
+        string strValue = products[i].Description.substr(0, index);
+        string strCost = Utils::getSingleton().formatMoneyWithComma(products[i].Price) + " " + Utils::getSingleton().getStringForKey("vnd");
+        string strId = products[i].Id;
         
         ui::Button* btn = ui::Button::create("popup/box_shop.png");
         btn->setPosition(Vec2(-240 + i * 240, -30));
@@ -1317,7 +1314,7 @@ void MainScene::initPopupCharge()
         });
         nodeStore->addChild(btn);
         
-        Sprite* sp = Sprite::create(images[i]);
+        Sprite* sp = Sprite::create("main/icon_charge.png");
         sp->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 + 15);
         sp->setName("itemimage");
         btn->addChild(sp);
@@ -1340,7 +1337,7 @@ void MainScene::initPopupCharge()
         btn->addChild(lb2);
         
         spCoin->setPosition(lb1->getPositionX() + lb1->getContentSize().width / 2
-                            + spCoin->getContentSize().width * spCoin->getScale() / 2 + 10, lb1->getPositionY() - 3);
+                            + spCoin->getContentSize().width * spCoin->getScale() / 2 + 5, lb1->getPositionY() - 3);
     }
     
     bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
@@ -1350,7 +1347,7 @@ void MainScene::initPopupCharge()
         btnStore->setVisible(false);
         nodeCard->setVisible(false);
         nodeStore->setVisible(true);
-        for (int i = 0; i < ids.size(); i++) {
+        for (int i = 0; i < products.size(); i++) {
             nodeStore->getChildByTag(i)->setPositionY(0);
         }
         for(int i=1;i<=4;i++){
