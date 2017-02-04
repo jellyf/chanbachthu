@@ -263,48 +263,56 @@ void SFSRequest::RequestGameReady()
 void SFSRequest::RequestGameChooseStilt(int stilt)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
-	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
-	data->WriteByte((unsigned char)stilt);
-	parameters->PutByteArray("d", data);
+//	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
+//	data->WriteByte((unsigned char)stilt);
+//	parameters->PutByteArray("d", data);
+    parameters->PutInt("1", stilt);
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::GAME_CHOOSE_STILT, parameters);
 }
 
 void SFSRequest::RequestGameChooseHost(int host)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
-	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
-	data->WriteByte((unsigned char)host);
-	parameters->PutByteArray("d", data);
+//	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
+//	data->WriteByte((unsigned char)host);
+//	parameters->PutByteArray("d", data);
+    parameters->PutInt("1", host);
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::GAME_CHOOSE_HOST, parameters);
 }
 
 void SFSRequest::RequestGameBash(unsigned char card, unsigned char group)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
-	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
-	data->WriteByte((unsigned char)card);
-	data->WriteByte((unsigned char)group);
-	parameters->PutByteArray("d", data);
+//	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
+//	data->WriteByte((unsigned char)card);
+//	data->WriteByte((unsigned char)group);
+//	parameters->PutByteArray("d", data);
+    parameters->PutByte("1", card);
+    parameters->PutByte("2", group);
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::GAME_REQUEST_BASH, parameters);
 }
 
 void SFSRequest::RequestGameBashBack(unsigned char card, unsigned char group)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
-	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
-	data->WriteByte((unsigned char)card);
-	data->WriteByte((unsigned char)group);
-	parameters->PutByteArray("d", data);
+//	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
+//	data->WriteByte((unsigned char)card);
+//	data->WriteByte((unsigned char)group);
+//	parameters->PutByteArray("d", data);
+    parameters->PutByte("1", card);
+    parameters->PutByte("2", group);
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::GAME_REQUEST_BASH_BACK, parameters);
 }
 
 void SFSRequest::RequestGameHold(unsigned char card, unsigned char group)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
-	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
-	data->WriteByte((unsigned char)card);
-	data->WriteByte((unsigned char)group);
-	parameters->PutByteArray("d", data);
+//	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
+//	data->WriteByte((unsigned char)card);
+//	data->WriteByte((unsigned char)group);
+//	parameters->PutByteArray("d", data);
+    parameters->PutByte("1", card);
+    parameters->PutByte("2", group);
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::GAME_REQUEST_HOLD, parameters);
 }
 
