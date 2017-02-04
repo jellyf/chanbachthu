@@ -16,6 +16,7 @@ public:
 	std::function<void()> onApplicationDidEnterBackground = NULL;
 
 	std::function<void(std::string)> onLoginFacebook = NULL;
+    std::function<void(std::string)> onPurchaseSuccess = NULL;
 
 	std::function<void()> onConnected = NULL;
 	std::function<void()> onLoginZone = NULL;
@@ -74,12 +75,5 @@ public:
 	std::function<void(LobbyListRoomType)> onLobbyRoomTypeSFSResponse = NULL;
 	std::function<void(std::vector<UserData>)> onLobbyUserDataSFSResponse = NULL;
 	std::function<void(InviteData)> onLobbyInviteDataSFSResponse = NULL;
-
-public:
-	static void callbackLoginFacebook(std::string token) {
-		if (EventHandler::getSingleton().onLoginFacebook != NULL) {
-			EventHandler::getSingleton().onLoginFacebook(token);
-		}
-	}
 };
 

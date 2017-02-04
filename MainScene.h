@@ -26,6 +26,7 @@ public:
 	void onListMailDataResponse(std::vector<MailData> list);
 	void onMailContentResponse(std::string content);
 	void onNewsDataResponse(std::vector<NewsData> list);
+    void onPurchaseSuccess(std::string token);
 protected:
 	virtual void onBackScene();
 	virtual void onChangeMoneyType(int type);

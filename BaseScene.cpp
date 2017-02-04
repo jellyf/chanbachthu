@@ -495,6 +495,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	showPopup(popupUserInfo);
 	Node* btnHistory = popupUserInfo->getChildByName("btnhistory");
 	Node* btnActive = popupUserInfo->getChildByName("btnactive");
+    Node* btnFB = popupUserInfo->getChildByName("btnlogoutfb");
 	Label* lbName = (Label*)popupUserInfo->getChildByName("lbname");
 	Label* lbQuan = (Label*)popupUserInfo->getChildByName("lbquan");
 	Label* lbXu = (Label*)popupUserInfo->getChildByName("lbxu");
@@ -505,6 +506,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 
 	btnHistory->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID);
 	btnActive->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && !Utils::getSingleton().userDataMe.IsActived);
+    btnFB->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && Utils::getSingleton().loginType == constant::LOGIN_FACEBOOK);
 	lbName->setString(data.DisplayName);
 	lbQuan->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyReal));
 	lbXu->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyFree));
@@ -1119,18 +1121,16 @@ void BaseScene::initPopupUserInfo()
 	});
 	popupUserInfo->addChild(btnActive);
 
-	if (Utils::getSingleton().loginType == constant::LOGIN_FACEBOOK) {
-		ui::Button* btnLogoutFb = ui::Button::create("main/btn_logout_fb.png", "main/btn_logout_fb_clicked.png");
-		btnLogoutFb->setPosition(Vec2(186, -135));
-		btnLogoutFb->setName("btnlogoutfb");
-		btnLogoutFb->setScale(.8f);
-		addTouchEventListener(btnLogoutFb, [=]() {
-			SFSRequest::getSingleton().Disconnect();
-			Utils::getSingleton().logoutFacebook();
-			Utils::getSingleton().goToLoginScene();
-		});
-		popupUserInfo->addChild(btnLogoutFb);
-	}
+    ui::Button* btnLogoutFb = ui::Button::create("main/btn_logout_fb.png", "main/btn_logout_fb_clicked.png");
+    btnLogoutFb->setPosition(Vec2(186, -135));
+    btnLogoutFb->setName("btnlogoutfb");
+    btnLogoutFb->setScale(.8f);
+    addTouchEventListener(btnLogoutFb, [=]() {
+        SFSRequest::getSingleton().Disconnect();
+        Utils::getSingleton().logoutFacebook();
+        Utils::getSingleton().goToLoginScene();
+    });
+    popupUserInfo->addChild(btnLogoutFb);
 
 	Label* lbName = Label::create("Stormus", "fonts/arialbd.ttf", 25);
 	lbName->setAnchorPoint(Vec2(0, .5f));
@@ -1322,7 +1322,6 @@ void BaseScene::initPopupHistory()
 	});
 }
 
-
 void BaseScene::onPingPong(long timems)
 {
 	pingId++;
@@ -1343,7 +1342,7 @@ void BaseScene::onUserDataMeResponse()
 	if (!hasHeader) return;
 	std::string strGold = Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().userDataMe.MoneyReal);
 	std::string strSilver = Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().userDataMe.MoneyFree);
-	std::string strId = String::createWithFormat("ID: %d", Utils::getSingleton().userDataMe.UserID)->getCString();
+	std::string strId = String::createWithFormat("ID: %ld", Utils::getSingleton().userDataMe.UserID)->getCString();
 	std::string strLevel = String::createWithFormat("Level: %d", Utils::getSingleton().userDataMe.Level)->getCString();
 
 	lbName->setString(Utils::getSingleton().userDataMe.DisplayName);

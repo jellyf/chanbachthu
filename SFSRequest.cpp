@@ -213,6 +213,14 @@ void SFSRequest::RequestGiftcode(std::string giftcode)
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::GIFT_CODE, parameters);
 }
 
+void SFSRequest::RequestPayment(std::string token)
+{
+    boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+    parameters->PutUtfString("1", token);
+    parameters->PutUtfString("2", Utils::getSingleton().getPlatformOS());
+    SFSConnector::getSingleton().SendExtensionRequest(cmd::PAYMENT, parameters);
+}
+
 void SFSRequest::RequestRegister(std::string username, std::string password, std::string email)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());

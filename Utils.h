@@ -51,6 +51,8 @@ public:
 	void rejoinRoom();
 	void connectZoneByIndex(int moneyType, int index);
 	void loginZoneByIndex(int moneyType, int index);
+    void purchaseItem(std::string sku);
+    void solveCachedPurchases();
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;
@@ -60,6 +62,7 @@ public:
 	TableReconnectData tableReconnectData;
 	std::vector<std::vector<ZoneData>> zones;
 	std::vector<EventData> events;
+    std::vector<std::string> cachedPaymentTokens;
 	std::string username;
 	std::string password;
 	std::string currentLobbyName;

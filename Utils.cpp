@@ -32,6 +32,21 @@ Utils::Utils()
 	userDataMe.UserID = 0;
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    IOSHelperCPlus::setLoginFBCallback([=](std::string token){
+        if(EventHandler::getSingleton().onLoginFacebook != NULL){
+            EventHandler::getSingleton().onLoginFacebook(token);
+        }
+    });
+    IOSHelperCPlus::setPurchaseSuccessCallback([=](std::string token){
+        if(EventHandler::getSingleton().onPurchaseSuccess != NULL){
+            EventHandler::getSingleton().onPurchaseSuccess(token);
+        }else if(token.length() > 0){
+            cachedPaymentTokens.push_back(token);
+        }
+    });
+#endif
 }
 
 Utils::~Utils()
@@ -362,9 +377,6 @@ void Utils::loginFacebook()
 	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID);
 	methodInfo.env->DeleteLocalRef(methodInfo.classID);
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    IOSHelperCPlus::setLoginFBCallback([=](std::string token){
-        EventHandler::getSingleton().callbackLoginFacebook(token);
-    });
     IOSHelperCPlus::loginFacebook();
 #endif
 }
@@ -440,4 +452,24 @@ void Utils::loginZoneByIndex(int moneyType, int index)
 	currentZoneIp = zoneIp;
 	currentZoneName = zoneName;
 	SFSRequest::getSingleton().LoginZone(username, password, zoneName);
+}
+
+void Utils::purchaseItem(std::string sku)
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    IOSHelperCPlus::purchaseItem(sku);
+#else
+    if(EventHandler::getSingleton().onPurchaseSuccess != NULL){
+        EventHandler::getSingleton().onPurchaseSuccess("");
+    }
+#endif
+}
+
+void Utils::solveCachedPurchases()
+{
+    if(cachedPaymentTokens.size() == 0) return;
+    for(std::string token : cachedPaymentTokens){
+        SFSRequest::getSingleton().RequestPayment(token);
+    }
+    cachedPaymentTokens.clear();
 }

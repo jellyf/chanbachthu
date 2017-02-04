@@ -57,7 +57,6 @@ void MainScene::onInit()
 
 	ui::Button* btnCharge = ui::Button::create("main/icon_charge.png");
 	btnCharge->setPosition(vecPos[m++]);
-	btnCharge->setVisible(paymentEnabled);
 	addTouchEventListener(btnCharge, [=]() {
 		if (popupCharge == nullptr) {
 			initPopupCharge();
@@ -66,6 +65,11 @@ void MainScene::onInit()
 	});
 	mLayer->addChild(btnCharge);
 	autoScaleNode(btnCharge);
+    if(paymentEnabled){
+        btnCharge->setPosition(vecPos[2]);
+    }else{
+        btnCharge->setPosition(vecPos[3]);
+    }
 
 	ui::Button* btnShop = ui::Button::create("main/icon_shop.png");
 	btnShop->setPosition(vecPos[m++]);
@@ -187,6 +191,7 @@ void MainScene::onInit()
 	if (Utils::getSingleton().isRunningEvent) {
 		runEventView(Utils::getSingleton().events, Utils::getSingleton().currentEventPosX);
 	}
+    Utils::getSingleton().solveCachedPurchases();
 
 	for (int i = 1; i <= 4; i++) {
 		string host = "http://125.212.192.96:8899/cbt/NhaMang/";
@@ -246,6 +251,7 @@ void MainScene::registerEventListenner()
 	EventHandler::getSingleton().onMailContentSFSResponse = bind(&MainScene::onMailContentResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onNewsDataSFSResponse = bind(&MainScene::onNewsDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onExchangeItemSFSResponse = bind(&MainScene::onExchangeItemResponse, this, placeholders::_1);
+    EventHandler::getSingleton().onPurchaseSuccess = bind(&MainScene::onPurchaseSuccess, this, placeholders::_1);
 }
 
 void MainScene::unregisterEventListenner()
@@ -266,6 +272,7 @@ void MainScene::unregisterEventListenner()
 	EventHandler::getSingleton().onMailContentSFSResponse = NULL;
 	EventHandler::getSingleton().onNewsDataSFSResponse = NULL;
 	EventHandler::getSingleton().onExchangeItemSFSResponse = NULL;
+    EventHandler::getSingleton().onPurchaseSuccess = NULL;
 }
 
 void MainScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
@@ -710,7 +717,7 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 	}
 
 	int count = scroll->getChildrenCount();
-	for (int i = list.size() * 5; i < scroll->getChildrenCount(); i++) {
+	for (int i = list.size() * 5; i < count; i++) {
 		scroll->getChildByTag(i)->setVisible(false);
 	}
 }
@@ -798,6 +805,14 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 	}
 }
 
+void MainScene::onPurchaseSuccess(std::string token)
+{
+    hideWaiting();
+    if(token.length() > 0){
+        SFSRequest::getSingleton().RequestPayment(token);
+    }
+}
+
 void MainScene::onBackScene()
 {
 	showWaiting();
@@ -851,9 +866,15 @@ void MainScene::initPopupCharge()
 	nodeSms->setName("nodesms");
 	nodeSms->setVisible(false);
 	popupCharge->addChild(nodeSms);
+    
+    Node* nodeStore = Node::create();
+    nodeStore->setName("nodestore");
+    nodeStore->setVisible(false);
+    popupCharge->addChild(nodeStore);
 
 	ui::Button* btnCard = ui::Button::create("popup/box2.png");
-	ui::Button* btnSms = ui::Button::create("popup/box1.png");
+    ui::Button* btnSms = ui::Button::create("popup/box1.png");
+    ui::Button* btnStore = ui::Button::create("popup/box1.png");
 
 	btnCard->setPosition(Vec2(-270, 160));
 	btnCard->setScale9Enabled(true);
@@ -862,11 +883,15 @@ void MainScene::initPopupCharge()
 		if (popupCharge->getTag() == 0) return;
 		popupCharge->setTag(0);
 		nodeCard->setVisible(true);
-		nodeSms->setVisible(false);
+        nodeSms->setVisible(false);
+        nodeStore->setVisible(false);
 		btnCard->loadTextureNormal("popup/box2.png");
-		btnSms->loadTextureNormal("popup/box1.png");
-		popupCharge->getChildByName("btn4")->setVisible(true);
-		popupCharge->getChildByName("providerimg4")->setVisible(true);
+        btnSms->loadTextureNormal("popup/box1.png");
+        btnStore->loadTextureNormal("popup/box1.png");
+        for(int i=1;i<=4;i++){
+            popupCharge->getChildByName("btn" + to_string(i))->setVisible(true);
+            popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(true);
+        }
 	});
 	popupCharge->addChild(btnCard);
 
@@ -883,8 +908,14 @@ void MainScene::initPopupCharge()
 		popupCharge->setTag(1);
 		nodeCard->setVisible(false);
 		nodeSms->setVisible(true);
+        nodeStore->setVisible(false);
 		btnCard->loadTextureNormal("popup/box1.png");
 		btnSms->loadTextureNormal("popup/box2.png");
+        btnStore->loadTextureNormal("popup/box1.png");
+        for(int i=1;i<=3;i++){
+            popupCharge->getChildByName("btn" + to_string(i))->setVisible(true);
+            popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(true);
+        }
 
 		int btnIndex = -1;
 		Node* btn4 = popupCharge->getChildByName("btn4");
@@ -934,6 +965,30 @@ void MainScene::initPopupCharge()
 	lbTitleBtnSms->setPosition(btnSms->getContentSize().width / 2, btnSms->getContentSize().height / 2 + 7);
 	lbTitleBtnSms->setColor(Color3B::BLACK);
 	btnSms->addChild(lbTitleBtnSms);
+    
+    btnStore->setPosition(Vec2(270, 160));
+    btnStore->setScale9Enabled(true);
+    btnStore->setContentSize(Size(250, 80));
+    addTouchEventListener(btnStore, [=]() {
+        if (popupCharge->getTag() == 2) return;
+        popupCharge->setTag(2);
+        nodeCard->setVisible(false);
+        nodeSms->setVisible(false);
+        nodeStore->setVisible(true);
+        btnCard->loadTextureNormal("popup/box1.png");
+        btnSms->loadTextureNormal("popup/box1.png");
+        btnStore->loadTextureNormal("popup/box2.png");
+        for(int i=1;i<=4;i++){
+            popupCharge->getChildByName("btn" + to_string(i))->setVisible(false);
+            popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(false);
+        }
+    });
+    popupCharge->addChild(btnStore);
+    
+    Label* lbTitleBtnStore = Label::create(Utils::getSingleton().getStringForKey("nap_iap"), "fonts/guanine.ttf", 35);
+    lbTitleBtnStore->setPosition(btnStore->getContentSize().width / 2, btnStore->getContentSize().height / 2 + 7);
+    lbTitleBtnStore->setColor(Color3B::BLACK);
+    btnStore->addChild(lbTitleBtnStore);
 
 	int x = -300;
 	vector<string> strProviders = { "viettel", "mobifone", "vinaphone", "megacard" };
@@ -1141,7 +1196,6 @@ void MainScene::initPopupCharge()
 			}
 		}
 		string provider = strProviders[providerId];
-		CCLOG("%s %s %s", code.c_str(), seri.c_str(), provider.c_str());
 		SFSRequest::getSingleton().RequestChargeCard(code, seri, provider);
 		showWaiting();
 	});
@@ -1239,6 +1293,71 @@ void MainScene::initPopupCharge()
 			btnItemSms->addChild(lbTitleBtnItemSms);
 		}
 	//}
+    
+    //Nap CH
+    vector<string> images = { "main/icon_charge.png", "main/icon_charge.png" , "main/icon_charge.png" };
+    vector<string> ids = { "com.chanonline.chanbachthu.goi.21", "com.chanonline.chanbachthu.goi.105", "com.chanonline.chanbachthu.goi.210" };
+    vector<long> values = { 21000, 105000, 210000 };
+    vector<long> costs = { 22000, 110000, 220000 };
+    
+    for (int i = 0; i < ids.size(); i++) {
+        string strValue = Utils::getSingleton().formatMoneyWithComma(values[i]);
+        string strCost = Utils::getSingleton().formatMoneyWithComma(costs[i]) + " vnd";
+        string strId = ids[i];
+        
+        ui::Button* btn = ui::Button::create("popup/box_shop.png");
+        btn->setPosition(Vec2(-240 + i * 240, -30));
+        btn->setContentSize(Size(182, 150));
+        btn->setScale9Enabled(true);
+        btn->setBright(false);
+        btn->setTag(i);
+        addTouchEventListener(btn, [=]() {
+            showWaiting(300);
+            Utils::getSingleton().purchaseItem(strId);
+        });
+        nodeStore->addChild(btn);
+        
+        Sprite* sp = Sprite::create(images[i]);
+        sp->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 + 15);
+        sp->setName("itemimage");
+        btn->addChild(sp);
+        
+        Sprite* spCoin = Sprite::create("main/icon_gold.png");
+        spCoin->setScale(.5f);
+        btn->addChild(spCoin);
+        
+        Label* lb1 = Label::create(strValue, "fonts/guanine.ttf", 20);
+        lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 55);
+        lb1->setColor(Color3B::YELLOW);
+        btn->addChild(lb1);
+        
+        Label* lb2 = Label::create(strCost, "fonts/guanine.ttf", 20);
+        lb2->setWidth(175);
+        lb2->setHeight(30);
+        lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 90);
+        lb2->setColor(Color3B::WHITE);
+        lb2->setHorizontalAlignment(TextHAlignment::CENTER);
+        btn->addChild(lb2);
+        
+        spCoin->setPosition(lb1->getPositionX() + lb1->getContentSize().width / 2
+                            + spCoin->getContentSize().width * spCoin->getScale() / 2 + 10, lb1->getPositionY() - 3);
+    }
+    
+    bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
+    if(!paymentEnabled){
+        btnCard->setVisible(false);
+        btnSms->setVisible(false);
+        btnStore->setVisible(false);
+        nodeCard->setVisible(false);
+        nodeStore->setVisible(true);
+        for (int i = 0; i < ids.size(); i++) {
+            nodeStore->getChildByTag(i)->setPositionY(0);
+        }
+        for(int i=1;i<=4;i++){
+            popupCharge->getChildByName("btn" + to_string(i))->setVisible(false);
+            popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(false);
+        }
+    }
 }
 
 void MainScene::initPopupGuide()
