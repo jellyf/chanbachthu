@@ -68,6 +68,7 @@ private:
 
 	void dealCards();
 	void dropWin();
+    void dropPenet();
 	void showMyCards(bool runEffect = true);
 	void runTimeWaiting(long uid, float time);
 	void getCardSpriteToHand(int id, int group, int zorder);
@@ -124,7 +125,8 @@ private:
 	cocos2d::ui::Button* btnForward;
 	cocos2d::ui::Button* btnHold;
 	cocos2d::ui::Button* btnPick;
-	cocos2d::ui::Button* btnPenet;
+    cocos2d::ui::Button* btnPenet;
+    cocos2d::ui::Button* btnDropPenet;
 	cocos2d::ui::Button* btnWin;
 	cocos2d::ui::Button* btnDropWin;
 	cocos2d::ui::Button* btnXemNoc;

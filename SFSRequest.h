@@ -56,7 +56,8 @@ public:
 	void RequestGameHold(unsigned char card, unsigned char group);
 	void RequestGamePick();
 	void RequestGameForward();
-	void RequestGamePenet();
+    void RequestGamePenet();
+    void RequestGameDropPenet();
 	void RequestGameWin();
 	void RequestGameDropWin();
 	void RequestGameWinCrest(std::vector<unsigned char> crests);

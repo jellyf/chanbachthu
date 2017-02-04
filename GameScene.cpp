@@ -391,7 +391,9 @@ void GameScene::onInit()
 	addTouchEventListener(btnPenet, [=]() {
 		SFSRequest::getSingleton().RequestGamePenet();
 		btnPenet->stopAllActions();
-		btnPenet->setVisible(false);
+        btnDropPenet->stopAllActions();
+        btnPenet->setVisible(false);
+        btnDropPenet->setVisible(false);
 		btnHold->setVisible(false);
 		btnPick->setVisible(false);
 
@@ -417,6 +419,15 @@ void GameScene::onInit()
 	});
 	mLayer->addChild(btnPenet, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnPenet);
+    
+    btnDropPenet = ui::Button::create("board/btn_bo_chiu.png", "board/btn_bo_chiu_clicked.png");
+    btnDropPenet->setPosition(Vec2(220, 35));
+    btnDropPenet->setVisible(false);
+    addTouchEventListener(btnDropPenet, [=]() {
+        dropPenet();
+    });
+    mLayer->addChild(btnDropPenet, constant::GAME_ZORDER_BUTTON);
+    autoScaleNode(btnDropPenet);
 
 	btnWin = ui::Button::create("board/btn_u.png");
 	btnWin->setPosition(vecUserPos[0]);
@@ -424,13 +435,15 @@ void GameScene::onInit()
 	addTouchEventListener(btnWin, [=]() {
 		SFSRequest::getSingleton().RequestGameWin();
 		btnWin->stopAllActions();
-		btnDropWin->stopAllActions();
+        btnDropWin->stopAllActions();
+        btnPenet->stopAllActions();
+        btnDropPenet->stopAllActions();
 		btnWin->setVisible(false);
 		btnDropWin->setVisible(false);
 		btnForward->setVisible(false);
 		btnHold->setVisible(false); 
 		btnPenet->setVisible(false);
-		btnPenet->stopAllActions();
+        btnDropPenet->setVisible(false);
 		noaction = 0;
 	});
 	mLayer->addChild(btnWin, constant::GAME_ZORDER_BUTTON);
@@ -1118,6 +1131,26 @@ void GameScene::dropWin()
 	}
 }
 
+void GameScene::dropPenet()
+{
+    SFSRequest::getSingleton().RequestGameDropPenet();
+    btnPenet->stopAllActions();
+    btnDropPenet->stopAllActions();
+    btnPenet->setVisible(false);
+    btnDropPenet->setVisible(false);
+    noaction = 0;
+    
+    if (waitAction == constant::GAME_ACTION_BASH) {
+        btnPick->setVisible(true);
+        btnHold->setVisible(true);
+        waitAction = -1;
+    } else if (waitAction == constant::GAME_ACTION_PICK) {
+        btnForward->setVisible(true);
+        btnHold->setVisible(true);
+        waitAction = -1;
+    }
+}
+
 void GameScene::runTimeWaiting(long uid, float time)
 {
 	int index = userIndexs[uid];
@@ -1718,6 +1751,9 @@ void GameScene::onRoomDataGaResponse(bool isGa, double gaMoney)
 
 void GameScene::onStartGameDataResponse(StartGameData data)
 {
+    if(data.CardStilt < 0){
+        data.CardStilt = -data.CardStilt;
+    }
 	state = START;
 	this->startGameData = data;
 	this->myCardHand = data.CardHand;
@@ -1978,6 +2014,13 @@ void GameScene::onUserBash(BashData data)
 			}
 		} else if (data.CanPenet) {
 			beatenNodeAndHide(btnPenet, 1.2f, 1, .7f, 7);
+            btnDropPenet->setVisible(true);
+            delayFunction(btnDropPenet, 7, [=]() {
+                btnDropPenet->setVisible(false);
+            });
+            if (data.TurnId == sfsIdMe) {
+                waitAction = constant::GAME_ACTION_BASH;
+            }
 		} else if (data.TurnId == sfsIdMe) {
 			noaction++;
 			btnHold->setVisible(true);
@@ -2086,6 +2129,17 @@ void GameScene::onUserBashBack(BashBackData data)
 			}
 		} else if (data.CanPenet) {
 			beatenNodeAndHide(btnPenet, 1.2f, 1, .7f, 7);
+            btnDropPenet->setVisible(true);
+            delayFunction(btnDropPenet, 7, [=]() {
+                btnDropPenet->setVisible(false);
+            });
+            if (data.TurnId == sfsIdMe) {
+                if (data.IsPicked) {
+                    waitAction = constant::GAME_ACTION_PICK;
+                } else {
+                    waitAction = constant::GAME_ACTION_BASH;
+                }
+            }
 		} else if (data.TurnId == sfsIdMe) {
 			noaction++;
 			btnHold->setVisible(true);
@@ -2258,9 +2312,11 @@ void GameScene::onUserPick(PickData data)
 		btnWin->setVisible(false);
 		btnDropWin->setVisible(false);
 		btnPenet->setVisible(false);
+        btnDropPenet->setVisible(false);
 		btnWin->stopAllActions();
 		btnDropWin->stopAllActions();
 		btnPenet->stopAllActions();
+        btnDropPenet->stopAllActions();
 	}
 	if (!isBatBao) {
 		if (data.CanWin) {
@@ -2275,6 +2331,13 @@ void GameScene::onUserPick(PickData data)
 			}
 		} else if (data.CanPenet) {
 			beatenNodeAndHide(btnPenet, 1.2f, 1, .7f, 7);
+            btnDropPenet->setVisible(true);
+            delayFunction(btnDropPenet, 7, [=]() {
+                btnDropPenet->setVisible(false);
+            });
+            if (data.TurnId == sfsIdMe) {
+                waitAction = constant::GAME_ACTION_PICK;
+            }
 		} else if (data.TurnId == sfsIdMe) {
 			noaction++;
 			btnHold->setVisible(true);
@@ -2375,9 +2438,12 @@ void GameScene::onUserPenet(PenetData data)
 		changeZOrderAfterFly(cards[i], constant::GAME_ZORDER_CARD_FLY + i);
 	}
 	if (data.UId == sfsIdMe) {
+        btnPenet->stopAllActions();
+        btnDropPenet->stopAllActions();
 		btnHold->setVisible(false);
 		btnPick->setVisible(false);
 		btnPenet->setVisible(false);
+        btnDropPenet->setVisible(false);
 		btnForward->setVisible(false);
 		btnBashBack->setVisible(true);
 		updateCardHand(data.CardHand);
@@ -2399,9 +2465,11 @@ void GameScene::onUserForward(ForwardData data)
 		btnWin->setVisible(false);
 		btnDropWin->setVisible(false);
 		btnPenet->setVisible(false);
+        btnDropPenet->setVisible(false);
 		btnWin->stopAllActions();
 		btnDropWin->stopAllActions();
 		btnPenet->stopAllActions();
+        btnDropPenet->stopAllActions();
 
 		progressTimer->setVisible(false);
 		progressTimer->stopAllActions();
@@ -2419,6 +2487,7 @@ void GameScene::onUserWin(long uId, unsigned char sound)
 {
 	btnBash->setVisible(false);
 	btnPenet->setVisible(false);
+    btnDropPenet->setVisible(false);
 	btnPick->setVisible(false);
 	btnHold->setVisible(false);
 	btnForward->setVisible(false);
@@ -2426,10 +2495,12 @@ void GameScene::onUserWin(long uId, unsigned char sound)
 	btnWin->stopAllActions();
 	btnDropWin->stopAllActions();
 	btnPenet->stopAllActions();
+    btnDropPenet->stopAllActions();
 	if (uId == sfsIdMe) {
 		btnWin->setVisible(false);
 		btnDropWin->setVisible(false);
 		playSoundAction(sound);
+        showSystemNotice(Utils::getSingleton().getStringForKey("ban_da_chon_u_roi"));
 	} else {
 		int index = userIndexs[uId];
 		showSystemNotice(vecUsers[index]->getPlayerName() + Utils::getSingleton().getStringForKey("da_chon_u_roi"));
@@ -2518,9 +2589,11 @@ void GameScene::onEndMatch(EndMatchData data)
 	btnWin->setVisible(false);
 	btnDropWin->setVisible(false);
 	btnPenet->setVisible(false);
+    btnDropPenet->setVisible(false);
 	btnWin->stopAllActions();
 	btnDropWin->stopAllActions();
 	btnPenet->stopAllActions();
+    btnDropPenet->stopAllActions();
 	runTimeWaiting(data.WinId, timeTurn);
 	showWinnerCards();
 	if (data.WinId == sfsIdMe) {
@@ -2548,11 +2621,13 @@ void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 	btnWin->setVisible(false);
 	btnDropWin->setVisible(false);
 	btnPenet->setVisible(false);
+    btnDropPenet->setVisible(false);
 	lbCardNoc->getParent()->getChildByName("spcardnoc")->setVisible(false);
 	lbCardNoc->setString("");
 	btnWin->stopAllActions();
 	btnDropWin->stopAllActions();
 	btnPenet->stopAllActions();
+    btnDropPenet->stopAllActions();
 	progressTimer->stopAllActions();
 
 	if (stiltCards.size() == 1) {

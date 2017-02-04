@@ -342,6 +342,12 @@ void SFSRequest::RequestGamePenet()
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::GAME_REQUEST_PENET, parameters);
 }
 
+void SFSRequest::RequestGameDropPenet()
+{
+    boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+    SFSConnector::getSingleton().SendExtensionRequest(cmd::GAME_REQUEST_DROP_PENET, parameters);
+}
+
 void SFSRequest::RequestGameWin()
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
