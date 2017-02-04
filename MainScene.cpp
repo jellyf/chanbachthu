@@ -1296,6 +1296,22 @@ void MainScene::initPopupCharge()
     
     //Nap CH
     vector<ProductData> products = Utils::getSingleton().products;
+    Size storeSize = Size(720, 220);
+    
+    ui::ScrollView* scrollStore = ui::ScrollView::create();
+    scrollStore->setDirection(ui::ScrollView::Direction::HORIZONTAL);
+    scrollStore->setBounceEnabled(true);
+    scrollStore->setPosition(Vec2(-storeSize.width/2, -storeSize.height/2));
+    scrollStore->setContentSize(storeSize);
+    scrollStore->setScrollBarEnabled(false);
+    scrollStore->setName("scrollstore");
+    nodeStore->addChild(scrollStore);
+    
+    int storeWidth = products.size() * 240;
+    if(storeWidth < storeSize.width){
+        storeWidth = storeSize.width;
+    }
+    scrollStore->setInnerContainerSize(Size(storeWidth, storeSize.height));
     for (int i = 0; i < products.size(); i++) {
         int index = products[i].Description.find(' ');
         string strValue = products[i].Description.substr(0, index);
@@ -1303,7 +1319,7 @@ void MainScene::initPopupCharge()
         string strId = products[i].Id;
         
         ui::Button* btn = ui::Button::create("popup/box_shop.png");
-        btn->setPosition(Vec2(-240 + i * 240, -30));
+        btn->setPosition(Vec2(120 + i * 240, storeSize.height/2));
         btn->setContentSize(Size(182, 150));
         btn->setScale9Enabled(true);
         btn->setBright(false);
@@ -1312,7 +1328,7 @@ void MainScene::initPopupCharge()
             showWaiting(300);
             Utils::getSingleton().purchaseItem(strId);
         });
-        nodeStore->addChild(btn);
+        scrollStore->addChild(btn);
         
         Sprite* sp = Sprite::create("main/icon_charge.png");
         sp->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 + 15);
@@ -1347,13 +1363,13 @@ void MainScene::initPopupCharge()
         btnStore->setVisible(false);
         nodeCard->setVisible(false);
         nodeStore->setVisible(true);
-        for (int i = 0; i < products.size(); i++) {
-            nodeStore->getChildByTag(i)->setPositionY(0);
-        }
+        nodeStore->setPositionY(0);
         for(int i=1;i<=4;i++){
             popupCharge->getChildByName("btn" + to_string(i))->setVisible(false);
             popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(false);
         }
+    }else{
+        nodeStore->setPositionY(-30);
     }
 }
 
