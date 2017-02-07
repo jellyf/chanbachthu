@@ -500,5 +500,13 @@ void Utils::queryIAPProduct()
     }
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     IOSHelperCPlus::queryIAPProducts(ids);
+#else
+	std::vector<std::string> descs = { "21.000 ", "105.000 ", "210.000 " };
+	std::vector<double> prices = { 22000, 105000, 210000 };
+	for (int i = 0; i < ids.size(); i++) {
+		products[i].Price = prices[i];
+		products[i].Description = descs[i];
+		products[i].CurrencySymbol = "vnd";
+	}
 #endif
 }

@@ -1312,10 +1312,11 @@ void MainScene::initPopupCharge()
         storeWidth = storeSize.width;
     }
     scrollStore->setInnerContainerSize(Size(storeWidth, storeSize.height));
+	string strCurrency = " " + Utils::getSingleton().getStringForKey("vnd");
     for (int i = 0; i < products.size(); i++) {
         int index = products[i].Description.find(' ');
         string strValue = products[i].Description.substr(0, index);
-        string strCost = Utils::getSingleton().formatMoneyWithComma(products[i].Price) + " " + Utils::getSingleton().getStringForKey("vnd");
+        string strCost = Utils::getSingleton().formatMoneyWithComma(products[i].Price) + strCurrency;
         string strId = products[i].Id;
         
         ui::Button* btn = ui::Button::create("popup/box_shop.png");
@@ -1371,6 +1372,9 @@ void MainScene::initPopupCharge()
     }else{
         nodeStore->setPositionY(-30);
     }
+	if (CC_TARGET_PLATFORM != CC_PLATFORM_IOS) {
+		btnStore->setVisible(false);
+	}
 }
 
 void MainScene::initPopupGuide()
