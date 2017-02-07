@@ -169,7 +169,7 @@ private:
 	char noaction = 0;
 	int soundDealId = -1;
 	int waitAction = -1;
-	float cardSpeed = .5f;
+	float cardSpeed = .35f;
 	float cardScaleTable = .85f;
 	float cardScaleTableNew = .9f;
 	long sfsIdMe;
