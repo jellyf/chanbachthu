@@ -21,6 +21,9 @@ public:
 	virtual void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* _event);
 	virtual void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* _event);
 
+	void onApplicationDidEnterBackground();
+	void onApplicationWillEnterForeground();
+
 	void onPingPong(long timems);
 	void onUserDataMeResponse();
 	void onRankDataResponse(std::vector<std::vector<RankData>> list);
@@ -82,6 +85,7 @@ protected:
 	cocos2d::Label* lbName;
 	cocos2d::Label* lbId;
 	cocos2d::Label* lbLevel;
+	cocos2d::Label* lbNetwork;
 
 	cocos2d::Node* popupRank;
 	cocos2d::Node* popupMainSettings;

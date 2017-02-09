@@ -764,7 +764,6 @@ void GameScene::registerEventListenner()
 void GameScene::unregisterEventListenner()
 {
 	BaseScene::unregisterEventListenner();
-	EventHandler::getSingleton().onApplicationDidEnterBackground = NULL;
 	EventHandler::getSingleton().onConnected = NULL;
 	EventHandler::getSingleton().onConnectionFailed = NULL;
 	EventHandler::getSingleton().onConnectionLost = NULL;
@@ -967,6 +966,7 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 
 void GameScene::onApplicationDidEnterBackground()
 {
+	BaseScene::onApplicationDidEnterBackground();
 	if (state != NONE && state != READY && myServerSlot >= 0) {
 		string username = Utils::getSingleton().userDataMe.Name;
 		double timeSecs = Utils::getSingleton().getCurrentSystemTimeInSecs();

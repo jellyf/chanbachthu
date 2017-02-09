@@ -321,7 +321,7 @@ void SFSConnector::RequestLeaveRoom()
 
 void SFSConnector::EnableLagMonitor()
 {
-	//mSmartFox->EnableLagMonitor(true, 4);
+	//mSmartFox->EnableLagMonitor(true, 1);
 }
 
 void SFSConnector::ForceIPv6(bool value)

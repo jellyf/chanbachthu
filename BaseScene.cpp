@@ -101,16 +101,31 @@ void BaseScene::onEnter()
 	mLayer->addChild(spNetwork, constant::GAME_ZORDER_SPLASH - 1);
 	autoScaleNode(spNetwork);
 
-	DelayTime* delayCheckPing = DelayTime::create(4.5f);
+	lbNetwork = Label::create("0ms", "fonts/arial.ttf", 18);
+	lbNetwork->setColor(Color3B::GREEN);
+	lbNetwork->setAnchorPoint(Vec2(1, 0));
+	lbNetwork->setPosition(1115, 3);
+	lbNetwork->setVisible(false);
+	mLayer->addChild(lbNetwork, constant::GAME_ZORDER_SPLASH - 1);
+	autoScaleNode(lbNetwork);
+
+	DelayTime* delayCheckPing = DelayTime::create(1.1f);
 	CallFunc* funcCheckPing = CallFunc::create([=]() {
-		if (pingId == spNetwork->getTag()) {
-			spNetwork->initWithFile("wifi3.png");
-			spNetwork->setAnchorPoint(Vec2(1, 0));
+		/*if (pingId == spNetwork->getTag()) {
+			onPingPong(2000);
 		}
-		spNetwork->setTag(pingId);
+		spNetwork->setTag(pingId);*/
+
+		if (pingId == lbNetwork->getTag()) {
+			string str = lbNetwork->getString();
+			long numb = atol(str.substr(0, str.length() - 2).c_str());
+			onPingPong(numb + 1100);
+		}
+		lbNetwork->setTag(pingId);
 	});
 	Sequence* actionCheckPing = Sequence::createWithTwoActions(delayCheckPing, funcCheckPing);
-	spNetwork->runAction(RepeatForever::create(actionCheckPing));
+	//spNetwork->runAction(RepeatForever::create(actionCheckPing));
+	//lbNetwork->runAction(RepeatForever::create(actionCheckPing));
 
 	onInit();
 	registerEventListenner();
@@ -135,6 +150,8 @@ void BaseScene::update(float delta)
 
 void BaseScene::registerEventListenner()
 {
+	EventHandler::getSingleton().onApplicationDidEnterBackground = std::bind(&BaseScene::onApplicationDidEnterBackground, this);
+	EventHandler::getSingleton().onApplicationWillEnterForeground = std::bind(&BaseScene::onApplicationWillEnterForeground, this);
 	EventHandler::getSingleton().onPingPong = std::bind(&BaseScene::onPingPong, this, std::placeholders::_1);
 	EventHandler::getSingleton().onConnectionFailed = std::bind(&BaseScene::onConnectionFailed, this);
 	EventHandler::getSingleton().onUserDataMeSFSResponse = std::bind(&BaseScene::onUserDataMeResponse, this);
@@ -146,6 +163,8 @@ void BaseScene::registerEventListenner()
 
 void BaseScene::unregisterEventListenner()
 {
+	EventHandler::getSingleton().onApplicationDidEnterBackground = NULL;
+	EventHandler::getSingleton().onApplicationWillEnterForeground = NULL;
 	EventHandler::getSingleton().onPingPong = NULL;
 	EventHandler::getSingleton().onConnectionFailed = NULL;
 	EventHandler::getSingleton().onUserDataMeSFSResponse = NULL;
@@ -185,6 +204,18 @@ void BaseScene::onTouchEnded(Touch * touch, Event * _event)
 {
 	if (tmpIndex > -1)
 		CCLOG("%d %d, %d", tmpIndex, (int)tmps.at(tmpIndex)->getPosition().x, (int)tmps.at(tmpIndex)->getPosition().y);
+}
+
+void BaseScene::onApplicationDidEnterBackground()
+{
+	spNetwork->pause();
+	lbNetwork->pause();
+}
+
+void BaseScene::onApplicationWillEnterForeground()
+{
+	spNetwork->resume();
+	lbNetwork->resume();
 }
 
 void BaseScene::showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose)
@@ -1325,7 +1356,7 @@ void BaseScene::initPopupHistory()
 void BaseScene::onPingPong(long timems)
 {
 	pingId++;
-	if (timems < 150) {
+	/*if (timems < 150) {
 		spNetwork->initWithFile("wifi0.png");
 	} else if (timems < 500) {
 		spNetwork->initWithFile("wifi1.png");
@@ -1334,7 +1365,8 @@ void BaseScene::onPingPong(long timems)
 	} else {
 		spNetwork->initWithFile("wifi3.png");
 	}
-	spNetwork->setAnchorPoint(Vec2(1, 0));
+	spNetwork->setAnchorPoint(Vec2(1, 0));*/
+	lbNetwork->setString(to_string(timems) + "ms");
 }
 
 void BaseScene::onUserDataMeResponse()
