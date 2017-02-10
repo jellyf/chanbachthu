@@ -1504,7 +1504,7 @@ void GameScene::onConnectionLost(std::string reason)
 		reason = "overlap_login";
 	}
 	showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
-		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0 && myServerSlot >= 0) {
+		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0 && myServerSlot >= 0 && state != NONE && state != READY) {
 			isReconnecting = true;
 			Utils::getSingleton().reconnect();
 			showWaiting();
