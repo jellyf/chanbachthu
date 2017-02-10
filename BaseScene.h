@@ -31,13 +31,18 @@ public:
 	void onListEventDataResponse(std::vector<EventData> list);
 	void onPlayLogDataResponse(std::vector<PlayLogData> logs);
 protected:
+	virtual void onConnected();
 	virtual void onConnectionFailed();
+	virtual void onLoginZone();
+	virtual void onLoginZoneError(short int code, std::string msg);
+	virtual void onErrorResponse(unsigned char code, std::string msg);
 	virtual void initHeaderWithInfos();
 	virtual void onBackScene();
 	virtual void onChangeMoneyType(int type);
 	virtual void onKeyBack();
 	virtual void onKeyHome();
 
+	void handleClientDisconnectionReason(std::string reason);
 	void addTouchEventListener(cocos2d::ui::Button* btn, std::function<void()> func, bool isNew = true);
 	void hideSplash();
 	void hideWaiting();
@@ -68,6 +73,8 @@ protected:
 	cocos2d::Node* createPopupNotice();
 	cocos2d::Vec2 getScaleSmoothly(float scale);
 
+	bool isReconnecting = false;
+	bool isOverlapLogin = false;
 	bool hasHeader = false;
 	bool isWaiting = false;
 	int pingId = 0;

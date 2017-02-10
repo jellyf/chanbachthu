@@ -153,12 +153,16 @@ void BaseScene::registerEventListenner()
 	EventHandler::getSingleton().onApplicationDidEnterBackground = std::bind(&BaseScene::onApplicationDidEnterBackground, this);
 	EventHandler::getSingleton().onApplicationWillEnterForeground = std::bind(&BaseScene::onApplicationWillEnterForeground, this);
 	EventHandler::getSingleton().onPingPong = std::bind(&BaseScene::onPingPong, this, std::placeholders::_1);
+	EventHandler::getSingleton().onConnected = bind(&BaseScene::onConnected, this);
 	EventHandler::getSingleton().onConnectionFailed = std::bind(&BaseScene::onConnectionFailed, this);
+	EventHandler::getSingleton().onLoginZone = bind(&BaseScene::onLoginZone, this);
+	EventHandler::getSingleton().onLoginZoneError = bind(&BaseScene::onLoginZoneError, this, placeholders::_1, placeholders::_2);
 	EventHandler::getSingleton().onUserDataMeSFSResponse = std::bind(&BaseScene::onUserDataMeResponse, this);
 	EventHandler::getSingleton().onRankDataSFSResponse = std::bind(&BaseScene::onRankDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onRankWinDataSFSResponse = std::bind(&BaseScene::onRankWinDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onListEventDataSFSResponse = std::bind(&BaseScene::onListEventDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onPlayLogDataSFSResponse = bind(&BaseScene::onPlayLogDataResponse, this, placeholders::_1);
+	EventHandler::getSingleton().onErrorSFSResponse = bind(&BaseScene::onErrorResponse, this, placeholders::_1, placeholders::_2);
 }
 
 void BaseScene::unregisterEventListenner()
@@ -172,6 +176,7 @@ void BaseScene::unregisterEventListenner()
 	EventHandler::getSingleton().onRankWinDataSFSResponse = NULL;
 	EventHandler::getSingleton().onListEventDataSFSResponse = NULL;
 	EventHandler::getSingleton().onPlayLogDataSFSResponse = NULL;
+	EventHandler::getSingleton().onErrorSFSResponse = NULL;
 }
 
 bool BaseScene::onTouchBegan(Touch * touch, Event * _event)
@@ -554,6 +559,22 @@ void BaseScene::setMoneyType(int type)
 	//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), type == 1);
 }
 
+void BaseScene::handleClientDisconnectionReason(std::string reason)
+{
+	if (isOverlapLogin) {
+		reason = "overlap_login";
+	}
+	showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
+		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0) {
+			isReconnecting = true;
+			Utils::getSingleton().reconnect();
+			showWaiting();
+		} else {
+			Utils::getSingleton().goToLoginScene();
+		}
+	}, false);
+}
+
 void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> func, bool isNew)
 {
 	if (isNew) {
@@ -576,12 +597,43 @@ void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> fun
 	});
 }
 
+void BaseScene::onErrorResponse(unsigned char code, std::string msg)
+{
+	if (code == 38) {
+		isOverlapLogin = true;
+		return;
+	}
+}
+
+void BaseScene::onConnected()
+{
+	if (isReconnecting) {
+		Utils::getSingleton().reloginZone();
+	}
+}
+
 void BaseScene::onConnectionFailed()
 {
 	showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {
 		SFSRequest::getSingleton().Disconnect();
 		Utils::getSingleton().goToLoginScene();
 	}, false);
+}
+
+void BaseScene::onLoginZone()
+{
+	if (isReconnecting) {
+		isReconnecting = false;
+	}
+}
+
+void BaseScene::onLoginZoneError(short int code, std::string msg)
+{
+	if (isReconnecting) {
+		isReconnecting = false;
+		SFSRequest::getSingleton().Disconnect();
+		Utils::getSingleton().goToLoginScene();
+	}
 }
 
 void BaseScene::initHeaderWithInfos()

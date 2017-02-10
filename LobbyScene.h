@@ -10,12 +10,8 @@ public:
 	virtual void registerEventListenner();
 	virtual void unregisterEventListenner();
 
-	void onConnected();
-	void onLoginZone();
 	void onConfigZoneReceived();
 	void onConnectionLost(std::string reason);
-	void onLoginZoneError(short int code, std::string msg);
-	void onErrorSFSResponse(unsigned char code, std::string msg);
 	void onJoinRoom(long roomId, std::string roomName);
 	void onJoinRoomError(std::string msg);
 	void onInviteDataResponse(InviteData data);
@@ -23,8 +19,12 @@ public:
 	void onRoomTypeDataResponse(LobbyListRoomType data);
 	void onTableReconnectDataResponse(TableReconnectData data);
 protected:
+	virtual void onConnected();
+	virtual void onLoginZone();
+	virtual void onLoginZoneError(short int code, std::string msg);
 	virtual void onBackScene();
 	virtual void onChangeMoneyType(int type);
+	virtual void onErrorResponse(unsigned char code, std::string msg);
 
 	bool isBackToMain = false;
 	bool isChangeMoney = false;

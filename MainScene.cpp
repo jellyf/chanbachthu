@@ -236,11 +236,8 @@ void MainScene::onInit()
 void MainScene::registerEventListenner()
 {
 	BaseScene::registerEventListenner();
-	EventHandler::getSingleton().onConnected = std::bind(&MainScene::onConnected, this);
 	EventHandler::getSingleton().onConfigZoneReceived = std::bind(&MainScene::onConfigZoneReceived, this);
 	EventHandler::getSingleton().onConnectionLost = std::bind(&MainScene::onConnectionLost, this, std::placeholders::_1);
-	EventHandler::getSingleton().onLoginZoneError = std::bind(&MainScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
-	EventHandler::getSingleton().onErrorSFSResponse = std::bind(&MainScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
 	EventHandler::getSingleton().onJoinRoom = std::bind(&MainScene::onJoinRoom, this, std::placeholders::_1, std::placeholders::_2);
 	EventHandler::getSingleton().onJoinRoomError = std::bind(&MainScene::onJoinRoomError, this, std::placeholders::_1);
 	EventHandler::getSingleton().onLobbyTableSFSResponse = bind(&MainScene::onTableDataResponse, this, placeholders::_1);
@@ -257,11 +254,8 @@ void MainScene::registerEventListenner()
 void MainScene::unregisterEventListenner()
 {
 	BaseScene::unregisterEventListenner();
-	EventHandler::getSingleton().onConnected = NULL;
 	EventHandler::getSingleton().onConnectionLost = NULL;
 	EventHandler::getSingleton().onConfigZoneReceived = NULL;
-	EventHandler::getSingleton().onLoginZoneError = NULL;
-	EventHandler::getSingleton().onErrorSFSResponse = NULL;
 	EventHandler::getSingleton().onJoinRoom = NULL;
 	EventHandler::getSingleton().onJoinRoomError = NULL;
 	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
@@ -281,9 +275,12 @@ void MainScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
 
 void MainScene::onConnected()
 {
-	if (tmpZoneId == -1) return;
-	Utils::getSingleton().loginZoneByIndex(currentMoneyType, tmpZoneId);
-	tmpZoneId = -1;
+	BaseScene::onConnected();
+	if (isGoToLobby) {
+		if (tmpZoneId == -1) return;
+		Utils::getSingleton().loginZoneByIndex(currentMoneyType, tmpZoneId);
+		tmpZoneId = -1;
+	}
 }
 
 void MainScene::onConnectionLost(std::string reason)
@@ -292,9 +289,7 @@ void MainScene::onConnectionLost(std::string reason)
 	if (isGoToLobby && tmpZoneId >= 0) {
 		Utils::getSingleton().connectZoneByIndex(currentMoneyType, tmpZoneId);
 	} else {
-		showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
-			Utils::getSingleton().goToLoginScene();
-		}, false);
+		handleClientDisconnectionReason(reason);
 	}
 }
 
@@ -305,12 +300,17 @@ void MainScene::onConfigZoneReceived()
 
 void MainScene::onLoginZoneError(short int code, std::string msg)
 {
-	hideWaiting();
-	showPopupNotice(msg, [=]() {});
+	BaseScene::onLoginZoneError(code, msg);
+	if (isGoToLobby) {
+		isGoToLobby = false;
+		hideWaiting();
+		showPopupNotice(msg, [=]() {});
+	}
 }
 
 void MainScene::onErrorResponse(unsigned char code, std::string msg)
 {
+	BaseScene::onErrorResponse(code, msg);
 	hideWaiting();
 	if (code == 0 && popupShop->isVisible()) {
 		showPopupNotice(msg, [=]() {
@@ -320,13 +320,6 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 			string content = str.substr(0, index);
 			content = Utils::getSingleton().replaceString(content, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 			Utils::getSingleton().openSMS(number, content);
-		}, false);
-		return;
-	}
-	if (code == 38) {
-		showPopupNotice(msg, [=]() {
-			SFSRequest::getSingleton().Disconnect();
-			Utils::getSingleton().goToLoginScene();
 		}, false);
 		return;
 	}
@@ -351,8 +344,11 @@ void MainScene::onJoinRoomError(std::string msg)
 
 void MainScene::onTableDataResponse(LobbyListTable data)
 {
+	hideWaiting();
 	Utils::getSingleton().moneyType = currentMoneyType;
-	Utils::getSingleton().goToLobbyScene();
+	if (isGoToLobby) {
+		Utils::getSingleton().goToLobbyScene();
+	}
 }
 
 void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)

@@ -25,12 +25,10 @@ public:
 
 	void onApplicationDidEnterBackground();
 
-	void onConnected();
 	void onConnectionFailed();
 	void onConnectionLost(std::string reason);
 	void onUserDataResponse(UserData data);
 	void onUserExitRoom(long sfsUId);
-	void onErrorResponse(unsigned char code, std::string msg);
 	void onPublicMessage(long uid, std::string msg);
 	void onRoomDataResponse(RoomData roomData);
 	void onRoomDataGaResponse(bool isGa, double gaMoney);
@@ -56,8 +54,10 @@ public:
 	void onGameSpectatorDataResponse(std::vector<PlayerData> spectators);
 	void onGameMyReconnectDataResponse(GameReconnectData data);
 	void onGameUserReconnectDataResponse(std::vector<UserReconnectData> list);
+	void onLobbyListTableResponse(LobbyListTable data);
 protected:
 	virtual void onKeyHome();
+	virtual void onErrorResponse(unsigned char code, std::string msg);
 private:
 	void initChatTable();
 	void initCrestTable();
@@ -175,13 +175,12 @@ private:
 	float cardScaleTableNew = .9f;
 	long sfsIdMe;
 	bool isBatBao;
-	bool isOverlapLogin = false;
 	bool hasClickInvite = false;
 	bool hasRegisterOut = false;
-	bool isReconnecting = false;
 	bool isKickForNotReady = false;
 	bool isPause = false;
 	bool isU411 = false;
+	bool mustGoToLobby = false;
 	GameState state;
 	StartGameData startGameData;
 	CardHandData myCardHand;

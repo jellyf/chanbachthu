@@ -157,7 +157,7 @@ void GameScene::onInit()
 		if (state == NONE || state == READY || myServerSlot < 0) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
-			experimental::AudioEngine::uncacheAll();
+			experimental::AudioEngine::stopAll();
 		} else {
 			hasRegisterOut = !hasRegisterOut;
 			showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
@@ -730,6 +730,8 @@ void GameScene::registerEventListenner()
 	EventHandler::getSingleton().onConnected = std::bind(&GameScene::onConnected, this);
 	EventHandler::getSingleton().onConnectionFailed = std::bind(&GameScene::onConnectionFailed, this);
 	EventHandler::getSingleton().onConnectionLost = std::bind(&GameScene::onConnectionLost, this, std::placeholders::_1);
+	EventHandler::getSingleton().onLoginZone = bind(&GameScene::onLoginZone, this);
+	EventHandler::getSingleton().onLoginZoneError = bind(&GameScene::onLoginZoneError, this, placeholders::_1, placeholders::_2);
 	EventHandler::getSingleton().onUserDataSFSResponse = std::bind(&GameScene::onUserDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onUserExitRoom = std::bind(&GameScene::onUserExitRoom, this, std::placeholders::_1);
 	EventHandler::getSingleton().onErrorSFSResponse = std::bind(&GameScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
@@ -758,6 +760,7 @@ void GameScene::registerEventListenner()
 	EventHandler::getSingleton().onGameSpectatorDataSFSResponse = std::bind(&GameScene::onGameSpectatorDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onGameMyReconnectDataSFSResponse = std::bind(&GameScene::onGameMyReconnectDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onGameUserReconnectDataSFSResponse = std::bind(&GameScene::onGameUserReconnectDataResponse, this, std::placeholders::_1);
+	EventHandler::getSingleton().onLobbyTableSFSResponse = std::bind(&GameScene::onLobbyListTableResponse, this, std::placeholders::_1);
 }
 
 void GameScene::unregisterEventListenner()
@@ -794,6 +797,7 @@ void GameScene::unregisterEventListenner()
 	EventHandler::getSingleton().onGameSpectatorDataSFSResponse = NULL;
 	EventHandler::getSingleton().onGameMyReconnectDataSFSResponse = NULL;
 	EventHandler::getSingleton().onGameUserReconnectDataSFSResponse = NULL;
+	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
 }
 
 void GameScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
@@ -1485,35 +1489,19 @@ int GameScene::getCardName(unsigned char cardId)
 	return (cardId / 3 + 1) * 10 + cardId % 3 + 1;
 }
 
-void GameScene::onConnected()
-{
-	Utils::getSingleton().reloginZone();
-}
-
 void GameScene::onConnectionFailed()
 {
 	SFSRequest::getSingleton().Disconnect();
 	Utils::getSingleton().goToLoginScene();
-	experimental::AudioEngine::uncacheAll();
+	experimental::AudioEngine::stopAll();
 }
 
 void GameScene::onConnectionLost(std::string reason)
 {
+	experimental::AudioEngine::stopAll();
+	mustGoToLobby = myServerSlot < 0 || state == NONE || state == READY;
 	btnBack->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
-	if (isOverlapLogin) {
-		reason = "overlap_login";
-	}
-	showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
-		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0 && myServerSlot >= 0 && state != NONE && state != READY) {
-			isReconnecting = true;
-			Utils::getSingleton().reconnect();
-			showWaiting();
-		} else {
-			SFSRequest::getSingleton().Disconnect();
-			Utils::getSingleton().goToLoginScene();
-			experimental::AudioEngine::uncacheAll();
-		}
-	}, false);
+	handleClientDisconnectionReason(reason);
 }
 
 void GameScene::onUserDataResponse(UserData data)
@@ -1539,7 +1527,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 				Utils::getSingleton().goToLobbyScene();
 			}, false);
 		}
-		experimental::AudioEngine::uncacheAll();
+		experimental::AudioEngine::stopAll();
 		return;
 	}
 	int index = userIndexs[sfsUId];
@@ -1557,10 +1545,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 
 void GameScene::onErrorResponse(unsigned char code, std::string msg)
 {
-	if (code == 38) {
-		isOverlapLogin = true;
-		return;
-	}
+	BaseScene::onErrorResponse(code, msg);
 	if (code == 31 || code == 30 || code == 29) {
 		showSystemNotice(msg);
 		return;
@@ -1592,13 +1577,13 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		if (hasRegisterOut) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
-			experimental::AudioEngine::uncacheAll();
+			experimental::AudioEngine::stopAll();
 		} else {
 			unregisterEventListenner();
 			showPopupNotice(Utils::getSingleton().getStringForKey("bi_day_ra_vi_khong_thao_tac"), [=]() {
 				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 				Utils::getSingleton().goToLobbyScene();
-				experimental::AudioEngine::uncacheAll();
+				experimental::AudioEngine::stopAll();
 			}, false);
 		}
 		return;
@@ -3008,6 +2993,13 @@ void GameScene::onGameUserReconnectDataResponse(std::vector<UserReconnectData> l
 				player.Info.SfsUserId = list[i].SfsUserId;
 			}
 		}
+	}
+}
+
+void GameScene::onLobbyListTableResponse(LobbyListTable data)
+{
+	if (mustGoToLobby) {
+		Utils::getSingleton().goToLobbyScene();
 	}
 }
 

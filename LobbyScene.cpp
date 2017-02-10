@@ -89,12 +89,8 @@ void LobbyScene::onInit()
 void LobbyScene::registerEventListenner()
 {
 	BaseScene::registerEventListenner();
-	EventHandler::getSingleton().onConnected = bind(&LobbyScene::onConnected, this);
-	EventHandler::getSingleton().onLoginZone = bind(&LobbyScene::onLoginZone, this);
 	EventHandler::getSingleton().onConfigZoneReceived = bind(&LobbyScene::onConfigZoneReceived, this);
 	EventHandler::getSingleton().onConnectionLost = bind(&LobbyScene::onConnectionLost, this, placeholders::_1);
-	EventHandler::getSingleton().onLoginZoneError = bind(&LobbyScene::onLoginZoneError, this, placeholders::_1, placeholders::_2);
-	EventHandler::getSingleton().onErrorSFSResponse = bind(&LobbyScene::onErrorSFSResponse, this, placeholders::_1, placeholders::_2);
 	EventHandler::getSingleton().onJoinRoom = bind(&LobbyScene::onJoinRoom, this, placeholders::_1, placeholders::_2);
 	EventHandler::getSingleton().onJoinRoomError = bind(&LobbyScene::onJoinRoomError, this, placeholders::_1);
 	EventHandler::getSingleton().onLobbyTableSFSResponse = bind(&LobbyScene::onTableDataResponse, this, placeholders::_1);
@@ -106,12 +102,8 @@ void LobbyScene::registerEventListenner()
 void LobbyScene::unregisterEventListenner()
 {
 	BaseScene::unregisterEventListenner();
-	EventHandler::getSingleton().onConnected = NULL;
 	EventHandler::getSingleton().onConnectionLost = NULL;
-	EventHandler::getSingleton().onLoginZone = NULL;
 	EventHandler::getSingleton().onConfigZoneReceived = NULL;
-	EventHandler::getSingleton().onLoginZoneError = NULL;
-	EventHandler::getSingleton().onErrorSFSResponse = NULL;
 	EventHandler::getSingleton().onJoinRoom = NULL;
 	EventHandler::getSingleton().onJoinRoomError = NULL;
 	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
@@ -122,19 +114,21 @@ void LobbyScene::unregisterEventListenner()
 
 void LobbyScene::onConnected()
 {
+	BaseScene::onConnected();
 	if (isBackToMain) {
 		/*CCLOG("logintype: %d");
 		CCLOG("UserName: %s", Utils::getSingleton().username.c_str());
 		if (Utils::getSingleton().loginType == constant::LOGIN_FACEBOOK) {
-			SFSRequest::getSingleton().LoginZone(Utils::getSingleton().username, "", Utils::getSingleton().gameConfig.zone);
+		SFSRequest::getSingleton().LoginZone(Utils::getSingleton().username, "", Utils::getSingleton().gameConfig.zone);
 		} else {
-			SFSRequest::getSingleton().LoginZone("", "g", Utils::getSingleton().gameConfig.zone);
+		SFSRequest::getSingleton().LoginZone("", "g", Utils::getSingleton().gameConfig.zone);
 		}
 		return;*/
+	} else if (isChangeMoney) {
+		Utils::getSingleton().currentZoneName = tmpZoneName;
+		SFSRequest::getSingleton().LoginZone(Utils::getSingleton().username, Utils::getSingleton().password, tmpZoneName);
+		tmpZoneName = "";
 	}
-	Utils::getSingleton().currentZoneName = tmpZoneName;
-	SFSRequest::getSingleton().LoginZone(Utils::getSingleton().username, Utils::getSingleton().password, tmpZoneName);
-	tmpZoneName = "";
 }
 
 void LobbyScene::onConnectionLost(std::string reason)
@@ -161,14 +155,13 @@ void LobbyScene::onConnectionLost(std::string reason)
 			}
 		}
 	} else {
-		showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
-			Utils::getSingleton().goToLoginScene();
-		}, false);
+		handleClientDisconnectionReason(reason);
 	}
 }
 
 void LobbyScene::onLoginZone()
 {
+	BaseScene::onLoginZone();
 	if (isBackToMain) {
 		SFSRequest::getSingleton().RequestLogin(Utils::getSingleton().username, Utils::getSingleton().password);
 	}
@@ -185,25 +178,22 @@ void LobbyScene::onConfigZoneReceived()
 
 void LobbyScene::onLoginZoneError(short int code, std::string msg)
 {
-	hideWaiting();
-	if (msg.length() == 0) return;
-	showPopupNotice(msg, [=]() {});
-	if(code == 28) setMoneyType(1 - currentMoneyType);
+	BaseScene::onLoginZoneError(code, msg);
+	if (isChangeMoney) {
+		hideWaiting();
+		if (msg.length() == 0) return;
+		showPopupNotice(msg, [=]() {});
+		if (code == 28) setMoneyType(1 - currentMoneyType);
+	}
 }
 
-void LobbyScene::onErrorSFSResponse(unsigned char code, std::string msg)
+void LobbyScene::onErrorResponse(unsigned char code, std::string msg)
 {
+	BaseScene::onErrorResponse(code, msg);
 	if (code != 48) hideWaiting();
 	if (isChangeMoney && code == 0) {
 		setMoneyType(1 - currentMoneyType);
 		onChangeMoneyType(1 - currentMoneyType);
-		return;
-	}
-	if (code == 38) {
-		showPopupNotice(msg, [=]() {
-			SFSRequest::getSingleton().Disconnect();
-			Utils::getSingleton().goToLoginScene();
-		}, false);
 		return;
 	}
 	if (msg.length() == 0) return;

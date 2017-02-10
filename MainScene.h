@@ -11,11 +11,8 @@ public:
 	virtual void unregisterEventListenner();
 	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
 
-	void onConnected();
 	void onConfigZoneReceived();
 	void onConnectionLost(std::string reason);
-	void onLoginZoneError(short int code, std::string msg);
-	void onErrorResponse(unsigned char code, std::string msg);
 	void onJoinRoom(long roomId, std::string roomName);
 	void onJoinRoomError(std::string msg);
 	void onTableDataResponse(LobbyListTable data);
@@ -28,8 +25,11 @@ public:
 	void onNewsDataResponse(std::vector<NewsData> list);
     void onPurchaseSuccess(std::string token);
 protected:
+	virtual void onConnected();
+	virtual void onLoginZoneError(short int code, std::string msg);
 	virtual void onBackScene();
 	virtual void onChangeMoneyType(int type);
+	virtual void onErrorResponse(unsigned char code, std::string msg);
 private:
 	void initPopupCharge();
 	void initPopupGuide();
