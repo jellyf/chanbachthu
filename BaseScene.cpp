@@ -94,10 +94,11 @@ void BaseScene::onEnter()
 
 	initPopupUserInfo();
 
-	spNetwork = Sprite::create("wifi3.png");
-	spNetwork->setAnchorPoint(Vec2(1, 0));
-	spNetwork->setPosition(1115, 5);
-	spNetwork->setVisible(false);
+	spNetwork = Sprite::create("wifi0.png");
+	//spNetwork->setAnchorPoint(Vec2(1, 0));
+	//spNetwork->setPosition(1115, 5);
+	spNetwork->setPosition(570, 650);
+	//spNetwork->setVisible(false);
 	mLayer->addChild(spNetwork, constant::GAME_ZORDER_SPLASH - 1);
 	autoScaleNode(spNetwork);
 
@@ -109,22 +110,22 @@ void BaseScene::onEnter()
 	mLayer->addChild(lbNetwork, constant::GAME_ZORDER_SPLASH - 1);
 	autoScaleNode(lbNetwork);
 
-	DelayTime* delayCheckPing = DelayTime::create(1.1f);
+	DelayTime* delayCheckPing = DelayTime::create(3.5f);
 	CallFunc* funcCheckPing = CallFunc::create([=]() {
-		/*if (pingId == spNetwork->getTag()) {
+		if (pingId == spNetwork->getTag()) {
 			onPingPong(2000);
 		}
-		spNetwork->setTag(pingId);*/
+		spNetwork->setTag(pingId);
 
-		if (pingId == lbNetwork->getTag()) {
+		/*if (pingId == lbNetwork->getTag()) {
 			string str = lbNetwork->getString();
 			long numb = atol(str.substr(0, str.length() - 2).c_str());
 			onPingPong(numb + 1100);
 		}
-		lbNetwork->setTag(pingId);
+		lbNetwork->setTag(pingId);*/
 	});
 	Sequence* actionCheckPing = Sequence::createWithTwoActions(delayCheckPing, funcCheckPing);
-	//spNetwork->runAction(RepeatForever::create(actionCheckPing));
+	spNetwork->runAction(RepeatForever::create(actionCheckPing));
 	//lbNetwork->runAction(RepeatForever::create(actionCheckPing));
 
 	onInit();
@@ -643,20 +644,20 @@ void BaseScene::initHeaderWithInfos()
 
 	std::vector<Vec2> vecPos;
 	vecPos.push_back(Vec2(62, 650));
+	vecPos.push_back(Vec2(330, 650));
+	vecPos.push_back(Vec2(430, 650));
+	vecPos.push_back(Vec2(165, 650));
 	vecPos.push_back(Vec2(360, 650));
-	vecPos.push_back(Vec2(460, 650));
-	vecPos.push_back(Vec2(195, 650));
-	vecPos.push_back(Vec2(390, 650));
-	vecPos.push_back(Vec2(695, 650));
-	vecPos.push_back(Vec2(791, 650));
+	vecPos.push_back(Vec2(720, 650));
+	vecPos.push_back(Vec2(808, 650));
 	vecPos.push_back(Vec2(904, 650));
-	vecPos.push_back(Vec2(220, 650));
-	vecPos.push_back(Vec2(416, 650));
+	vecPos.push_back(Vec2(190, 650));
+	vecPos.push_back(Vec2(386, 650));
 	vecPos.push_back(Vec2(954, 675));
 	vecPos.push_back(Vec2(953, 647));
 	vecPos.push_back(Vec2(953, 624));
 	vecPos.push_back(Vec2(560, 590));
-	vecPos.push_back(Vec2(600, 650));
+	vecPos.push_back(Vec2(640, 650));
 
 	ui::Button* btnBack = ui::Button::create("main/back.png");
 	btnBack->setPosition(vecPos[0]);
@@ -1408,7 +1409,7 @@ void BaseScene::initPopupHistory()
 void BaseScene::onPingPong(long timems)
 {
 	pingId++;
-	/*if (timems < 150) {
+	if (timems < 150) {
 		spNetwork->initWithFile("wifi0.png");
 	} else if (timems < 500) {
 		spNetwork->initWithFile("wifi1.png");
@@ -1417,8 +1418,8 @@ void BaseScene::onPingPong(long timems)
 	} else {
 		spNetwork->initWithFile("wifi3.png");
 	}
-	spNetwork->setAnchorPoint(Vec2(1, 0));*/
-	lbNetwork->setString(to_string(timems) + "ms");
+	//spNetwork->setAnchorPoint(Vec2(1, 0));
+	//lbNetwork->setString(to_string(timems) + "ms");
 }
 
 void BaseScene::onUserDataMeResponse()

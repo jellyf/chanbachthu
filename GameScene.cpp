@@ -229,7 +229,7 @@ void GameScene::onInit()
 	autoScaleNode(btnChat);
 
 	iconGa = Sprite::create("board/btn_ga_on.png");
-	iconGa->setPosition(topRight + getScaleSceneDistance(Vec2(-240, -50)));// 880, 650);
+	iconGa->setPosition(topRight + getScaleSceneDistance(Vec2(-245, -50)));// 880, 650);
 	mLayer->addChild(iconGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(iconGa);
 
@@ -237,6 +237,8 @@ void GameScene::onInit()
 	lbMoneyGa->setPosition(topRight + getScaleSceneDistance(Vec2(-240, -90)));// 880, 610);
 	mLayer->addChild(lbMoneyGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(lbMoneyGa);
+
+	spNetwork->setPosition(topRight + getScaleSceneDistance(Vec2(-325, -50)));
 
 	btnReady = ui::Button::create("board/btn.png", "board/btn_clicked.png");
 	btnReady->setPosition(Vec2(560, 350));

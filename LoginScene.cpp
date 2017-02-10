@@ -158,6 +158,8 @@ void LoginScene::onInit()
 	mLayer->addChild(labelVersion);
 	autoScaleNode(labelVersion);
 
+	spNetwork->setPosition(1080, 660);
+
 	std::string lastUsername = UserDefault::getInstance()->getStringForKey(constant::KEY_USERNAME.c_str());
 	std::string lastPassword = UserDefault::getInstance()->getStringForKey(constant::KEY_PASSWORD.c_str());
 	tfUsername->setText(lastUsername.c_str());
