@@ -180,6 +180,7 @@ private:
 	bool isReconnecting = false;
 	bool isKickForNotReady = false;
 	bool isPause = false;
+	bool isU411 = false;
 	GameState state;
 	StartGameData startGameData;
 	CardHandData myCardHand;

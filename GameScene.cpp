@@ -2003,14 +2003,16 @@ void GameScene::onUserBash(BashData data)
 	}
 	if (!isBatBao) {
 		if (data.CanPenetWin) {
-			noaction++;
-			beatenNodeAndHide(btnWin, 1.1f, .9f, .7f, 10);
-			btnDropWin->setVisible(true);
-			delayFunction(btnDropWin, 10, [=]() {
-				btnDropWin->setVisible(false);
-			});
-			if (data.TurnId == sfsIdMe) {
-				waitAction = constant::GAME_ACTION_BASH;
+			if (isU411) {
+				noaction++;
+				beatenNodeAndHide(btnWin, 1.1f, .9f, .7f, 10);
+				btnDropWin->setVisible(true);
+				delayFunction(btnDropWin, 10, [=]() {
+					btnDropWin->setVisible(false);
+				});
+				if (data.TurnId == sfsIdMe) {
+					waitAction = constant::GAME_ACTION_BASH;
+				}
 			}
 		} else if (data.CanPenet) {
 			beatenNodeAndHide(btnPenet, 1.2f, 1, .7f, 7);
@@ -2114,17 +2116,19 @@ void GameScene::onUserBashBack(BashBackData data)
 	}
 	if (!isBatBao) {
 		if (data.CanPenetWin) {
-			noaction++;
-			beatenNodeAndHide(btnWin, 1.1f, .9f, .7f, 10);
-			btnDropWin->setVisible(true);
-			delayFunction(btnDropWin, 10, [=]() {
-				btnDropWin->setVisible(false);
-			});
-			if (data.TurnId == sfsIdMe) {
-				if (data.IsPicked) {
-					waitAction = constant::GAME_ACTION_PICK;
-				} else {
-					waitAction = constant::GAME_ACTION_BASH;
+			if (isU411) {
+				noaction++;
+				beatenNodeAndHide(btnWin, 1.1f, .9f, .7f, 10);
+				btnDropWin->setVisible(true);
+				delayFunction(btnDropWin, 10, [=]() {
+					btnDropWin->setVisible(false);
+				});
+				if (data.TurnId == sfsIdMe) {
+					if (data.IsPicked) {
+						waitAction = constant::GAME_ACTION_PICK;
+					} else {
+						waitAction = constant::GAME_ACTION_BASH;
+					}
 				}
 			}
 		} else if (data.CanPenet) {
@@ -2320,14 +2324,16 @@ void GameScene::onUserPick(PickData data)
 	}
 	if (!isBatBao) {
 		if (data.CanWin) {
-			noaction++;
-			beatenNodeAndHide(btnWin, 1.1f, .9f, .7f, 10);
-			btnDropWin->setVisible(true);
-			delayFunction(btnDropWin, 10, [=]() {
-				btnDropWin->setVisible(false);
-			});
-			if (data.TurnId == sfsIdMe) {
-				waitAction = constant::GAME_ACTION_PICK;
+			if (isU411) {
+				noaction++;
+				beatenNodeAndHide(btnWin, 1.1f, .9f, .7f, 10);
+				btnDropWin->setVisible(true);
+				delayFunction(btnDropWin, 10, [=]() {
+					btnDropWin->setVisible(false);
+				});
+				if (data.TurnId == sfsIdMe) {
+					waitAction = constant::GAME_ACTION_PICK;
+				}
 			}
 		} else if (data.CanPenet) {
 			beatenNodeAndHide(btnPenet, 1.2f, 1, .7f, 7);
@@ -2683,6 +2689,7 @@ void GameScene::onUserReadyResponse(long UiD, bool isReady)
 void GameScene::onTableResponse(GameTableData data)
 {
 	timeTurn = data.Time;
+	isU411 = data.IsU411;
 	string roomName = Utils::getSingleton().currentRoomName;
 	string tableId = roomName.substr(roomName.find_last_of("b") + 1, roomName.length()).c_str();
 
