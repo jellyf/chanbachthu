@@ -118,6 +118,7 @@ private:
 	cocos2d::Layer* playLayer;
 	cocos2d::Layer* endLayer;
 	cocos2d::ProgressTimer* progressTimer;
+	cocos2d::ui::Button* btnBack;
 	cocos2d::ui::Button* btnReady;
 	cocos2d::ui::Button* btnCancelReady;
 	cocos2d::ui::Button* btnBash;

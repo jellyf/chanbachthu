@@ -151,10 +151,9 @@ void GameScene::onInit()
 	endLayer->setPositionY(700 * (scaleScene.x - 1) / 4);
 
 	Vec2 topLeft = Vec2(0, winSize.height);
-	ui::Button* btnBack = ui::Button::create("board/btn_back.png", "board/btn_back_clicked.png");
+	btnBack = ui::Button::create("board/btn_back.png", "board/btn_back_clicked.png");
 	btnBack->setPosition(topLeft + getScaleSceneDistance(Vec2(50, -50)));
 	addTouchEventListener(btnBack, [=]() {
-		if (gameSplash->isVisible()) return;
 		if (state == NONE || state == READY || myServerSlot < 0) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
@@ -164,7 +163,7 @@ void GameScene::onInit()
 			showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
 		}
 	});
-	mLayer->addChild(btnBack, constant::GAME_ZORDER_BUTTON);
+	mLayer->addChild(btnBack, constant::ZORDER_POPUP + 100);
 	autoScaleNode(btnBack);
 
 	Vec2 topRight = Vec2(winSize.width, winSize.height);
@@ -1500,6 +1499,7 @@ void GameScene::onConnectionFailed()
 
 void GameScene::onConnectionLost(std::string reason)
 {
+	btnBack->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
 	if (isOverlapLogin) {
 		reason = "overlap_login";
 	}
@@ -1524,6 +1524,7 @@ void GameScene::onUserDataResponse(UserData data)
 void GameScene::onUserExitRoom(long sfsUId)
 {
 	if (sfsUId == sfsIdMe) {
+		btnBack->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
 		if (isKickForNotReady) {
 			showPopupNotice(Utils::getSingleton().getStringForKey("bi_thoat_do_khong_san_sang"), [=]() {
 				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
