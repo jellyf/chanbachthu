@@ -163,7 +163,7 @@ void GameScene::onInit()
 			showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
 		}
 	});
-	mLayer->addChild(btnBack, constant::ZORDER_POPUP + 100);
+	mLayer->addChild(btnBack, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnBack);
 
 	Vec2 topRight = Vec2(winSize.width, winSize.height);
@@ -1681,6 +1681,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	gameSplash->setVisible(false);
 	progressTimer->stopAllActions();
 	progressTimer->setVisible(false);
+	btnBack->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
 	spHandCards.clear();
 	chosenCuocs.clear();
 	chosenCuocNumbs.clear();
@@ -2586,10 +2587,12 @@ void GameScene::onEndMatch(EndMatchData data)
 	btnDropWin->stopAllActions();
 	btnPenet->stopAllActions();
     btnDropPenet->stopAllActions();
-	runTimeWaiting(data.WinId, timeTurn);
+	runTimeWaiting(data.WinId, 40);
 	showWinnerCards();
 	if (data.WinId == sfsIdMe) {
 		tableCrest->setVisible(true);
+	} else {
+		btnBack->setLocalZOrder(constant::ZORDER_POPUP);
 	}
 	playSoundAction(data.SoundId);
 }
@@ -2614,8 +2617,8 @@ void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 	btnDropWin->setVisible(false);
 	btnPenet->setVisible(false);
     btnDropPenet->setVisible(false);
-	lbCardNoc->getParent()->getChildByName("spcardnoc")->setVisible(false);
-	lbCardNoc->setString("");
+	//lbCardNoc->getParent()->getChildByName("spcardnoc")->setVisible(false);
+	//lbCardNoc->setString("");
 	btnWin->stopAllActions();
 	btnDropWin->stopAllActions();
 	btnPenet->stopAllActions();
@@ -2633,9 +2636,9 @@ void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 
 	DelayTime* delay = DelayTime::create(3);
 	CallFunc* func = CallFunc::create([=]() {
-		lbCardNoc->getParent()->setVisible(false);
-		lbCardNoc->getParent()->getChildByName("spcardnoc")->setVisible(true);
-		gameSplash->setVisible(true);
+		//lbCardNoc->getParent()->setVisible(false);
+		//lbCardNoc->getParent()->getChildByName("spcardnoc")->setVisible(true);
+		/*gameSplash->setVisible(true);
 		for (Sprite* sp : spCards) {
 			sp->setVisible(false);
 		}
@@ -2644,7 +2647,8 @@ void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 		lbDiem->setString(Utils::getSingleton().getStringForKey("tie"));
 		lbCuocSai->setString("");
 		lbNoted->setString("");
-		lbNotedGa->setString("");
+		lbNotedGa->setString("");*/
+		showSystemNotice(Utils::getSingleton().getStringForKey("van_nay_hoa_roi"));
 	});
 	runAction(Sequence::create(delay, func, nullptr));
 }
