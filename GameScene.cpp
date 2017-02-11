@@ -1258,8 +1258,14 @@ void GameScene::updateCardHand(CardHandData data)
 			if (atoi(spHandCards[changedCards[i]]->getName().c_str()) % 1000 == ids[indexs[j]]) {
 				spHandCards[changedCards[i]]->setName(to_string(groups[indexs[j]] + ids[indexs[j]]));
 				spHandCards[changedCards[i]]->setLocalZOrder(constant::GAME_ZORDER_HAND_CARD + indexs[j]);
-				RotateTo* rotate = RotateTo::create(.5f, rots[indexs[j]]);
-				spHandCards[changedCards[i]]->runAction(rotate);
+				if (rots[indexs[j]] - spHandCards[changedCards[i]]->getRotation() < 180) {
+					RotateTo* rotate = RotateTo::create(.5f, rots[indexs[j]]);
+					spHandCards[changedCards[i]]->runAction(rotate);
+				} else {
+					RotateBy* rotate = RotateBy::create(.5f, rots[indexs[j]] - spHandCards[changedCards[i]]->getRotation());
+					spHandCards[changedCards[i]]->stopAllActions();
+					spHandCards[changedCards[i]]->runAction(rotate);
+				}
 				break;
 			}
 		}
