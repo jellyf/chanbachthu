@@ -68,7 +68,8 @@ void MainScene::onInit()
     if(paymentEnabled){
         btnCharge->setPosition(vecPos[2]);
     }else{
-        btnCharge->setPosition(vecPos[3]);
+		btnCharge->setPosition(vecPos[3]);
+		btnCharge->setVisible(CC_TARGET_PLATFORM == CC_PLATFORM_IOS);
     }
 
 	ui::Button* btnShop = ui::Button::create("main/icon_shop.png");
