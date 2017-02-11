@@ -2636,11 +2636,11 @@ void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 		sp->setPosition(pos.x / scaleScene.y, pos.y / scaleScene.x);
 	}
 
-	DelayTime* delay = DelayTime::create(3);
+	/*DelayTime* delay = DelayTime::create(3);
 	CallFunc* func = CallFunc::create([=]() {
-		//lbCardNoc->getParent()->setVisible(false);
-		//lbCardNoc->getParent()->getChildByName("spcardnoc")->setVisible(true);
-		/*gameSplash->setVisible(true);
+		lbCardNoc->getParent()->setVisible(false);
+		lbCardNoc->getParent()->getChildByName("spcardnoc")->setVisible(true);
+		gameSplash->setVisible(true);
 		for (Sprite* sp : spCards) {
 			sp->setVisible(false);
 		}
@@ -2649,10 +2649,10 @@ void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 		lbDiem->setString(Utils::getSingleton().getStringForKey("tie"));
 		lbCuocSai->setString("");
 		lbNoted->setString("");
-		lbNotedGa->setString("");*/
-		showSystemNotice(Utils::getSingleton().getStringForKey("van_nay_hoa_roi"));
+		lbNotedGa->setString("");
 	});
-	runAction(Sequence::create(delay, func, nullptr));
+	runAction(Sequence::create(delay, func, nullptr));*/
+	showSystemNotice(Utils::getSingleton().getStringForKey("van_nay_hoa_roi"));
 }
 
 void GameScene::onPunishResponse(long UiD, std::string msg)
