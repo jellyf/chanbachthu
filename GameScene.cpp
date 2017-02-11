@@ -1680,6 +1680,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	tableCrest->setVisible(false);
 	tableEndMatch->setVisible(false);
 	lbCardNoc->getParent()->setVisible(false);
+	lbCardNoc->getParent()->getChildByName("spcardnoc")->setVisible(true);
 	gameSplash->setVisible(false);
 	progressTimer->stopAllActions();
 	progressTimer->setVisible(false);
@@ -2619,8 +2620,8 @@ void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 	btnDropWin->setVisible(false);
 	btnPenet->setVisible(false);
     btnDropPenet->setVisible(false);
-	//lbCardNoc->getParent()->getChildByName("spcardnoc")->setVisible(false);
-	//lbCardNoc->setString("");
+	lbCardNoc->getParent()->getChildByName("spcardnoc")->setVisible(false);
+	lbCardNoc->setString("");
 	btnWin->stopAllActions();
 	btnDropWin->stopAllActions();
 	btnPenet->stopAllActions();
