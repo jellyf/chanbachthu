@@ -768,6 +768,9 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 	}
 	scrollTitle->setInnerContainerSize(Size(scrollTitle->getContentSize().width, heightTitle));
 	for (int i = 0; i < list.size(); i++) {
+		string strTitle = list[i].Title.length() < 24 ? list[i].Title : list[i].Title.substr(0, 23);
+		int indexTitle = strTitle.find_last_of(' ');
+		strTitle = strTitle.substr(0, indexTitle);
 		ui::Button* btn = (ui::Button*) scrollTitle->getChildByTag(i);
 		bool isNewBtn;
 		if (btn == nullptr) {
@@ -786,7 +789,7 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 		}
 		btn->loadTextureNormal(i == 0 ? "popup/box2.png" : "popup/box1.png");
 		btn->setPosition(Vec2(scrollTitle->getContentSize().width / 2, heightTitle - 25 - i * 50));
-		btn->setTitleText(list[i].Title.length() < 24 ? list[i].Title : list[i].Title.substr(0, 23));
+		btn->setTitleText(strTitle);
 		addTouchEventListener(btn, [=]() {
 			ui::Button* btn1 = (ui::Button*)scrollTitle->getChildByTag(scrollTitle->getTag());
 			btn1->loadTextureNormal("popup/box1.png");
