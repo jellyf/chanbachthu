@@ -354,7 +354,8 @@ void MainScene::onTableDataResponse(LobbyListTable data)
 
 void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 {
-	/*int numb = rand() % 20;
+	/*list.clear();
+	int numb = rand() % 20;
 	for (int i = 0; i < numb; i++) {
 		ShopHistoryData data;
 		data.Id = rand() % 100;
@@ -427,6 +428,7 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 			lb4 = (Label*)scrollHistory->getChildByTag(tag + 3);
 			lb5 = (Label*)scrollHistory->getChildByTag(tag + 4);
 			btn = (ui::Button*)scrollHistory->getChildByTag(tag + 5);
+			btn->setTouchEnabled(true);
 			isNewBtn = false;
 		}
 		addTouchEventListener(btn, [=]() {
@@ -452,7 +454,11 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 	}
 	int count = scrollHistory->getChildrenCount();
 	for (int j = list.size() * 6; j < count; j++) {
-		((Label*)scrollHistory->getChildByTag(j))->setString("");
+		if (j % 6 != 5) {
+			((Label*)scrollHistory->getChildByTag(j))->setString("");
+		} else {
+			((ui::Button*)scrollHistory->getChildByTag(j))->setTouchEnabled(false);
+		}
 	}
 }
 
