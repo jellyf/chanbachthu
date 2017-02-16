@@ -331,25 +331,30 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	d.Parse<0>(content.c_str());
 	if (tag == 1) {
 		GameConfig config;
-		config.paymentEnabled = d["payment"].GetBool();
-		config.paymentEnabledIOS = d["paymentIOS"].GetBool();
-		config.zone = d["name"].GetString();
-		config.host = d["host"].GetString();
-		config.port = d["port"].GetInt();
-		config.websocket = d["port"].GetInt();
-		config.version = d["version"].GetInt();
-		config.versionIOS = d["versionIOS"].GetInt();
-		config.ip_rs = d["ip_rs"].GetString();
-		config.phone = d["phone"].GetString();
-		config.smsVT = d["smsVT"].GetString();
-		config.smsVNPVMS = d["smsVNPVMS"].GetString();
-		config.smsKH = d["smsKH"].GetString();
-		config.smsMK = d["smsMK"].GetString();
-		config.linkFb = d["fb"].GetString();
-		config.linkAndroid = d["a"].GetString();
-		config.linkIOS = d["i"].GetString();
-		config.canUpdate = d["updatenow"].GetBool();
-        config.inapp = d["inapp"].GetString();
+		try {
+			config.paymentEnabled = d["payment"].GetBool();
+			config.paymentEnabledIOS = d["paymentIOS"].GetBool();
+			config.zone = d["name"].GetString();
+			config.host = d["host"].GetString();
+			config.port = d["port"].GetInt();
+			config.websocket = d["port"].GetInt();
+			config.version = d["version"].GetInt();
+			config.versionIOS = d["versionIOS"].GetInt();
+			config.ip_rs = d["ip_rs"].GetString();
+			config.phone = d["phone"].GetString();
+			config.smsVT = d["smsVT"].GetString();
+			config.smsVNPVMS = d["smsVNPVMS"].GetString();
+			config.smsKH = d["smsKH"].GetString();
+			config.smsMK = d["smsMK"].GetString();
+			config.linkFb = d["fb"].GetString();
+			config.linkAndroid = d["a"].GetString();
+			config.linkIOS = d["i"].GetString();
+			config.canUpdate = d["updatenow"].GetBool();
+			config.inapp = d["inapp"].GetString();
+		} catch (exception e) {
+			showPopupNotice(Utils::getSingleton().getStringForKey("error_unknown"), [=]() {});
+			return;
+		}
 
 		string verstr = Application::sharedApplication()->getVersion();
 		int i = verstr.find_last_of('.') + 1;
