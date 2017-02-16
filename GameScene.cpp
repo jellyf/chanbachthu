@@ -1549,7 +1549,6 @@ void GameScene::onUserExitRoom(long sfsUId)
 		progressTimer->stopAllActions();
 		progressTimer->setVisible(false);
 	}
-	userIndexs[sfsUId] = -1;
 }
 
 void GameScene::onErrorResponse(unsigned char code, std::string msg)
