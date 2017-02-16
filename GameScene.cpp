@@ -1549,6 +1549,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 		progressTimer->stopAllActions();
 		progressTimer->setVisible(false);
 	}
+	userIndexs[sfsUId] = -1;
 }
 
 void GameScene::onErrorResponse(unsigned char code, std::string msg)
@@ -1573,7 +1574,7 @@ void GameScene::onErrorResponse(unsigned char code, std::string msg)
 void GameScene::onPublicMessage(long uid, std::string msg)
 {
 	int index = userIndexs[uid];
-	if (index < 0 || index > 3 || (index == 0 && uid != sfsIdMe)) return;
+	if (index < 0 || index > 3) return;
 	showToast(msg, vecUserPos[index] + Vec2(0, 30));
 }
 
